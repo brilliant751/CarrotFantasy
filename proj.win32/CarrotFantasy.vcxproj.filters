@@ -15,13 +15,13 @@
     <ClCompile Include="main.cpp">
       <Filter>win32</Filter>
     </ClCompile>
-    <ClCompile Include="StartScene.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="AppDelegate.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="EnterScene.cpp">
+    <ClCompile Include="..\Classes\EnterScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\StartScene.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,13 +29,13 @@
     <ClInclude Include="main.h">
       <Filter>win32</Filter>
     </ClInclude>
-    <ClInclude Include="StartScene.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="AppDelegate.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="EnterScene.h">
+    <ClInclude Include="..\Classes\EnterScene.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\StartScene.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

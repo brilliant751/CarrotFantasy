@@ -82,7 +82,7 @@ bool StartScene::init()
     //this->addChild(menu, 1);
 
     /* ´´½¨±³¾° */
-    auto background = Sprite::create("HelloWorld.png");
+    auto background = Sprite::create("StartScene/front_bg.png");
     if (background == nullptr)
         problemLoading("'StartScene/front_bg.png'");
     else
