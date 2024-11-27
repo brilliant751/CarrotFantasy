@@ -1,6 +1,5 @@
 #pragma once
 
-
 #ifndef __ENTER_SCENE__
 #define __ENTER_SCENE__
 
