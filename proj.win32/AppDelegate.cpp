@@ -10,10 +10,10 @@ using namespace cocos2d::experimental;
 USING_NS_CC;
 
 //可供选择的屏幕分辨率
-static Size design_s = Size(1024, 768);
 static Size small_s = Size(480, 320);
 static Size medium_s = Size(1024, 768);
 static Size large_s = Size(2048, 1536);
+static Size design_s = Size(1960, 1080);
 
 AppDelegate::AppDelegate()
 {
