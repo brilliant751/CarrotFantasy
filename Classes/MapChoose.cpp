@@ -18,7 +18,7 @@ static void problemLoading(const char* filename)
 
 Scene* mapChoose::create_Scene()
 {
-    return Scene::create();
+    return mapChoose::create();
 }
 
 bool mapChoose::init()
