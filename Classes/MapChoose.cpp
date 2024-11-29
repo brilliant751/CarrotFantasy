@@ -7,6 +7,8 @@
 USING_NS_CC;
 using namespace ui;
 
+//1
+
 /* 如果文件无法打开，打印报错信息 */
 static void problemLoading(const char* filename)
 {
