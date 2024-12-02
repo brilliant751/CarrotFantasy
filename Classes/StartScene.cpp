@@ -43,25 +43,7 @@ bool StartScene::init()
     auto visibleSize = Director::getInstance()->getVisibleSize();   //(1960,1080)
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-
-    /************     参数     ************/
-
-    constexpr int btnY = 180;           //按钮高度
-    constexpr float btn_scale = 1.1f;   //按钮放大倍率
-    constexpr float map_scale = 1.5f;   //地图放大倍率
-    const Vec2 bg(visibleSize / 2);     //地图位置
-    const Vec2 crt(980, 600);           //萝卜位置
-    const Vec2 lf1(900, 715);           //叶子1
-    const Vec2 lf2(990, 745);           //叶子2
-    const Vec2 lf3(1080, 715);          //叶子3
-    const Vec2 tm(960, 450);            //商标位置
-    const Vec2 ad_btn(600, btnY);       //冒险模式
-    const Vec2 boss_btn(970, btnY);     //boss模式
-    const Vec2 nest_btn(1340, btnY);    //怪物窝
-
-
-    /**************************************/
-
+    // 预加载精灵图集
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("StartScene/StartScene.plist");
 
     /* 创建精灵的闭包函数 */
@@ -78,6 +60,23 @@ bool StartScene::init()
         this->addChild(newsp, layer);
         return newsp;
         };
+
+    /************     参数     ************/
+
+    constexpr int btnY = 180;           //按钮高度
+    constexpr float btn_scale = 1.1f;   //按钮放大倍率
+    constexpr float map_scale = 1.5f;   //地图放大倍率
+    const Vec2 bg(visibleSize / 2);     //地图位置
+    const Vec2 crt(980, 600);           //萝卜位置
+    const Vec2 lf1(900, 715);           //叶子1
+    const Vec2 lf2(990, 745);           //叶子2
+    const Vec2 lf3(1080, 715);          //叶子3
+    const Vec2 tm(960, 450);            //商标位置
+    const Vec2 ad_btn(600, btnY);       //冒险模式
+    const Vec2 boss_btn(970, btnY);     //boss模式
+    const Vec2 nest_btn(1340, btnY);    //怪物窝
+
+    /**************************************/
 
     /* 创建 冒险模式 按钮 */
     auto advenBtn = Button::create(

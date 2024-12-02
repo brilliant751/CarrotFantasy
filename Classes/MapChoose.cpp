@@ -1,4 +1,4 @@
-#include"cocos2d.h"
+
 #include "EnterScene.h"
 #include "MapChoose.h"
 #include "AudioEngine.h"
@@ -95,6 +95,8 @@ bool MapChoose::init()
 
         };
     
+    /************     参数     ************/
+
     const Vec2 po_bg(visibleSize / 2);     //地图位置
     constexpr float btn_scale = 1.1f;      //按钮放大倍率
     constexpr float map_scale = 1.5f;      //地图放大倍率
@@ -104,16 +106,30 @@ bool MapChoose::init()
     const Vec2 po_btn_help(1628, 953);     //帮助按钮位置
     const Vec2 po_btn_start(980, 150);     //开始按钮位置
 
+    /**************************************/
 
+    /* 创建背景 */
     auto bg = sp_create("bg.png", po_bg, map_scale, -1);
     auto bg_left = sp_create("bg_left.png", po_bg_left, map_scale, 0);
     auto bg_right = sp_create("bg_right.png", po_bg_right, map_scale, 0);
 
-    auto btn_back = btn_create("MapChoose/btn_back_normal.png", "MapChoose/btn_back_pressed.png", "MapChoose/btn_back_normal.png",
+    /* 创建按钮 */
+    //返回
+    auto btn_back = btn_create(
+        "MapChoose/btn_back_normal.png",
+        "MapChoose/btn_back_pressed.png",
+        "MapChoose/btn_back_normal.png",
         po_btn_back, 1, 1.2);
-    auto btn_help = btn_create("MapChoose/btn_help_normal.png", "MapChoose/btn_help_pressed.png", "MapChoose/btn_help_normal.png",
+    //帮助
+    auto btn_help = btn_create(
+        "MapChoose/btn_help_normal.png",
+        "MapChoose/btn_help_pressed.png",
+        "MapChoose/btn_help_normal.png",
         po_btn_help, 2, 1.2);
-    auto btn_start = btn_create("MapChoose/btn_start_normal.png", "MapChoose/btn_start_pressed.png", "MapChoose/btn_start_normal.png",
+    //开始
+    auto btn_start = btn_create("MapChoose/btn_start_normal.png",
+        "MapChoose/btn_start_pressed.png",
+        "MapChoose/btn_start_normal.png",
         po_btn_start, 3);
 
     return true;
