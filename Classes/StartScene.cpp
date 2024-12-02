@@ -90,9 +90,9 @@ bool StartScene::init()
     advenBtn->addTouchEventListener([&](Ref* sender, Widget::TouchEventType type) {
         switch (type)
         {
-            case ui::Widget::TouchEventType::BEGAN:
+            case Widget::TouchEventType::BEGAN:
                 break;
-            case ui::Widget::TouchEventType::ENDED:
+            case Widget::TouchEventType::ENDED:
                 enterCall(this);
                 break;
             default:

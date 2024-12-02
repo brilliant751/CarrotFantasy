@@ -7,14 +7,14 @@
 
 USING_NS_CC;
 
-class mapChoose : public Scene
+class MapChoose : public Scene
 {
 public:
 	static Scene* create_Scene();
 
 	virtual bool init();
 
-	CREATE_FUNC(mapChoose);
+	CREATE_FUNC(MapChoose);
 };
 
 #endif // !__MAP_CHOOSE__

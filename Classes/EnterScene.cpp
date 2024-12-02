@@ -3,6 +3,7 @@
 #include "StartScene.h"
 #include "AudioEngine.h"
 #include "ui/CocosGUI.h"
+#include"MapChoose.h"
 
 USING_NS_CC;
 using namespace ui;
@@ -22,6 +23,8 @@ Scene* Enter::create_Scene()
 /* 进入地图选择界面 */
 void chooseCall(Ref* pSender)
 {
+    auto map_choose = MapChoose::create_Scene();
+    Director::getInstance()->replaceScene(map_choose);
 
 }
 
