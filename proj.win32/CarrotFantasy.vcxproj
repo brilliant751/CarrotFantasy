@@ -154,6 +154,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClCompile Include="..\Classes\MapChoose.cpp" />
     <ClCompile Include="..\Classes\StartScene.cpp" />
     <ClCompile Include="AppDelegate.cpp" />
+    <ClCompile Include="HelpScene.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -161,6 +162,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClInclude Include="..\Classes\MapChoose.h" />
     <ClInclude Include="..\Classes\StartScene.h" />
     <ClInclude Include="AppDelegate.h" />
+    <ClInclude Include="HelpScene.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>

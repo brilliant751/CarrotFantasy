@@ -21,12 +21,24 @@ Scene* MapChoose::create_Scene()
     return MapChoose::create();
 }
 
+/* 左键按钮切换上一张map */
+void MapChoose::left_onButtonClicked(Ref* sender) {
+    if (level > 0)
+        cur_map->setSpriteFrame(all_map[--level].map_url);
+}
+
+/* 右键按钮切换下一张map */
+void MapChoose::right_onButtonClicked(Ref* sender) {
+    if (level < 2)
+        cur_map->setSpriteFrame(all_map[++level].map_url);    
+}
+
 
 bool MapChoose::init()
 {
     if (!Scene::init())
         return false;
-
+    
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
@@ -59,13 +71,15 @@ bool MapChoose::init()
     //                         1 - back
     //                         2 - help
     //                         3 - start
+    //                         4 - left
+    //                         5 - right
     auto btn_create = [&](const string& normal_name, const string& pressed_name, const string& locked_name,
         const Vec2& pos, int btn_type, const float& scale = 1.1f, int layer = 0) {
             auto temp_btn = Button::create(normal_name, pressed_name, locked_name);
             temp_btn->setPosition(pos);
             temp_btn->setScale(scale);
 
-            temp_btn->addTouchEventListener([&](Ref* sender, Widget::TouchEventType type) {
+            temp_btn->addTouchEventListener([=](Ref* sender, Widget::TouchEventType type) {
                 switch (type)
                 {
                     case ui::Widget::TouchEventType::BEGAN:
@@ -80,6 +94,12 @@ bool MapChoose::init()
                                 break;
                             case 3:
                                 //开始游戏
+                                break;
+                            case 4:
+                                left_onButtonClicked(this);
+                                break;
+                            case 5:
+                                right_onButtonClicked(this);
                                 break;
                             default:
                                 break;
@@ -105,6 +125,8 @@ bool MapChoose::init()
     const Vec2 po_btn_back(330, 953);      //返回按钮位置
     const Vec2 po_btn_help(1628, 953);     //帮助按钮位置
     const Vec2 po_btn_start(980, 150);     //开始按钮位置
+    const Vec2 po_btn_left(400, 540);      //左移按钮位置
+    const Vec2 po_btn_right(1560, 540);    //右移按钮位置
 
     /**************************************/
 
@@ -112,6 +134,9 @@ bool MapChoose::init()
     auto bg = sp_create("bg.png", po_bg, map_scale, -1);
     auto bg_left = sp_create("bg_left.png", po_bg_left, map_scale, 0);
     auto bg_right = sp_create("bg_right.png", po_bg_right, map_scale, 0);
+
+    /* 定义cur_map */
+    cur_map = sp_create(all_map[level].map_url, po_bg, map_scale, 0);
 
     /* 创建按钮 */
     //返回
@@ -132,6 +157,21 @@ bool MapChoose::init()
         "MapChoose/contents/btn_start_pressed.png",
         "MapChoose/contents/btn_start_normal.png",
         po_btn_start, 3);
+    //左移
+    auto btn_left = btn_create(
+        "MapChoose/contents/btn_left_normal.png",
+        "MapChoose/contents/btn_left_pressed.png",
+        "MapChoose/contents/btn_left_normal.png",
+        po_btn_left, 4);
+    //右移
+    auto btn_right = btn_create(
+        "MapChoose/contents/btn_right_normal.png",
+        "MapChoose/contents/btn_right_pressed.png",
+        "MapChoose/contents/btn_right_normal.png",
+        po_btn_right, 5);
+    
+   
+
 
     return true;
 }
