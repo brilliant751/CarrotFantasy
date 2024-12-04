@@ -3,6 +3,7 @@
 #include "EnterScene.h"
 #include "AudioEngine.h"
 #include "ui/CocosGUI.h"
+#include "ui/UIButton.h"
 
 USING_NS_CC;
 using namespace ui;
@@ -27,11 +28,6 @@ static void problemLoading(const char* filename)
     printf("Error while loading: %s\n", filename);
     printf("Depending on how you compiled you might have to add 'Resources/' in front of filenames in HelloWorldScene.cpp\n");
 }
-
-//static Sprite* sp_create(const string& pctname, const Vec2& pos, const float& scale = 1.0f, int layer = 0, Scene* it)
-//{
-//    Sprite* newsp = Sprite::create();
-//}
 
 /* 初始化程序 */
 bool StartScene::init()
@@ -134,7 +130,6 @@ bool StartScene::init()
 
     /* 创建商标 */
     auto gameTM = sp_create("gameTM.png", tm, map_scale, 4);
-
 
     return true;
 }

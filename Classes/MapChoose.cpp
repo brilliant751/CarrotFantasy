@@ -116,20 +116,21 @@ bool MapChoose::init()
     /* 创建按钮 */
     //返回
     auto btn_back = btn_create(
-        "MapChoose/btn_back_normal.png",
-        "MapChoose/btn_back_pressed.png",
-        "MapChoose/btn_back_normal.png",
+        "MapChoose/contents/btn_back_normal.png",
+        "MapChoose/contents/btn_back_pressed.png",
+        "MapChoose/contents/btn_back_normal.png",
         po_btn_back, 1, 1.2);
     //帮助
     auto btn_help = btn_create(
-        "MapChoose/btn_help_normal.png",
-        "MapChoose/btn_help_pressed.png",
-        "MapChoose/btn_help_normal.png",
+        "MapChoose/contents/btn_help_normal.png",
+        "MapChoose/contents/btn_help_pressed.png",
+        "MapChoose/contents/btn_help_normal.png",
         po_btn_help, 2, 1.2);
     //开始
-    auto btn_start = btn_create("MapChoose/btn_start_normal.png",
-        "MapChoose/btn_start_pressed.png",
-        "MapChoose/btn_start_normal.png",
+    auto btn_start = btn_create(
+        "MapChoose/contents/btn_start_normal.png",
+        "MapChoose/contents/btn_start_pressed.png",
+        "MapChoose/contents/btn_start_normal.png",
         po_btn_start, 3);
 
     return true;
