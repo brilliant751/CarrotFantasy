@@ -57,9 +57,28 @@ bool StartScene::init()
         return newsp;
         };
 
+    /* 创建按钮的闭包函数 */
+    //lambda表达式
+    //normal：   正常状态显示
+    //pressed：  点击状态显示
+    //pos：      坐标
+    //scale：    放大倍率
+    //layer：    放置层数
+    auto btn_create = [&](const string& normal, const string& pressed,
+        const Vec2& pos, const float& scale = 1.0f, int layer = 1)
+        {
+            auto btn = Button::create();
+            btn->loadTextures(normal, pressed, normal);
+            btn->setPosition(pos);
+            btn->setScale(scale);
+            this->addChild(btn, layer);
+            return btn;
+        };
+
     /************     参数     ************/
 
-    constexpr int btnY = 180;           //按钮高度
+    constexpr int btnY1 = 180;           //按钮高度
+    constexpr int btnY2 = 400;           //按钮高度
     constexpr float btn_scale = 1.1f;   //按钮放大倍率
     constexpr float map_scale = 1.5f;   //地图放大倍率
     const Vec2 bg(visibleSize / 2);     //地图位置
@@ -68,21 +87,21 @@ bool StartScene::init()
     const Vec2 lf2(990, 745);           //叶子2
     const Vec2 lf3(1080, 715);          //叶子3
     const Vec2 tm(960, 450);            //商标位置
-    const Vec2 ad_btn(600, btnY);       //冒险模式
-    const Vec2 boss_btn(970, btnY);     //boss模式
-    const Vec2 nest_btn(1340, btnY);    //怪物窝
+    const Vec2 ad_btn(600, btnY1);       //冒险模式
+    const Vec2 boss_btn(970, btnY1);     //boss模式
+    const Vec2 nest_btn(1340, btnY1);    //怪物窝
+    const Vec2 setting_btn(560, btnY2);
+    const Vec2 help_btn(1380, btnY2);
 
     /**************************************/
 
     /* 创建 冒险模式 按钮 */
-    auto advenBtn = Button::create(
-        "StartScene/contents/btn_adventure_normal.png",
-        "StartScene/contents/btn_adventure_pressed.png",
-        "StartScene/contents/btn_adventure_normal.png");
-    advenBtn->setPosition(ad_btn);
-    advenBtn->setScale(btn_scale);
-
-    advenBtn->addTouchEventListener([&](Ref* sender, Widget::TouchEventType type) {
+    auto adventure = btn_create(
+        "StartScene/btn/btn_adventure_normal.png",
+        "StartScene/btn/btn_adventure_pressed.png",
+        ad_btn, btn_scale);
+    // 切换场景
+    adventure->addTouchEventListener([&](Ref* sender, Widget::TouchEventType type) {
         switch (type)
         {
             case Widget::TouchEventType::BEGAN:
@@ -95,27 +114,23 @@ bool StartScene::init()
         }
         });
 
-    addChild(advenBtn);
+    /* 创建 设置 按钮 */
+    auto settings = btn_create(
+        "StartScene/btn/btn_setting_normal.png",
+        "StartScene/btn/btn_setting_pressed.png",
+        setting_btn, btn_scale, 1);
+
+    /* 创建 帮助 按钮 */
+    auto help = btn_create(
+        "StartScene/btn/btn_help_normal.png",
+        "StartScene/btn/btn_help_pressed.png",
+        help_btn, btn_scale, 1);
 
     /* 创建 boss模式 按钮 */
-    auto bossBtn = Button::create(
-        "StartScene/contents/btn_boss_normal.png",
-        "StartScene/contents/btn_boss_pressed.png",
-        "StartScene/contents/btn_boss_normal.png");
-
-    bossBtn->setPosition(boss_btn);
-    bossBtn->setScale(btn_scale);
-    addChild(bossBtn);
+    auto boss = sp_create("btn_boss_normal.png", boss_btn, btn_scale, 1);
 
     /* 创建 怪物窝 按钮 */
-    auto nestBtn = Button::create(
-        "StartScene/contents/btn_nest_normal.png",
-        "StartScene/contents/btn_nest_pressed.png",
-        "StartScene/contents/btn_nest_normal.png");
-
-    nestBtn->setPosition(nest_btn);
-    nestBtn->setScale(btn_scale);
-    addChild(nestBtn);
+    auto nest = sp_create("btn_nest_normal.png", nest_btn, btn_scale, 1);
 
     /* 创建背景 */
     auto mainbg = sp_create("mainbg.png", bg, map_scale, -1);
