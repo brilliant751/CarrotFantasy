@@ -27,7 +27,13 @@
     <ClCompile Include="..\Classes\MapChoose.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="HelpScene.cpp">
+    <ClCompile Include="..\Classes\HelpScene_1.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\HelpScene_2.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\HelpScene_3.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,7 +53,13 @@
     <ClInclude Include="..\Classes\MapChoose.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="HelpScene.h">
+    <ClInclude Include="..\Classes\HelpScene_1.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\HelpScene_2.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\HelpScene_3.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

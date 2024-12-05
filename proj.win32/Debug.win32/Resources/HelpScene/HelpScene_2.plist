@@ -19,7 +19,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>monster_2 .png</key>
+            <key>monster_2.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -49,7 +49,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>monster_blood .png</key>
+            <key>monster_blood.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>

@@ -1,6 +1,7 @@
 
 #include "EnterScene.h"
 #include "MapChoose.h"
+#include "HelpScene_1.h"
 #include "AudioEngine.h"
 #include "ui/CocosGUI.h"
 
@@ -31,6 +32,12 @@ void MapChoose::left_onButtonClicked(Ref* sender) {
 void MapChoose::right_onButtonClicked(Ref* sender) {
     if (level < 2)
         cur_map->setSpriteFrame(all_map[++level].map_url);    
+}
+
+/* 帮助按钮切换至HelpScene_1 */
+void MapChoose::help_onButtonClicked(Ref* sender) {
+    auto next = HelpScene_1::create_Scene();
+    Director::getInstance()->replaceScene(next);
 }
 
 
@@ -89,8 +96,8 @@ bool MapChoose::init()
                             case 1:
                                 //回到EnterScene
                                 break;
-                            case 2:
-                                //到HelpScene
+                            case 2: 
+                                help_onButtonClicked(this);                              
                                 break;
                             case 3:
                                 //开始游戏

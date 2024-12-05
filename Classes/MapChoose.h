@@ -25,9 +25,10 @@ public:
 	static Scene* create_Scene();
 	void right_onButtonClicked(Ref* sender);
 	void left_onButtonClicked(Ref* sender);
+	void help_onButtonClicked(Ref* sender);
 	virtual bool init();
 
-	CREATE_FUNC(MapChoose)
+	CREATE_FUNC(MapChoose);
 private:
 	Sprite* cur_map;
 	int level = 0;

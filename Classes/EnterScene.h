@@ -16,9 +16,6 @@ public:
 
 	CREATE_FUNC(Enter);
 
-//private:
-	// Ö÷Ìâ
-
 };
 
 #endif // !__ENTER_SCENE__
