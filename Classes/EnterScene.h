@@ -15,6 +15,10 @@ public:
 	virtual bool init();
 
 	CREATE_FUNC(Enter);
+
+//private:
+	// Ö÷Ìâ
+
 };
 
 #endif // !__ENTER_SCENE__

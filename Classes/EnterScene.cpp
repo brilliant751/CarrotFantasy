@@ -9,6 +9,8 @@ USING_NS_CC;
 using namespace ui;
 using namespace std;
 
+static int top = 0;    // 栈顶指针
+
 /* 如果文件无法打开，打印报错信息 */
 static void problemLoading(const char* filename)
 {
@@ -26,7 +28,6 @@ void chooseCall(Ref* pSender)
 {
     auto map_choose = MapChoose::create_Scene();
     Director::getInstance()->replaceScene(map_choose);
-
 }
 
 bool Enter::init()
@@ -39,7 +40,6 @@ bool Enter::init()
 
     // 预加载精灵图集
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("EnterScene/EnterScene.plist");
-    static const auto frame = SpriteFrameCache::getInstance()->getSpriteFrameByName("theme_desert.png");
 
     /* 创建精灵的闭包函数 */
     //lambda表达式
@@ -89,18 +89,17 @@ bool Enter::init()
     /* 创建事件 */
     auto click_listener = EventListenerTouchOneByOne::create();
     click_listener->onTouchBegan = [&](Touch* touch, Event* event) { 
-        auto pos = touch->getLocation();
-        auto sp = (Sprite*)(this->getChildByName("skyline"));
-        if (sp->getBoundingBox().containsPoint(pos))
-            return true;
-        return false;
+        auto pos = touch->getLocation();    //获取点击位置
+        auto sp = (Sprite*)(this->getChildByName("stages"));    //从场景中抓取名为stages的精灵
+        if (sp->getBoundingBox().containsPoint(pos) && top == 0)
+            return true;    //点击位置在精灵范围内 and 当前为第一个主题
+        return false;   //返回false，中止执行事件响应
         };
     click_listener->onTouchMoved = [](Touch* touch, Event* event) {};
     click_listener->onTouchEnded = [&](Touch* touch, Event* event) {
         auto next = MapChoose::create_Scene();
         if (next == nullptr)
-            return false;
-        
+            return false;   //确保next非空
         Director::getInstance()->replaceScene(next);
         return true;
         };
@@ -110,10 +109,8 @@ bool Enter::init()
     auto background = sp_create("bg.png", bg, bg_scale, -1);
 
     /* 创建章节 */
-    auto skyline = sp_create("theme_skyline.png", bg, stage_scale, 1);
-    //skyline->initWithSpriteFrameName("theme_desert.png");
-    skyline->setName("skyline");
-    //skyline->setSpriteFrame(frame);
+    auto stages = sp_create("theme_skyline.png", bg, stage_scale, 1);
+    stages->setName("stages");  //设置名字，便于抓取
 
 
     /******* 创建按钮 *******/
@@ -122,6 +119,22 @@ bool Enter::init()
         "EnterScene/contents/left_normal.png",
         "EnterScene/contents/left_pressed.png",
         btn_left, btn_scale);
+    goleft->addTouchEventListener([&](Ref* eSender, Widget::TouchEventType type) {
+        auto sp = (Sprite*)(this->getChildByName("stages"));    //抓取精灵
+        //主题
+        const string themes[3] = { "theme_skyline.png", "theme_desert.png", "theme_jungle.png" };
+        switch (type)
+        {
+            case Widget::TouchEventType::BEGAN:
+                break;
+            case Widget::TouchEventType::ENDED:
+                if (top > 0)
+                    sp->setSpriteFrame(themes[--top]);
+                break;
+            default:
+                break;
+        }
+        });
 
     
     /* 按钮——右移 */
@@ -129,22 +142,22 @@ bool Enter::init()
         "EnterScene/contents/right_normal.png",
         "EnterScene/contents/right_pressed.png",
         btn_right, btn_scale);
-    //ToDo
-    auto func = [&](Ref* eSender, Widget::TouchEventType type) {
-        auto sp = (Sprite*)(this->getChildByName("skyline"));
+    goright->addTouchEventListener([&](Ref* eSender, Widget::TouchEventType type) {
+        auto sp = (Sprite*)(this->getChildByName("stages"));    //抓取精灵
+        //主题
+        const string themes[3] = { "theme_skyline.png", "theme_desert.png", "theme_jungle.png" };
         switch (type)
         {
             case Widget::TouchEventType::BEGAN:
                 break;
             case Widget::TouchEventType::ENDED:
-                //skyline->setSpriteFrame(frame);
-                sp->setTexture("EnterScene/contents/theme_jungle.png");
+                if (top < 2)
+                    sp->setSpriteFrame(themes[++top]);
                 break;
             default:
                 break;
         }
-        };
-    goright->addTouchEventListener(func);
+        });
 
 
     return true;
