@@ -1,6 +1,7 @@
 
 #include "StartScene.h"
 #include "EnterScene.h"
+#include "HelpScene_1.h"
 #include "AudioEngine.h"
 #include "ui/CocosGUI.h"
 #include "ui/UIButton.h"
@@ -10,15 +11,23 @@ using namespace ui;
 using namespace std;
 
 
-
+/* 创建场景 */
 Scene* StartScene::create_Scene()
 {
 	return StartScene::create();
 }
 
+/* 进入章节选择 */
 static void enterCall(Ref* eSender)
 {
     auto next = Enter::create_Scene();
+    Director::getInstance()->replaceScene(next);
+}
+
+/* 进入帮助 */
+static void helpCall(Ref* eSender)
+{
+    auto next = HelpScene_1::create_Scene();
     Director::getInstance()->replaceScene(next);
 }
 
@@ -77,21 +86,21 @@ bool StartScene::init()
 
     /************     参数     ************/
 
-    constexpr int btnY1 = 180;           //按钮高度
-    constexpr int btnY2 = 400;           //按钮高度
-    constexpr float btn_scale = 1.1f;   //按钮放大倍率
-    constexpr float map_scale = 1.5f;   //地图放大倍率
-    const Vec2 bg(visibleSize / 2);     //地图位置
-    const Vec2 crt(980, 600);           //萝卜位置
-    const Vec2 lf1(900, 715);           //叶子1
-    const Vec2 lf2(990, 745);           //叶子2
-    const Vec2 lf3(1080, 715);          //叶子3
-    const Vec2 tm(960, 450);            //商标位置
-    const Vec2 ad_btn(600, btnY1);       //冒险模式
-    const Vec2 boss_btn(970, btnY1);     //boss模式
-    const Vec2 nest_btn(1340, btnY1);    //怪物窝
-    const Vec2 setting_btn(560, btnY2);
-    const Vec2 help_btn(1380, btnY2);
+    constexpr int btnY1 = 180;              //大按钮高度
+    constexpr int btnY2 = 400;              //小按钮高度
+    constexpr float btn_scale = 1.1f;       //按钮放大倍率
+    constexpr float map_scale = 1.5f;       //地图放大倍率
+    const Vec2 bg(visibleSize / 2);         //地图位置
+    const Vec2 crt(980, 600);               //萝卜位置
+    const Vec2 lf1(900, 715);               //叶子1
+    const Vec2 lf2(990, 745);               //叶子2
+    const Vec2 lf3(1080, 715);              //叶子3
+    const Vec2 tm(960, 450);                //商标位置
+    const Vec2 ad_btn(600, btnY1);          //冒险模式
+    const Vec2 boss_btn(970, btnY1);        //boss模式
+    const Vec2 nest_btn(1340, btnY1);       //怪物窝
+    const Vec2 setting_btn(560, btnY2);     //设置按钮
+    const Vec2 help_btn(1380, btnY2);       //帮助按钮
 
     /**************************************/
 
@@ -125,6 +134,19 @@ bool StartScene::init()
         "StartScene/btn/btn_help_normal.png",
         "StartScene/btn/btn_help_pressed.png",
         help_btn, btn_scale, 1);
+    // 切换场景
+    help->addTouchEventListener([&](Ref* sender, Widget::TouchEventType type) {
+        switch (type)
+        {
+            case Widget::TouchEventType::BEGAN:
+                break;
+            case Widget::TouchEventType::ENDED:
+                helpCall(this);
+                break;
+            default:
+                break;
+        }
+        });
 
     /* 创建 boss模式 按钮 */
     auto boss = sp_create("btn_boss_normal.png", boss_btn, btn_scale, 1);
