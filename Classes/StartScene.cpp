@@ -88,19 +88,21 @@ bool StartScene::init()
 
     constexpr int btnY1 = 180;              //大按钮高度
     constexpr int btnY2 = 400;              //小按钮高度
-    constexpr float btn_scale = 1.1f;       //按钮放大倍率
+    constexpr float btn_scale = 1.5f;       //按钮放大倍率
     constexpr float map_scale = 1.5f;       //地图放大倍率
     const Vec2 bg(visibleSize / 2);         //地图位置
     const Vec2 crt(980, 600);               //萝卜位置
     const Vec2 lf1(900, 715);               //叶子1
-    const Vec2 lf2(990, 745);               //叶子2
-    const Vec2 lf3(1080, 715);              //叶子3
+    const Vec2 lf2(990, 645);               //叶子2
+    const Vec2 lf3(989, 637);               //叶子3
     const Vec2 tm(960, 450);                //商标位置
-    const Vec2 ad_btn(600, btnY1);          //冒险模式
-    const Vec2 boss_btn(970, btnY1);        //boss模式
-    const Vec2 nest_btn(1340, btnY1);       //怪物窝
-    const Vec2 setting_btn(560, btnY2);     //设置按钮
-    const Vec2 help_btn(1380, btnY2);       //帮助按钮
+    const Vec2 ad_btn(540, btnY1);          //冒险模式
+    const Vec2 boss_btn(980, btnY1);        //boss模式
+    const Vec2 nest_btn(1400, btnY1);       //怪物窝
+    const Vec2 setting_btn(570, btnY2);     //设置按钮
+    const Vec2 help_btn(1400, btnY2);       //帮助按钮
+    const Vec2 rgup(1526, 897);             //右上角
+    const Vec2 gugu(560, 735);              //小鸟
 
     /**************************************/
 
@@ -163,11 +165,32 @@ bool StartScene::init()
     /* 创建三个叶子 */
     auto leaf1 = sp_create("leaf-1.png", lf1, map_scale, 1);
     auto leaf2 = sp_create("leaf-2.png", lf2, map_scale, 2);
+    leaf2->setAnchorPoint(Vec2(0.5, 0));
     auto leaf3 = sp_create("leaf-3.png", lf3, map_scale, 1);
+    leaf3->setAnchorPoint(Vec2(0, 0));
+    // 叶子抖动
+    auto shake = Sequence::create(RotateBy::create(0.1f, 15.0f), RotateBy::create(0.1f, -15.0f), nullptr);
+    auto once = Repeat::create(shake, 2);
+    auto delay = DelayTime::create(2.0f);
+    auto seq1 = Sequence::create(delay, once, delay, delay, nullptr);
+    auto seq2 = Sequence::create(delay, delay, once, delay, nullptr);
+    leaf2->runAction(RepeatForever::create(seq1));
+    leaf3->runAction(RepeatForever::create(seq2));
 
     /* 创建商标 */
     auto gameTM = sp_create("gameTM.png", tm, map_scale, 4);
 
+    /* 创建角标 */
+    auto corner = sp_create("rgup_corner.png", rgup, map_scale, 4);
+
+    /* 创建小鸟 */
+    auto bird = sp_create("bird.png", gugu, map_scale, 4);
+    // 小鸟飞飞
+    auto move_up = MoveBy::create(2, Vec2(0, 50));
+    auto move_down = MoveBy::create(2, Vec2(0, -50));
+    auto seq = Sequence::create(move_up, move_down, nullptr);
+    bird->runAction(RepeatForever::create(seq));
+    
     return true;
 }
 
