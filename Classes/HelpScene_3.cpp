@@ -20,6 +20,7 @@ static void problemLoading(const char* filename)
     printf("Depending on how you compiled you might have to add 'Resources/' in front of filenames in HelloWorldScene.cpp\n");
 }
 
+/* 创建场景 */
 Scene* HelpScene_3::create_Scene()
 {
     return HelpScene_3::create();
@@ -28,15 +29,17 @@ Scene* HelpScene_3::create_Scene()
 /* 左键按钮切换上一张picture */
 void HelpScene_3::left_onButtonClicked(Ref* sender) {
     if (page > 1) {
-        picture->setSpriteFrame(picture_url[--page - 1]);
+        --page;
+        picture->setSpriteFrame(picture_url[page]);
         page_left->setSpriteFrame(num_url[page]);
     }
 }
 
-/* 右键按钮切换下一张map */
+/* 右键按钮切换下一张picture */
 void HelpScene_3::right_onButtonClicked(Ref* sender) {
     if (page < 10) {
-        picture->setSpriteFrame(picture_url[++page - 1]);       
+        ++page;
+        picture->setSpriteFrame(picture_url[page]);       
         page_left->setSpriteFrame(num_url[page]);
     }
 }
@@ -47,6 +50,7 @@ void HelpScene_3::home_onButtonClicked(Ref* sender) {
     Director::getInstance()->replaceScene(next);
 }
 
+/* 场景初始化 */
 bool HelpScene_3::init()
 {
     if (!Scene::init())
@@ -82,7 +86,6 @@ bool HelpScene_3::init()
     //                         1 - left
     //                         2 - right
     //                         3 - home
-
     auto btn_create = [&](const string& normal_name, const string& pressed_name, const string& locked_name,
         const Vec2& pos, int btn_type, const float& scale = 1.1f, int layer = 0) {
             auto temp_btn = Button::create(normal_name, pressed_name, locked_name);
@@ -136,21 +139,25 @@ bool HelpScene_3::init()
 
     /**************************************/
 
-    /* 创建背景、图案、文字 */
+    /********** 创建精灵 **********/
+    /* 创建背景 */
     auto bg = sp_create("help_bg.png", po_bg, map_scale, -1);
     auto bg_bottom = sp_create("bg_bottom.png", po_bg_bottom, map_scale, 0);
-    picture = sp_create(picture_url[page - 1], po_bg, map_scale, 0);
-    auto help = sp_create("column_help_normal.png", po_help, 2.3, 0);
-    auto monster = sp_create("column_monster_normal.png", po_monster, 2.3, 0);
-    auto tower = sp_create("column_tower_pressed.png", po_tower,map_scale, 0);
+    /* 创建动态图案 */
+    picture = sp_create(picture_url[page], po_bg, map_scale, 0);
     page_left = sp_create(num_url[page], po_page_left, 1.9, 1);
+    /* 创建可点击对象 */
+    auto help = sp_create("column_help_normal.png", po_help, 2.3, 0);
+    help->setName("help");
+    auto monster = sp_create("column_monster_normal.png", po_monster, 2.3, 0);
+    monster->setName("monster");
+    auto tower = sp_create("column_tower_pressed.png", po_tower,map_scale, 0);
+    /* 创建页码 */
     auto page_middle = sp_create(num_url[0], po_page_middle, 1.9, 1);
     auto page_right = sp_create(num_url[10], po_page_right, 1.9, 1);
 
-    help->setName("help");
-    monster->setName("monster");
 
-    /* 创建按钮 */
+    /********** 创建按钮 **********/
     /* 左移 */
     auto btn_left = btn_create(
         "HelpScene/contents/btn_help_left_normal.png",
@@ -170,14 +177,14 @@ bool HelpScene_3::init()
         "HelpScene/contents/btn_home_normal.png",
         po_btn_home, 3);
 
-    /* 创建事件 */
+    /********** 创建事件 **********/
     /* help */
     auto help_click_listener = EventListenerTouchOneByOne::create();
     help_click_listener->onTouchBegan = [&](Touch* touch, Event* event) {
         auto pos = touch->getLocation();    //获取点击位置
-        auto sp = (Sprite*)(this->getChildByName("help"));    //从场景中抓取名为stages的精灵
+        auto sp = (Sprite*)(this->getChildByName("help"));    //从场景中抓取名为help的精灵
         if (sp->getBoundingBox().containsPoint(pos))
-            return true;    //点击位置在精灵范围内 and 当前为第一个主题
+            return true;    //点击位置在精灵范围内
         return false;   //返回false，中止执行事件响应
         };
     help_click_listener->onTouchMoved = [](Touch* touch, Event* event) {};
@@ -194,9 +201,9 @@ bool HelpScene_3::init()
     auto monster_click_listener = EventListenerTouchOneByOne::create();
     monster_click_listener->onTouchBegan = [&](Touch* touch, Event* event) {
         auto pos = touch->getLocation();    //获取点击位置
-        auto sp = (Sprite*)(this->getChildByName("monster"));    //从场景中抓取名为stages的精灵
+        auto sp = (Sprite*)(this->getChildByName("monster"));    //从场景中抓取名为monster的精灵
         if (sp->getBoundingBox().containsPoint(pos))
-            return true;    //点击位置在精灵范围内 and 当前为第一个主题
+            return true;    //点击位置在精灵范围内
         return false;   //返回false，中止执行事件响应
         };
     monster_click_listener->onTouchMoved = [](Touch* touch, Event* event) {};

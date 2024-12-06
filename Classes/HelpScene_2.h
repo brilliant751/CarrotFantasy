@@ -14,7 +14,8 @@ class HelpScene_2 : public Scene
 {
 public:
 	static Scene* create_Scene();
-	virtual bool init();	
+	virtual bool init();
+
 	void home_onButtonClicked(Ref* sender);
 
 	CREATE_FUNC(HelpScene_2);

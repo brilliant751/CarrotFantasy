@@ -20,6 +20,7 @@ static void problemLoading(const char* filename)
     printf("Depending on how you compiled you might have to add 'Resources/' in front of filenames in HelloWorldScene.cpp\n");
 }
 
+/* 创建场景 */
 Scene* HelpScene_2::create_Scene()
 {
     return HelpScene_2::create();
@@ -31,6 +32,7 @@ void HelpScene_2::home_onButtonClicked(Ref* sender) {
     Director::getInstance()->replaceScene(next);
 }
 
+/* 场景初始化 */
 bool HelpScene_2::init()
 {
     if (!Scene::init())
@@ -64,7 +66,6 @@ bool HelpScene_2::init()
     //layer：         放置层数
     //btn_type:       按钮类别：
     //                         1 - home
-
     auto btn_create = [&](const string& normal_name, const string& pressed_name, const string& locked_name,
         const Vec2& pos, int btn_type, const float& scale = 1.1f, int layer = 0) {
             auto temp_btn = Button::create(normal_name, pressed_name, locked_name);
@@ -115,12 +116,17 @@ bool HelpScene_2::init()
 
     /**************************************/
 
-    /* 创建背景、图案、文字 */
+    /********** 创建精灵 **********/
+    /* 创建背景 */
     auto bg = sp_create("help_bg.png", po_bg, map_scale, -1);
     auto monsters = sp_create("monsters.png", po_monsters, map_scale, 0);
+    /* 创建按钮 */
     auto help = sp_create("column_help_normal.png", po_help, 2.3, 0);
+    help->setName("help");
     auto monster = sp_create("column_monster_pressed.png", po_monster, map_scale, 0);
     auto tower = sp_create("column_tower_normal.png", po_tower, 2.2, 0);
+    tower->setName("tower");
+    /* 创建字幕 */
     auto monster_1 = sp_create("monster_1.png", po_monster_1, map_scale, 1);
     auto monster_2 = sp_create("monster_2.png", po_monster_2, map_scale, 1);
     auto monster_3 = sp_create("monster_3.png", po_monster_3, map_scale, 1);
@@ -129,26 +135,23 @@ bool HelpScene_2::init()
     auto blood_1 = sp_create("monster_blood.png", po_blood_1, map_scale, 1);
     auto blood_2 = sp_create("monster_blood.png", po_blood_2, map_scale, 1);
     auto caption = sp_create("monster_caption.png", po_caption, map_scale, 1);
-    
-    help->setName("help");
-    tower->setName("tower");
 
-    /* 创建按钮 */
-    //home
+    /********** 创建按钮 **********/
+    /* home */
     auto btn_home = btn_create(
         "HelpScene/contents/btn_home_normal.png",
         "HelpScene/contents/btn_home_pressed.png",
         "HelpScene/contents/btn_home_normal.png",
         po_btn_home, 1);
 
-    /* 创建事件 */
+    /********** 创建事件 **********/
     /* help */
     auto help_click_listener = EventListenerTouchOneByOne::create();
     help_click_listener->onTouchBegan = [&](Touch* touch, Event* event) {
         auto pos = touch->getLocation();    //获取点击位置
-        auto sp = (Sprite*)(this->getChildByName("help"));    //从场景中抓取名为stages的精灵
+        auto sp = (Sprite*)(this->getChildByName("help"));    //从场景中抓取名为help的精灵
         if (sp->getBoundingBox().containsPoint(pos))
-            return true;    //点击位置在精灵范围内 and 当前为第一个主题
+            return true;    //点击位置在精灵范围内
         return false;   //返回false，中止执行事件响应
         };
     help_click_listener->onTouchMoved = [](Touch* touch, Event* event) {};
@@ -165,9 +168,9 @@ bool HelpScene_2::init()
     auto tower_click_listener = EventListenerTouchOneByOne::create();
     tower_click_listener->onTouchBegan = [&](Touch* touch, Event* event) {
         auto pos = touch->getLocation();    //获取点击位置
-        auto sp = (Sprite*)(this->getChildByName("tower"));    //从场景中抓取名为stages的精灵
+        auto sp = (Sprite*)(this->getChildByName("tower"));    //从场景中抓取名为tower的精灵
         if (sp->getBoundingBox().containsPoint(pos))
-            return true;    //点击位置在精灵范围内 and 当前为第一个主题
+            return true;    //点击位置在精灵范围内
         return false;   //返回false，中止执行事件响应
         };
     tower_click_listener->onTouchMoved = [](Touch* touch, Event* event) {};
