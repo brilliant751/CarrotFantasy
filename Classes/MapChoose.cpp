@@ -24,14 +24,20 @@ Scene* MapChoose::create_Scene()
 
 /* 左键按钮切换上一张map */
 void MapChoose::left_onButtonClicked(Ref* sender) {
-    if (level > 0)
+    if (level > 0) {
         cur_map->setSpriteFrame(all_map[--level].map_url);
+        towers->setSpriteFrame(all_map[level].towers_url);
+        waves->setSpriteFrame(all_map[level].waves_url);
+    }
 }
 
 /* 右键按钮切换下一张map */
 void MapChoose::right_onButtonClicked(Ref* sender) {
-    if (level < 2)
+    if (level < 2) {
         cur_map->setSpriteFrame(all_map[++level].map_url);    
+        towers->setSpriteFrame(all_map[level].towers_url);
+        waves->setSpriteFrame(all_map[level].waves_url);
+    }
 }
 
 /* 帮助按钮切换至HelpScene_1 */
@@ -124,7 +130,10 @@ bool MapChoose::init()
     
     /************     参数     ************/
 
-    const Vec2 po_bg(visibleSize / 2);     //地图位置
+    const Vec2 po_bg(visibleSize / 2);     //底图位置
+    const Vec2 po_map(980, 560);        //可用防御塔位置
+    const Vec2 po_towers(980, 240);        //可用防御塔位置
+    const Vec2 po_waves(1180, 850);        //可用防御塔位置
     constexpr float btn_scale = 1.1f;      //按钮放大倍率
     constexpr float map_scale = 1.5f;      //地图放大倍率
     const Vec2 po_bg_left(495, 185);       //左下背景位置
@@ -132,8 +141,9 @@ bool MapChoose::init()
     const Vec2 po_btn_back(330, 953);      //返回按钮位置
     const Vec2 po_btn_help(1628, 953);     //帮助按钮位置
     const Vec2 po_btn_start(980, 150);     //开始按钮位置
-    const Vec2 po_btn_left(400, 540);      //左移按钮位置
-    const Vec2 po_btn_right(1560, 540);    //右移按钮位置
+    const Vec2 po_btn_left(400, 560);      //左移按钮位置
+    const Vec2 po_btn_right(1560, 560);    //右移按钮位置
+
 
     /**************************************/
 
@@ -142,8 +152,10 @@ bool MapChoose::init()
     auto bg_left = sp_create("bg_left.png", po_bg_left, map_scale, 0);
     auto bg_right = sp_create("bg_right.png", po_bg_right, map_scale, 0);
 
-    /* 定义cur_map */
-    cur_map = sp_create(all_map[level].map_url, po_bg, map_scale, 0);
+    /* 定义cur_map towers waves */
+    cur_map = sp_create(all_map[level].map_url, po_map, 1.7, 0);
+    towers = sp_create(all_map[level].towers_url, po_towers, map_scale, 0);
+    waves = sp_create(all_map[level].waves_url, po_waves, map_scale, 0);
 
     /* 创建按钮 */
     //返回

@@ -77,10 +77,11 @@ bool Enter::init()
     /************     参数     ************/
 
     constexpr float bg_scale = 1.5f;        //背景放大倍率
-    constexpr float stage_scale = 1.0f;     //章节放大倍率
+    constexpr float stage_scale = 1.3f;     //章节放大倍率
     constexpr float btn_scale = 1.1f;       //按钮放大倍率
     const float btnY = visibleSize.y / 2;   //按钮高度
-    const Vec2 bg(visibleSize / 2);         //章节位置
+    const Vec2 bg(visibleSize / 2);         //背景位置
+    const Vec2 stg(980, 500);               //章节位置
     const Vec2 btn_left(400, btnY);         //左移位置
     const Vec2 btn_right(1560, btnY);       //右移位置
 
@@ -109,7 +110,7 @@ bool Enter::init()
     auto background = sp_create("bg.png", bg, bg_scale, -1);
 
     /* 创建章节 */
-    auto stages = sp_create("theme_skyline.png", bg, stage_scale, 1);
+    auto stages = sp_create("theme_skyline.png", stg, stage_scale, 1);
     stages->setName("stages");  //设置名字，便于抓取
 
 
