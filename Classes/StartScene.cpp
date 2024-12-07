@@ -21,14 +21,14 @@ Scene* StartScene::create_Scene()
 static void enterCall(Ref* eSender)
 {
     auto next = Enter::create_Scene();
-    Director::getInstance()->replaceScene(next);
+    Director::getInstance()->pushScene(next);
 }
 
 /* 进入帮助 */
 static void helpCall(Ref* eSender)
 {
     auto next = HelpScene_1::create_Scene();
-    Director::getInstance()->replaceScene(next);
+    Director::getInstance()->pushScene(next);
 }
 
 /* 如果文件无法打开，打印报错信息 */
@@ -88,6 +88,7 @@ bool StartScene::init()
 
     constexpr int btnY1 = 180;              //大按钮高度
     constexpr int btnY2 = 400;              //小按钮高度
+    constexpr int locks = 220;              //锁高度
     constexpr float btn_scale = 1.5f;       //按钮放大倍率
     constexpr float map_scale = 1.5f;       //地图放大倍率
     const Vec2 bg(visibleSize / 2);         //地图位置
@@ -103,6 +104,8 @@ bool StartScene::init()
     const Vec2 help_btn(1400, btnY2);       //帮助按钮
     const Vec2 rgup(1526, 897);             //右上角
     const Vec2 gugu(560, 735);              //小鸟
+    const Vec2 lock1(1145, locks);          //boss锁
+    const Vec2 lock2(1565, locks);          //nest锁
 
     /**************************************/
 
@@ -190,6 +193,10 @@ bool StartScene::init()
     auto move_down = MoveBy::create(2, Vec2(0, -50));
     auto seq = Sequence::create(move_up, move_down, nullptr);
     bird->runAction(RepeatForever::create(seq));
+
+    /* 创建锁 */
+    auto lock_boss = sp_create("locked.png", lock1, 1.1f, 5);
+    auto lock_nest = sp_create("locked.png", lock2, 1.1f, 5);
     
     return true;
 }

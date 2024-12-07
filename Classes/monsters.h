@@ -14,7 +14,7 @@ struct monster_info {
 	int type;                                     //记录怪物种类
 	int hp;                                       //记录怪物血量
 	int speed;                                    //记录怪物移动速度
-	int coin;                                     //携带萝卜币
+	int rewards;                                  //携带萝卜币
 	int damage;                                   //对萝卜造成的伤害
 	int count;                                    //走过的格子数
 
@@ -23,12 +23,16 @@ struct monster_info {
 
 
 
-class monster : public cocos2d::Sprite
+class Monsters : public cocos2d::Sprite
 {
 public:
+	static void create_Sprite();
+	virtual bool init();
+
 
 	
 
+	CREATE_FUNC(Monsters);
 	
 private:
 	monster_info info;
