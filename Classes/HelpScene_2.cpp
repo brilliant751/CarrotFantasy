@@ -26,10 +26,10 @@ Scene* HelpScene_2::create_Scene()
     return HelpScene_2::create();
 }
 
-/* home按钮切换至StartScene */
-void HelpScene_2::home_onButtonClicked(Ref* sender) {
+/* 返回按钮切换至StartScene */
+void HelpScene_2::back_onButtonClicked(Ref* sender) {
     auto next = StartScene::create_Scene();
-    Director::getInstance()->replaceScene(next);
+    Director::getInstance()->popScene();
 }
 
 /* 场景初始化 */
@@ -80,7 +80,7 @@ bool HelpScene_2::init()
                     case ui::Widget::TouchEventType::ENDED:
                         switch (btn_type) {
                             case 1:
-                                home_onButtonClicked(this);
+                                back_onButtonClicked(this);
                                 break;
                             default:
                                 break;
@@ -101,7 +101,7 @@ bool HelpScene_2::init()
     const Vec2 po_monsters(980, 500);      //monsters底图位置
     constexpr float btn_scale = 1.1f;      //按钮放大倍率
     constexpr float map_scale = 1.5f;      //地图放大倍率
-    const Vec2 po_btn_home(360, 920);      //home按钮位置
+    const Vec2 po_btn_back(360, 920);      //home按钮位置
     const Vec2 po_help(750, 922);          //column_help位置 
     const Vec2 po_monster(980, 920);       //column monster位置  
     const Vec2 po_tower(1200, 925);        //column_tower位置 
@@ -137,12 +137,12 @@ bool HelpScene_2::init()
     auto caption = sp_create("monster_caption.png", po_caption, map_scale, 1);
 
     /********** 创建按钮 **********/
-    /* home */
-    auto btn_home = btn_create(
-        "HelpScene/contents/btn_home_normal.png",
-        "HelpScene/contents/btn_home_pressed.png",
-        "HelpScene/contents/btn_home_normal.png",
-        po_btn_home, 1);
+    /* 返回 */
+    auto btn_back = btn_create(
+        "HelpScene/contents/btn_back_normal.png",
+        "HelpScene/contents/btn_back_pressed.png",
+        "HelpScene/contents/btn_back_normal.png",
+        po_btn_back, 1);
 
     /********** 创建事件 **********/
     /* help */

@@ -36,7 +36,10 @@
     <ClCompile Include="..\Classes\HelpScene_3.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\monsters.cpp">
+    <ClCompile Include="..\Classes\Monsters.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Skyline_01.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -65,7 +68,13 @@
     <ClInclude Include="..\Classes\HelpScene_3.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\monsters.h">
+    <ClInclude Include="..\Classes\Monsters.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Skyline_01.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Monster_info.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

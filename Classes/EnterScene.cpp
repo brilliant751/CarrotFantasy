@@ -83,6 +83,7 @@ bool Enter::init()
     const Vec2 bg(visibleSize / 2);         //背景位置
     const Vec2 stg(980, 500);               //章节位置
     const Vec2 btn_left(400, btnY);         //左移位置
+    const Vec2 btn_back(330, 953);       //返回按钮位置
     const Vec2 btn_right(1560, btnY);       //右移位置
 
     /**************************************/
@@ -101,7 +102,7 @@ bool Enter::init()
         auto next = MapChoose::create_Scene();
         if (next == nullptr)
             return false;   //确保next非空
-        Director::getInstance()->replaceScene(next);
+        Director::getInstance()->pushScene(next);
         return true;
         };
     _eventDispatcher->addEventListenerWithSceneGraphPriority(click_listener, this);
@@ -154,6 +155,24 @@ bool Enter::init()
             case Widget::TouchEventType::ENDED:
                 if (top < 2)
                     sp->setSpriteFrame(themes[++top]);
+                break;
+            default:
+                break;
+        }
+        });
+
+    /* 按钮——返回 */
+    auto back_btn = btn_create(
+        "EnterScene/contents/home_normal.png",
+        "EnterScene/contents/home_pressed.png",
+        btn_back, btn_scale, 3);
+    back_btn->addTouchEventListener([&](Ref* eSender, Widget::TouchEventType type) {
+        switch (type)
+        {
+            case Widget::TouchEventType::BEGAN:
+                break;
+            case Widget::TouchEventType::ENDED:
+                Director::getInstance()->popScene();
                 break;
             default:
                 break;

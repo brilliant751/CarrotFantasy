@@ -87,7 +87,7 @@ bool StartScene::init()
     /************     参数     ************/
 
     constexpr int btnY1 = 180;              //大按钮高度
-    constexpr int btnY2 = 400;              //小按钮高度
+    constexpr int btnY2 = 440;              //小按钮高度
     constexpr int locks = 220;              //锁高度
     constexpr float btn_scale = 1.5f;       //按钮放大倍率
     constexpr float map_scale = 1.5f;       //地图放大倍率

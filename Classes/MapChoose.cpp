@@ -43,9 +43,13 @@ void MapChoose::right_onButtonClicked(Ref* sender) {
 /* 帮助按钮切换至HelpScene_1 */
 void MapChoose::help_onButtonClicked(Ref* sender) {
     auto next = HelpScene_1::create_Scene();
-    Director::getInstance()->replaceScene(next);
+    Director::getInstance()->pushScene(next);
 }
 
+/* 返回按钮返回到EnterScene */
+void MapChoose::back_onButtonClicked(Ref* sender) {
+    Director::getInstance()->popScene();
+}
 
 bool MapChoose::init()
 {
@@ -100,7 +104,7 @@ bool MapChoose::init()
                     case ui::Widget::TouchEventType::ENDED:
                         switch (btn_type) {
                             case 1:
-                                //回到EnterScene
+                                back_onButtonClicked(this);//回到EnterScene
                                 break;
                             case 2: 
                                 help_onButtonClicked(this);                              
@@ -131,7 +135,7 @@ bool MapChoose::init()
     /************     参数     ************/
 
     const Vec2 po_bg(visibleSize / 2);     //底图位置
-    const Vec2 po_map(980, 560);        //可用防御塔位置
+    const Vec2 po_map(980, 560);           //可用防御塔位置
     const Vec2 po_towers(980, 240);        //可用防御塔位置
     const Vec2 po_waves(1180, 850);        //可用防御塔位置
     constexpr float btn_scale = 1.1f;      //按钮放大倍率

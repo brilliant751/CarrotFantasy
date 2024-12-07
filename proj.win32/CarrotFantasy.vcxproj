@@ -155,8 +155,9 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClCompile Include="..\Classes\HelpScene_2.cpp" />
     <ClCompile Include="..\Classes\HelpScene_3.cpp" />
     <ClCompile Include="..\Classes\MapChoose.cpp" />
-    <ClCompile Include="..\Classes\monsters.cpp" />
+    <ClCompile Include="..\Classes\Monsters.cpp" />
     <ClCompile Include="..\Classes\StartScene.cpp" />
+    <ClCompile Include="..\Classes\Skyline_01.cpp" />
     <ClCompile Include="AppDelegate.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -166,7 +167,9 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClInclude Include="..\Classes\HelpScene_2.h" />
     <ClInclude Include="..\Classes\HelpScene_3.h" />
     <ClInclude Include="..\Classes\MapChoose.h" />
-    <ClInclude Include="..\Classes\monsters.h" />
+    <ClInclude Include="..\Classes\Monsters.h" />
+    <ClInclude Include="..\Classes\Monster_info.h" />
+    <ClInclude Include="..\Classes\Skyline_01.h" />
     <ClInclude Include="..\Classes\StartScene.h" />
     <ClInclude Include="AppDelegate.h" />
     <ClInclude Include="main.h" />

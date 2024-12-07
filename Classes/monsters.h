@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef __monsters__
-#define __monsters__
+#ifndef __MONSTERS__
+#define __MONSTERS__
 
 #include "cocos2d.h"
 
@@ -17,8 +17,6 @@ struct monster_info {
 	int rewards;                                  //携带萝卜币
 	int damage;                                   //对萝卜造成的伤害
 	int count;                                    //走过的格子数
-
-
 };
 
 
@@ -26,9 +24,10 @@ struct monster_info {
 class Monsters : public cocos2d::Sprite
 {
 public:
-	static void create_Sprite();
+	static Sprite* create_Sprite();
 	virtual bool init();
 
+	void setType(int type);
 
 	
 
@@ -38,5 +37,5 @@ private:
 	monster_info info;
 };
 
-#endif // !__monsters__
+#endif // !__MONSTERS__
 

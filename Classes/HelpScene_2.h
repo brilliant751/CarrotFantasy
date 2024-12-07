@@ -16,7 +16,7 @@ public:
 	static Scene* create_Scene();
 	virtual bool init();
 
-	void home_onButtonClicked(Ref* sender);
+	void back_onButtonClicked(Ref* sender);
 
 	CREATE_FUNC(HelpScene_2);
 private:

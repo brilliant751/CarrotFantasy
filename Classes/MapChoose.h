@@ -26,6 +26,7 @@ public:
 	void right_onButtonClicked(Ref* sender);
 	void left_onButtonClicked(Ref* sender);
 	void help_onButtonClicked(Ref* sender);
+	void back_onButtonClicked(Ref* sender);
 	virtual bool init();
 
 	CREATE_FUNC(MapChoose);

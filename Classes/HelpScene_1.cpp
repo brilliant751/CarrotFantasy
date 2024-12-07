@@ -46,10 +46,9 @@ void HelpScene_1::right_onButtonClicked(Ref* sender) {
     }
 }
 
-/* home按钮切换至StartScene */
-void HelpScene_1::home_onButtonClicked(Ref* sender) {
-    auto next = StartScene::create_Scene();
-    Director::getInstance()->replaceScene(next);
+/* 返回按钮切换至StartScene */
+void HelpScene_1::back_onButtonClicked(Ref* sender) {
+    Director::getInstance()->popScene();
 }
 
 /* 场景初始化 */
@@ -112,7 +111,7 @@ bool HelpScene_1::init()
                                 right_onButtonClicked(this);
                                 break;
                             case 3:
-                                home_onButtonClicked(this);
+                                back_onButtonClicked(this);
                                 break;                            
                             default:
                                 break;
@@ -133,7 +132,7 @@ bool HelpScene_1::init()
     const Vec2 po_bg_bottom(1000, 150);    //bg_bottom位置
     constexpr float btn_scale = 1.1f;      //按钮放大倍率
     constexpr float map_scale = 1.5f;      //地图放大倍率
-    const Vec2 po_btn_home(360, 920);      //home按钮位置
+    const Vec2 po_btn_back(360, 920);      //home按钮位置
     const Vec2 po_help(750, 922);          //column_help位置
     const Vec2 po_monster(980, 920);       //column monster位置
     const Vec2 po_tower(1190, 925);        //column_tower位置
@@ -177,12 +176,12 @@ bool HelpScene_1::init()
         "HelpScene/contents/btn_help_right_pressed.png",
         "HelpScene/contents/btn_help_right_normal.png",
         po_btn_right, 2, 0.7);
-    /* home */
-    auto btn_home = btn_create(
-        "HelpScene/contents/btn_home_normal.png",
-        "HelpScene/contents/btn_home_pressed.png",
-        "HelpScene/contents/btn_home_normal.png",
-        po_btn_home, 3);
+    /* 返回 */
+    auto btn_back = btn_create(
+        "HelpScene/contents/btn_back_normal.png",
+        "HelpScene/contents/btn_back_pressed.png",
+        "HelpScene/contents/btn_back_normal.png",
+        po_btn_back, 3);
 
     /********** 创建事件 **********/
     /* monster */

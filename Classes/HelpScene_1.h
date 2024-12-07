@@ -18,7 +18,7 @@ public:
 
 	void right_onButtonClicked(Ref* sender);
 	void left_onButtonClicked(Ref* sender);
-	void home_onButtonClicked(Ref* sender);
+	void back_onButtonClicked(Ref* sender);
 
 	CREATE_FUNC(HelpScene_1);
 private:
