@@ -110,7 +110,7 @@ bool OptionScene_2::init()
     const Vec2 po_all_money(550, 480);     //总钱数 字幕位置 
     const Vec2 po_all_monsters(980, 480);     //打败怪物数目 字幕位置
     const Vec2 po_all_bosses(1400, 480);    //打败BOSS数目 字幕位置 
-    const Vec2 po_all_items(757, 412);       //摧毁道具 字幕位置 
+    //const Vec2 po_all_items(757, 412);       //摧毁道具 字幕位置 
     const Vec2 po_map_1(757, 350);       //冒险地图数目 字幕位置 
     const Vec2 po_map_2(1177, 412);      //隐藏地图数目 字幕位置 
     const Vec2 po_map_3(1177, 350);      //BOSS地图数目 字幕位置 

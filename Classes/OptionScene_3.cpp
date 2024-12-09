@@ -19,13 +19,13 @@ static void problemLoading(const char* filename)
 }
 
 /* 创建场景 */
-Scene* OptionScene_2::create_Scene()
+Scene* OptionScene_3::create_Scene()
 {
-    return OptionScene_2::create();
+    return OptionScene_3::create();
 }
 
 /* 返回按钮切换至StartScene */
-void OptionScene_2::back_onButtonClicked(Ref* sender) {
+void OptionScene_3::back_onButtonClicked(Ref* sender) {
     auto next = StartScene::create_Scene();
     Director::getInstance()->popScene();
 }

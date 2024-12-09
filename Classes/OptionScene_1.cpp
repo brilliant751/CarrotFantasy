@@ -140,17 +140,17 @@ bool OptionScene_1::init()
         "OptionScene_1/contents/BGM_close.png",
         BGM_btn, btn_scale);
     /* 创建 重置游戏 按钮 */
-    auto reset = btn_create(
+    auto reset1 = btn_create(
         "OptionScene_1/contents/reset_normal.png",
         "OptionScene_1/contents/reset_pressed.png",
         reset_btn, btn_scale);
     /* 创建 重置游戏确定 按钮 */
-    auto reset = btn_create(
+    auto reset2 = btn_create(
         "OptionScene_1/contents/reset_yes_normal.png",
         "OptionScene_1/contents/reset_yes_pressed.png",
         reset_yes_btn, btn_scale);
     /* 创建 重置游戏取消 按钮 */
-    auto reset = btn_create(
+    auto reset3 = btn_create(
         "OptionScene_1/contents/reset_no_normal.png",
         "OptionScene_1/contents/reset_no_pressed.png",
         reset_no_btn, btn_scale);
@@ -164,8 +164,8 @@ bool OptionScene_1::init()
 
     const Vec2 po_bg(visibleSize / 2);     //地图位置
     const Vec2 po_bg_bottom(1000, 150);    //bg_bottom位置
-    constexpr float btn_scale = 1.1f;      //按钮放大倍率
-    constexpr float map_scale = 1.5f;      //地图放大倍率
+    //constexpr float btn_scale = 1.1f;      //按钮放大倍率
+    //constexpr float map_scale = 1.5f;      //地图放大倍率
     const Vec2 po_btn_back(360, 920);      //home按钮位置
     const Vec2 po_options(750, 922);          //column_options位置
     const Vec2 po_statistics(980, 920);       //column_statistics位置
