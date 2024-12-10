@@ -23,6 +23,65 @@ Scene* OptionScene_1::create_Scene()
 {
     return OptionScene_1::create();
 }
+//创建弹窗层
+class PopupLayer : public cocos2d::Layer {
+public:
+    static PopupLayer* createlayer();
+    virtual bool init();
+    CREATE_FUNC(PopupLayer);
+};
+
+PopupLayer* PopupLayer::createlayer() {
+    auto layer = PopupLayer::createlayer();
+    return layer;
+}
+
+bool PopupLayer::init() {
+    if (!Layer::init()) {
+        return false;
+    }
+    // 创建一个全屏的灰暗层作为背景
+    auto dimLayer = LayerColor::create(Color4B(0, 0, 0, 128), Director::getInstance()->getVisibleSize().width,
+        Director::getInstance()->getVisibleSize().height);
+    this->addChild(dimLayer);
+    // 添加弹窗内容，如文本、按钮等
+    auto btn_create = [&](const string& normal, const string& pressed,
+        const Vec2& pos, const float& scale = 1.0f, int layer = 1)
+        {
+            auto btn = Button::create();
+            btn->loadTextures(normal, pressed, normal);
+            btn->setPosition(pos);
+            btn->setScale(scale);
+            this->addChild(btn, layer);
+            return btn;
+        };
+    /************     参数     ************/
+
+    const Vec2 reset_yes_btn(540, 440);          //确认按钮
+    const Vec2 reset_no_btn(980, 440);        //取消按钮
+    constexpr float btn_scale = 1.5f;       //按钮放大倍率
+    /**************************************/
+
+       /* 创建 重置游戏确定 按钮 */
+    auto reset2 = btn_create(
+        "OptionScene/contents/reset_yes_normal.png",
+        "OptionScene/contents/reset_yes_pressed.png",
+        reset_yes_btn, btn_scale);
+    /* 创建 重置游戏取消 按钮 */
+    auto reset3 = btn_create(
+        "OptionScene/contents/reset_no_normal.png",
+        "OptionScene/contents/reset_no_pressed.png",
+        reset_no_btn, btn_scale);
+
+    reset3->addClickEventListener([](Ref* sender) {
+        // 如果是层（Layer），从父节点移除自身
+        if (auto layer = dynamic_cast<Layer*>(sender)) {
+            layer->removeFromParent();
+        }
+        });
+    this->addChild(reset3);
+    return true;
+}
 
 
 /* 返回按钮切换至StartScene */
@@ -67,10 +126,6 @@ bool OptionScene_1::init()
     //scale：         放大倍率
     //layer：         放置层数
     //btn_type:       按钮类别：
-    //                         1 - 选项
-    //                         2 - 数据统计
-    //                         3 - 制作方
-    //                         4 - Home
     /* 创建按钮的闭包函数 */
     //lambda表达式
     //normal：   正常状态显示
@@ -93,20 +148,23 @@ bool OptionScene_1::init()
 
     constexpr int btnY1 = 180;              //大按钮高度
     constexpr int btnY2 = 440;              //小按钮高度
-    constexpr int locks = 220;              //锁高度
     constexpr float btn_scale = 1.5f;       //按钮放大倍率
     constexpr float map_scale = 1.5f;      //地图放大倍率
     const Vec2 options_btn(540, btnY1);          //选项按钮
     const Vec2 statistics_btn(980, btnY1);        //数据统计按钮
     const Vec2 producer_btn(1400, btnY1);       //制作方按钮
-    const Vec2 sound_btn(540, btnY2);          //音效按钮
-    const Vec2 BGM_btn(980, btnY2);        //背景音乐按钮
-    const Vec2 reset_btn(1400, btnY2);       //重置游戏按钮
-    const Vec2 reset_yes_btn(540, btnY2);          //确认按钮
-    const Vec2 reset_no_btn(980, btnY2);        //取消按钮
-    const Vec2 po_btn_home(360, 920);      //home按钮位置
-    const Vec2 po_sound_effect(550, 800);     //音效 字幕位置 
-    const Vec2 po_BGM(980, 800);     //BGM 字幕位置
+    const Vec2 sound_btn(850, 700);          //音效按钮
+    const Vec2 BGM_btn(1250, 700);        //背景音乐按钮
+    const Vec2 reset_btn(1025, 500);       //重置游戏按钮
+    const Vec2 po_btn_home(440, 960);      //home按钮位置
+    const Vec2 po_sound_effect(840, 800);     //音效 字幕位置 
+    const Vec2 po_BGM(1240, 800);     //BGM 字幕位置
+    const Vec2 po_bg(visibleSize / 2);     //地图位置
+    const Vec2 po_bg_bottom(1000, 150);    //bg_bottom位置
+    const Vec2 po_options(750, 922);          //column_options位置
+    const Vec2 po_statistics(980, 920);       //column_statistics位置
+    const Vec2 po_producer(1190, 925);        //column_producer位置
+
 
     /**************************************/
 
@@ -115,61 +173,41 @@ bool OptionScene_1::init()
     auto word_BGM = sp_create("word_BGM.png", po_BGM , map_scale, 1);
 
     /* 创建 选项 按钮 */
-    auto Options = btn_create(
-        "OptionScene_1/contents/options_normal.png",
-        "OptionScene_1/contents/options_pressed.png",
+    auto Options_btn = btn_create(
+        "OptionScene/contents/options_normal.png",
+        "OptionScene/contents/options_pressed.png",
         options_btn, btn_scale);
     /* 创建 数据统计 按钮 */
-    auto Statistics = btn_create(
-        "OptionScene_1/contents/statistics_normal.png",
-        "OptionScene_1/contents/statistics_pressed.png",
+    auto Statistics_btn = btn_create(
+        "OptionScene/contents/statistics_normal.png",
+        "OptionScene/contents/statistics_pressed.png",
         statistics_btn, btn_scale);
     /* 创建 制作方 按钮 */
-    auto Producer= btn_create(
-        "OptionScene_1/contents/producer_normal.png",
-        "OptionScene_1/contents/producer_pressed.png",
+    auto Producer_btn= btn_create(
+        "OptionScene/contents/producer_normal.png",
+        "OptionScene/contents/producer_pressed.png",
         producer_btn, btn_scale);
     /* 创建 开启音效 按钮 */
-    auto sound_effect = btn_create(
-        "OptionScene_1/contents/sound_effect_open.png",
-        "OptionScene_1/contents/sound_effect_close.png",
+    auto sound_effect_btn = btn_create(
+        "OptionScene/contents/sound_effect_open.png",
+        "OptionScene/contents/sound_effect_close.png",
         sound_btn, btn_scale);
     /* 创建 开启背景音乐 按钮 */
-    auto BGM = btn_create(
-        "OptionScene_1/contents/BGM_open.png",
-        "OptionScene_1/contents/BGM_close.png",
+    auto btn_BGM = btn_create(
+        "OptionScene/contents/BGM_open.png",
+        "OptionScene/contents/BGM_close.png",
         BGM_btn, btn_scale);
     /* 创建 重置游戏 按钮 */
-    auto reset1 = btn_create(
-        "OptionScene_1/contents/reset_normal.png",
-        "OptionScene_1/contents/reset_pressed.png",
+    auto reset1_btn = btn_create(
+        "OptionScene/contents/reset_normal.png",
+        "OptionScene/contents/reset_pressed.png",
         reset_btn, btn_scale);
-    /* 创建 重置游戏确定 按钮 */
-    auto reset2 = btn_create(
-        "OptionScene_1/contents/reset_yes_normal.png",
-        "OptionScene_1/contents/reset_yes_pressed.png",
-        reset_yes_btn, btn_scale);
-    /* 创建 重置游戏取消 按钮 */
-    auto reset3 = btn_create(
-        "OptionScene_1/contents/reset_no_normal.png",
-        "OptionScene_1/contents/reset_no_pressed.png",
-        reset_no_btn, btn_scale);
     /* 返回 */
     auto btn_back = btn_create(
-        "OptionScene_1/contents/option_1_back_normal.png",
-        "OptionScene_1/contents/option_1_back_pressed.png",
-        po_btn_home, 3);
+        "OptionScene/contents/option_1_back_normal.png",
+        "OptionScene/contents/option_1_back_pressed.png",
+        po_btn_home, 1.5);
 
-    /************     参数     ************/
-
-    const Vec2 po_bg(visibleSize / 2);     //地图位置
-    const Vec2 po_bg_bottom(1000, 150);    //bg_bottom位置
-    //constexpr float btn_scale = 1.1f;      //按钮放大倍率
-    //constexpr float map_scale = 1.5f;      //地图放大倍率
-    const Vec2 po_btn_back(360, 920);      //home按钮位置
-    const Vec2 po_options(750, 922);          //column_options位置
-    const Vec2 po_statistics(980, 920);       //column_statistics位置
-    const Vec2 po_producer(1190, 925);        //column_producer位置
 
     /**************************************/
 
@@ -183,6 +221,9 @@ bool OptionScene_1::init()
     statistics->setName("statistics");
     auto producer = sp_create("producer_normal.png", po_producer, 2.2, 0);
     producer->setName("producer");
+    auto reset1 = sp_create("reset_normal.png", reset_btn, 2.2, 0);
+    reset1->setName("reset1");
+
 
     /********** 创建事件 **********/
     /* statistics */
@@ -260,6 +301,24 @@ bool OptionScene_1::init()
         return true;
         };
     _eventDispatcher->addEventListenerWithSceneGraphPriority(BGM_click_listener, this);
+    /* reset1 */
+    auto reset1_click_listener = EventListenerTouchOneByOne::create();
+    reset1_click_listener->onTouchBegan = [&](Touch* touch, Event* event) {
+        auto pos = touch->getLocation();    //获取点击位置
+        auto sp = (Sprite*)(this->getChildByName("reset1"));    //从场景中抓取名为reset1的精灵
+        if (sp->getBoundingBox().containsPoint(pos))
+            return true;    //点击位置在精灵范围内
+        return false;   //返回false，中止执行事件响应
+        };
+    statistics_click_listener->onTouchMoved = [](Touch* touch, Event* event) {};
+    statistics_click_listener->onTouchEnded = [&](Touch* touch, Event* event) {
+        auto resetpopupLayer = PopupLayer::create();
+        if (auto scene = Director::getInstance()->getRunningScene()) {
+            scene->addChild(resetpopupLayer);
+        }
+        };
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(reset1_click_listener, this);
+
 
     return true;
 }

@@ -2,6 +2,7 @@
 #include "StartScene.h"
 #include "EnterScene.h"
 #include "HelpScene_1.h"
+#include "OptionScene_1.h"
 #include "AudioEngine.h"
 #include "ui/CocosGUI.h"
 #include "ui/UIButton.h"
@@ -28,6 +29,13 @@ static void enterCall(Ref* eSender)
 static void helpCall(Ref* eSender)
 {
     auto next = HelpScene_1::create_Scene();
+    Director::getInstance()->pushScene(next);
+}
+
+/* 进入设置 */
+static void settingsCall(Ref* eSender)
+{
+    auto next = OptionScene_1::create_Scene();
     Director::getInstance()->pushScene(next);
 }
 
@@ -140,16 +148,29 @@ bool StartScene::init()
         "StartScene/btn/btn_help_pressed.png",
         help_btn, btn_scale, 1);
     // 切换场景
-    help->addTouchEventListener([&](Ref* sender, Widget::TouchEventType type) {
+    settings->addTouchEventListener([&](Ref* sender, Widget::TouchEventType type) {
         switch (type)
         {
             case Widget::TouchEventType::BEGAN:
                 break;
             case Widget::TouchEventType::ENDED:
-                helpCall(this);
+                settingsCall(this);
                 break;
             default:
                 break;
+        }
+        });
+    // 切换场景
+    help->addTouchEventListener([&](Ref* sender, Widget::TouchEventType type) {
+        switch (type)
+        {
+        case Widget::TouchEventType::BEGAN:
+            break;
+        case Widget::TouchEventType::ENDED:
+            helpCall(this);
+            break;
+        default:
+            break;
         }
         });
 
