@@ -23,10 +23,12 @@ bool Map_1_01::init()
 	if (!Scene::init())
 		return false;
 
-	auto visibleSize = Director::getInstance()->getVisibleSize();   //(1960,1080)
-	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	const Vec2 origin = Vec2(305, 120); //地图坐标起点
+	auto visibleSize = Director::getInstance()->getVisibleSize();   //(2050，1200)
 
-
+    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/1-01/1-01.plist");
+    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/Barriers/Barriers.plist");
+    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/Carrot/Carrot.plist");
 
     /* 创建精灵的闭包函数 */
     //lambda表达式
@@ -66,15 +68,42 @@ bool Map_1_01::init()
     constexpr int btnY1 = 180;              //大按钮高度
     constexpr int btnY2 = 440;              //小按钮高度
     constexpr int locks = 220;              //锁高度
-    constexpr float btn_scale = 1.5f;       //按钮放大倍率
+    constexpr float btn_scale = 1.4f;       //按钮放大倍率
     constexpr float map_scale = 1.5f;       //地图放大倍率
+    constexpr float word_scale = 2.0f;      //文字放大倍率
     const Vec2 bg(visibleSize / 2);         //地图位置
+    const Vec2 crt(1000, 1000);             //萝卜位置
+    const Vec2 topbg(1024, 1022);           //顶部位置
+    const Vec2 gmmenu(1630, 1022);          //菜单位置
+    const Vec2 gmpause(1520, 1022);       //暂停位置
 
     /**************************************/
 
+    /*********** 创建精灵 **********/
+    /* 创建背景 */
+    auto map_bg = sp_create("1-01_bg.png", bg, map_scale, -2);
+
+    /* 创建萝卜 */
+    auto carrot = sp_create("HP_MAX.PNG", crt, map_scale, 0);
+
+    /* 创建顶部状态栏 */
+    auto top_bg = sp_create("top_bg.png", topbg, map_scale, -1);
+
+    /* 创建暂停中显示 */
+    auto pausing = sp_create("paused.png", topbg, word_scale, 0);
 
 
-
+    /*********** 创建按钮 **********/
+    /* 创建菜单 */
+    auto game_menu = btn_create(
+        "Levels/btn/gamemenu_btn_normal.png",
+        "Levels/btn/gamemenu_btn_pressed.png",
+        gmmenu, btn_scale, 0);
+    /* 创建暂停键 */
+    auto game_pause = btn_create(
+        "Levels/btn/game_pause.png",
+        "Levels/btn/game_pause.png",
+        gmpause, btn_scale, 0);
 
 	return true;
 }

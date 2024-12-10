@@ -45,8 +45,8 @@ bool StartScene::init()
     if (!Scene::init())
         return false;
 
-    auto visibleSize = Director::getInstance()->getVisibleSize();   //(1960,1080)
-    Vec2 origin = Director::getInstance()->getVisibleOrigin();
+    const Vec2 origin = Vec2(305, 120); //地图坐标起点
+    auto visibleSize = Director::getInstance()->getVisibleSize();   // (2050,1200)
 
     // 预加载精灵图集
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("StartScene/StartScene.plist");
@@ -86,26 +86,26 @@ bool StartScene::init()
 
     /************     参数     ************/
 
-    constexpr int btnY1 = 180;              //大按钮高度
-    constexpr int btnY2 = 440;              //小按钮高度
-    constexpr int locks = 220;              //锁高度
+    constexpr int btnY1 = 235;              //大按钮高度
+    constexpr int btnY2 = 460;              //小按钮高度
+    constexpr int locks = 208;              //锁高度
     constexpr float btn_scale = 1.5f;       //按钮放大倍率
     constexpr float map_scale = 1.5f;       //地图放大倍率
     const Vec2 bg(visibleSize / 2);         //地图位置
-    const Vec2 crt(980, 600);               //萝卜位置
-    const Vec2 lf1(900, 715);               //叶子1
-    const Vec2 lf2(990, 645);               //叶子2
-    const Vec2 lf3(989, 637);               //叶子3
-    const Vec2 tm(960, 450);                //商标位置
-    const Vec2 ad_btn(540, btnY1);          //冒险模式
-    const Vec2 boss_btn(980, btnY1);        //boss模式
-    const Vec2 nest_btn(1400, btnY1);       //怪物窝
-    const Vec2 setting_btn(570, btnY2);     //设置按钮
-    const Vec2 help_btn(1400, btnY2);       //帮助按钮
-    const Vec2 rgup(1526, 897);             //右上角
-    const Vec2 gugu(560, 735);              //小鸟
-    const Vec2 lock1(1145, locks);          //boss锁
-    const Vec2 lock2(1565, locks);          //nest锁
+    const Vec2 crt(1024, 670);               //萝卜位置
+    const Vec2 lf1(930, 800);               //叶子1
+    const Vec2 lf2(1030, 732);               //叶子2
+    const Vec2 lf3(1033, 728);               //叶子3
+    const Vec2 tm(1005, 514);                //商标位置
+    const Vec2 ad_btn(570, btnY1);          //冒险模式
+    const Vec2 boss_btn(1020, btnY1);        //boss模式
+    const Vec2 nest_btn(1450, btnY1);       //怪物窝
+    const Vec2 setting_btn(590, btnY2);     //设置按钮
+    const Vec2 help_btn(1455, btnY2);       //帮助按钮
+    const Vec2 rgup(1596, 973);             //右上角
+    const Vec2 gugu(595, 830);              //小鸟
+    const Vec2 lock1(1223, locks);          //boss锁
+    const Vec2 lock2(1665, locks);          //nest锁
 
     /**************************************/
 
@@ -195,8 +195,8 @@ bool StartScene::init()
     bird->runAction(RepeatForever::create(seq));
 
     /* 创建锁 */
-    auto lock_boss = sp_create("locked.png", lock1, 1.1f, 5);
-    auto lock_nest = sp_create("locked.png", lock2, 1.1f, 5);
+    auto lock_boss = sp_create("locked.png", lock1, btn_scale, 5);
+    auto lock_nest = sp_create("locked.png", lock2, btn_scale, 5);
     
     return true;
 }

@@ -1,5 +1,6 @@
 
 #include "EnterScene.h"
+#include "Skyline_01.h"
 #include "MapChoose.h"
 #include "HelpScene_1.h"
 #include "AudioEngine.h"
@@ -49,6 +50,12 @@ void MapChoose::help_onButtonClicked(Ref* sender) {
 /* 返回按钮返回到EnterScene */
 void MapChoose::back_onButtonClicked(Ref* sender) {
     Director::getInstance()->popScene();
+}
+
+/* 开始按钮进入到第一关 */
+void MapChoose::start_onButtonClicked(Ref* sender) {
+    auto next = Map_1_01::create_Scene();
+    Director::getInstance()->pushScene(next);
 }
 
 bool MapChoose::init()
@@ -104,19 +111,19 @@ bool MapChoose::init()
                     case ui::Widget::TouchEventType::ENDED:
                         switch (btn_type) {
                             case 1:
-                                back_onButtonClicked(this);//回到EnterScene
+                                back_onButtonClicked(this);     //回到EnterScene
                                 break;
                             case 2: 
-                                help_onButtonClicked(this);                              
+                                help_onButtonClicked(this);     //进入help
                                 break;
                             case 3:
-                                //开始游戏
+                                start_onButtonClicked(this);    //开始游戏
                                 break;
                             case 4:
-                                left_onButtonClicked(this);
+                                left_onButtonClicked(this);     //左移
                                 break;
                             case 5:
-                                right_onButtonClicked(this);
+                                right_onButtonClicked(this);    //右移
                                 break;
                             default:
                                 break;
