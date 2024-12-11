@@ -81,10 +81,10 @@ bool Enter::init()
     constexpr float btn_scale = 1.3f;       //按钮放大倍率
     const float btnY = visibleSize.y / 2;   //按钮高度
     const Vec2 bg(visibleSize / 2);         //背景位置
-    const Vec2 stg(1024, 560);               //章节位置
-    const Vec2 btn_left(400, btnY);         //左移位置
-    const Vec2 btn_back(370, 1035);         //返回按钮位置
-    const Vec2 btn_right(1650, btnY);       //右移位置
+    const Vec2 stg(810, 460);               //章节位置
+    const Vec2 btn_left(370, btnY);         //左移位置
+    const Vec2 btn_back(305, 823);          //返回按钮位置
+    const Vec2 btn_right(1250, btnY);       //右移位置
 
     /**************************************/
 

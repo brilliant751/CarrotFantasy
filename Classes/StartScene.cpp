@@ -54,7 +54,7 @@ bool StartScene::init()
         return false;
 
     const Vec2 origin = Vec2(305, 120); //地图坐标起点
-    auto visibleSize = Director::getInstance()->getVisibleSize();   // (2050,1200)
+    auto visibleSize = Director::getInstance()->getVisibleSize();   // (1620,960)
 
     // 预加载精灵图集
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("StartScene/StartScene.plist");
@@ -94,26 +94,26 @@ bool StartScene::init()
 
     /************     参数     ************/
 
-    constexpr int btnY1 = 235;              //大按钮高度
-    constexpr int btnY2 = 460;              //小按钮高度
-    constexpr int locks = 208;              //锁高度
-    constexpr float btn_scale = 1.5f;       //按钮放大倍率
+    constexpr int btnY1 = 190;              //大按钮高度
+    constexpr int btnY2 = 372;              //小按钮高度
+    constexpr int locks = 170;              //锁高度
+    constexpr float btn_scale = 1.4f;       //按钮放大倍率
     constexpr float map_scale = 1.5f;       //地图放大倍率
     const Vec2 bg(visibleSize / 2);         //地图位置
-    const Vec2 crt(1024, 670);               //萝卜位置
-    const Vec2 lf1(930, 800);               //叶子1
-    const Vec2 lf2(1030, 732);               //叶子2
-    const Vec2 lf3(1033, 728);               //叶子3
-    const Vec2 tm(1005, 514);                //商标位置
-    const Vec2 ad_btn(570, btnY1);          //冒险模式
-    const Vec2 boss_btn(1020, btnY1);        //boss模式
-    const Vec2 nest_btn(1450, btnY1);       //怪物窝
-    const Vec2 setting_btn(590, btnY2);     //设置按钮
-    const Vec2 help_btn(1455, btnY2);       //帮助按钮
-    const Vec2 rgup(1596, 973);             //右上角
-    const Vec2 gugu(595, 830);              //小鸟
-    const Vec2 lock1(1223, locks);          //boss锁
-    const Vec2 lock2(1665, locks);          //nest锁
+    const Vec2 crt(810, 540);               //萝卜位置
+    const Vec2 lf1(735, 637);               //叶子1
+    const Vec2 lf2(806, 587);               //叶子2
+    const Vec2 lf3(810, 583);               //叶子3
+    const Vec2 tm(795, 413);                //商标位置
+    const Vec2 ad_btn(460, btnY1);          //冒险模式
+    const Vec2 boss_btn(815, btnY1);        //boss模式
+    const Vec2 nest_btn(1160, btnY1);       //怪物窝
+    const Vec2 setting_btn(477, btnY2);     //设置按钮
+    const Vec2 help_btn(1158, btnY2);       //帮助按钮
+    const Vec2 rgup(1262, 775);             //右上角
+    const Vec2 gugu(460, 660);              //小鸟
+    const Vec2 lock1(965, locks);          //boss锁
+    const Vec2 lock2(1318, locks);          //nest锁
 
     /**************************************/
 

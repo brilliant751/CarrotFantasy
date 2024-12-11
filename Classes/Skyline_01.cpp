@@ -11,6 +11,13 @@ USING_NS_CC;
 using namespace ui;
 using namespace std;
 
+#define GR_LEN 95   //方格边长
+
+/********** 坐标线位置 **********/
+// 地图大小为 12 * 8 个方格
+constexpr int mapX[13] = { 0, 95, 190, 285, 380, 475, 570, 665, 760, 855, 950, 1045, 1140 };
+constexpr int mapY[9] = { 0, 95, 190, 285, 380, 475, 570, 665, 760 };
+/********************************/
 
 /* 创建场景 */
 Scene* Map_1_01::create_Scene()
@@ -18,16 +25,14 @@ Scene* Map_1_01::create_Scene()
 	return Map_1_01::create();
 }
 
-
-
 /* 初始化场景 */
 bool Map_1_01::init()
 {
 	if (!Scene::init())
 		return false;
 
-	const Vec2 origin = Vec2(305, 120); //地图坐标起点
-	auto visibleSize = Director::getInstance()->getVisibleSize();   //(2050，1200)
+	const Vec2 origin = Vec2(240, 100); //地图坐标起点
+	auto visibleSize = Director::getInstance()->getVisibleSize();   //(1620,960)
 
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/1-01/1-01.plist");
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/Barriers/Barriers.plist");
@@ -68,17 +73,27 @@ bool Map_1_01::init()
 
     /************     参数     ************/
 
-    constexpr int btnY1 = 180;              //大按钮高度
-    constexpr int btnY2 = 440;              //小按钮高度
-    constexpr int locks = 220;              //锁高度
+    constexpr int topY = 814;               //顶部高度
     constexpr float btn_scale = 1.4f;       //按钮放大倍率
     constexpr float map_scale = 1.5f;       //地图放大倍率
     constexpr float word_scale = 2.0f;      //文字放大倍率
     const Vec2 bg(visibleSize / 2);         //地图位置
-    const Vec2 crt(1000, 1000);             //萝卜位置
-    const Vec2 topbg(1024, 1022);           //顶部位置
-    const Vec2 gmmenu(1630, 1022);          //菜单位置
-    const Vec2 gmpause(1520, 1022);       //暂停位置
+    const Vec2 topbg(810, topY);            //顶部位置
+    const Vec2 gmmenu(1270, topY);          //菜单位置
+    const Vec2 gmpause(1180, topY);         //暂停位置
+    const Vec2 spd(1070, topY);             //倍速位置
+
+    const Vec2 crt(1250, origin.y + mapY[6]);             //萝卜位置
+    const Vec2 born(origin.x + (mapX[1] + mapX[2]) / 2.0f, origin.y + mapY[6]); //怪物出生点
+    /* 障碍物位置 */
+    const Vec2 brr1_1(origin.x + (mapX[4] + mapX[5]) / 2.0f, origin.y + (mapY[4] + mapY[5]) / 2.0f);
+    const Vec2 brr1_2(origin.x + (mapX[7] + mapX[8]) / 2.0f, origin.y + (mapY[4] + mapY[5]) / 2.0f);
+    const Vec2 brr1_3(origin.x + (mapX[2] + mapX[3]) / 2.0f, origin.y + (mapY[3] + mapY[4]) / 2.0f);
+    const Vec2 brr1_4(origin.x + (mapX[9] + mapX[10]) / 2.0f, origin.y + (mapY[3] + mapY[4]) / 2.0f);
+    const Vec2 brr2_1(origin.x + mapX[6], origin.y + (mapY[2] + mapY[3]) / 2.0f);
+    const Vec2 brr4_1(origin.x + mapX[6], origin.y + mapY[6]);
+    const Vec2 brr4_2(origin.x + mapX[4], origin.y + mapY[6]);
+    const Vec2 brr4_3(origin.x + mapX[8], origin.y + mapY[6]);
 
     /**************************************/
 
@@ -94,6 +109,23 @@ bool Map_1_01::init()
 
     /* 创建暂停中显示 */
     auto pausing = sp_create("paused.png", topbg, word_scale, 0);
+
+    /* 创建怪物出生点 */
+    auto start_point = sp_create("start_point.png", born, map_scale, 0);
+
+    /* 创建倍速键 */
+    auto spd_shift = sp_create("game_speed_1.png", spd, map_scale, 0);
+
+    /* 创建障碍物 */
+    auto _1brr1 = sp_create("Barrier_One_1.png", brr1_1, map_scale, 0);
+    auto _1brr2 = sp_create("Barrier_One_1.png", brr1_2, map_scale, 0);
+    auto _1brr3 = sp_create("Barrier_One_2.png", brr1_3, map_scale, 0);
+    auto _1brr4 = sp_create("Barrier_One_2.png", brr1_4, map_scale, 0);
+    auto _2brr1 = sp_create("Barrier_Two_1.png", brr2_1, map_scale, 0);
+    auto _4brr1 = sp_create("Barrier_Four_1.png", brr4_1, map_scale, 0);
+    auto _4brr2 = sp_create("Barrier_Four_3.png", brr4_2, map_scale, 0);
+    auto _4brr3 = sp_create("Barrier_Four_3.png", brr4_3, map_scale, 0);
+
 
 
     /*********** 创建按钮 **********/

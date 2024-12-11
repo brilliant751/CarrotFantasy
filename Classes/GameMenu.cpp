@@ -60,13 +60,11 @@ bool PauseMenu::init()
 
     /************     参数     ************/
 
-    constexpr int btnY1 = 180;              //大按钮高度
-    constexpr int btnY2 = 440;              //小按钮高度
     constexpr float btn_scale = 1.5f;       //按钮放大倍率
     constexpr float map_scale = 1.5f;       //地图放大倍率
     constexpr float word_scale = 2.0f;      //文字放大倍率
     const Vec2 bg(visibleSize / 2);         //窗口位置
-    const Vec2 ctn(1010, 760);
+    const Vec2 ctn(796, 607);              //继续按钮位置
 
     /**************************************/
 

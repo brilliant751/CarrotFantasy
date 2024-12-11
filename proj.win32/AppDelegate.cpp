@@ -14,7 +14,7 @@ static Size small_s = Size(480, 320);
 static Size medium_s = Size(1024, 768);
 static Size large_s = Size(2048, 1536);
 //static Size design_s = Size(1960, 1080);
-static Size design_s = Size(2050, 1200);
+static Size design_s = Size(1620, 960);
 
 AppDelegate::AppDelegate()
 {
@@ -54,6 +54,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 #endif
         director->setOpenGLView(glview);
     }
+
 
     //FPSÏÔÊ¾¿ª¹Ø
     director->setDisplayStats(true);
