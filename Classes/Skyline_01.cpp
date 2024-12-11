@@ -131,6 +131,8 @@ bool Map_1_01::init()
         "Levels/btn/game_pause.png",
         "Levels/btn/game_pause.png",
         gmpause, btn_scale, 0);
+    game_pause->setName("pause");
+
 
 	return true;
 }
