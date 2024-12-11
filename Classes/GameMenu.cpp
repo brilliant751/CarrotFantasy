@@ -84,16 +84,15 @@ bool PauseMenu::init()
     resume->setTag(100);
     resume->addTouchEventListener([this](Ref* sender, Widget::TouchEventType type) {
         auto main_scene = Director::getInstance()->getRunningScene();
-        //auto dimlayer = (LayerColor*)(main_scene->getChildByName("dimmer"));
         switch (type)
         {
             case ui::Widget::TouchEventType::BEGAN:
                 break;
             case ui::Widget::TouchEventType::ENDED:
-                main_scene->removeChildByName("dimmer");
-                main_scene->removeChild(this);
-                ((Button*)(main_scene->getChildByName("Menu")))->setEnabled(true);
-                main_scene->getEventDispatcher()->setEnabled(true);
+                main_scene->removeChildByName("dimmer");    //除去调暗层
+                main_scene->removeChild(this);      //关闭弹窗
+                /* 恢复主场景的监听事件 */
+                main_scene->getEventDispatcher()->resumeEventListenersForTarget(main_scene, true);
                 break;
             default:
                 break;

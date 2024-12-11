@@ -105,16 +105,10 @@ bool Map_1_01::init()
     game_menu->setName("Menu");
     game_menu->addTouchEventListener([this, v_size=visibleSize](Ref* sender, Widget::TouchEventType type) {
         auto menu_layer = PauseMenu::create_Layer();    //创建弹出菜单
-        //if (is_popup)
-        //    return;
         auto menu = (Button*)(this->getChildByName("Menu"));
-        // 创建调暗层
+        /* 创建调暗层 */
         auto dimlayer = LayerColor::create(Color4B(0, 0, 0, 128), v_size.width, v_size.height);
-        //auto dimlayer = Widget::create();
-        //dimlayer->setContentSize(v_size);
-        //dimlayer->setPosition(v_size);
-        //dimlayer->setColor(Color3B(0, 0, 0));
-        //dimlayer->setOpacity(128);
+        dimlayer->setName("dimmer");
         switch (type)
         {
             case ui::Widget::TouchEventType::BEGAN:
@@ -122,9 +116,11 @@ bool Map_1_01::init()
             case ui::Widget::TouchEventType::ENDED:
                 this->addChild(menu_layer, 10);
                 this->addChild(dimlayer, 9);
-                dimlayer->setName("dimmer");
-                menu->setEnabled(false);
-                this->is_popup = true;
+                /* 暂停主场景的监听事件 */
+                //此处会循环暂停所有child结点的监听事件
+                this->getEventDispatcher()->pauseEventListenersForTarget(this, true);
+                /* 恢复弹窗层的监听事件 */
+                this->getEventDispatcher()->resumeEventListenersForTarget(menu_layer, true);
                 break;
             default:
                 break;
