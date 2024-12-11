@@ -141,19 +141,19 @@ bool MapChoose::init()
     
     /************     参数     ************/
 
-    const Vec2 po_bg(visibleSize / 2);     //底图位置
-    const Vec2 po_map(980, 560);           //可用防御塔位置
-    const Vec2 po_towers(980, 240);        //可用防御塔位置
-    const Vec2 po_waves(1180, 850);        //可用防御塔位置
-    constexpr float btn_scale = 1.1f;      //按钮放大倍率
-    constexpr float map_scale = 1.5f;      //地图放大倍率
-    const Vec2 po_bg_left(495, 185);       //左下背景位置
-    const Vec2 po_bg_right(1482, 183);     //右下背景位置
-    const Vec2 po_btn_back(330, 953);      //返回按钮位置
-    const Vec2 po_btn_help(1628, 953);     //帮助按钮位置
-    const Vec2 po_btn_start(980, 150);     //开始按钮位置
-    const Vec2 po_btn_left(400, 560);      //左移按钮位置
-    const Vec2 po_btn_right(1560, 560);    //右移按钮位置
+    const Vec2 po_bg(visibleSize / 2);      //底图位置
+    const Vec2 po_map(1024, 600);           //地图位置
+    const Vec2 po_towers(1024, 280);        //可用防御塔位置
+    const Vec2 po_waves(1250, 900);         //波次位置
+    constexpr float btn_scale = 1.2f;       //按钮放大倍率
+    constexpr float map_scale = 1.5f;       //地图放大倍率
+    const Vec2 po_bg_left(518, 235);        //左下背景位置
+    const Vec2 po_bg_right(1551, 233);      //右下背景位置
+    const Vec2 po_btn_back(370, 1035);      //返回按钮位置
+    const Vec2 po_btn_help(1680, 1035);     //帮助按钮位置
+    const Vec2 po_btn_start(1025, 180);     //开始按钮位置
+    const Vec2 po_btn_left(400, 600);       //左移按钮位置
+    const Vec2 po_btn_right(1650, 600);     //右移按钮位置
 
 
     /**************************************/

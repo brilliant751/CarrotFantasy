@@ -78,13 +78,13 @@ bool Enter::init()
 
     constexpr float bg_scale = 1.5f;        //背景放大倍率
     constexpr float stage_scale = 1.3f;     //章节放大倍率
-    constexpr float btn_scale = 1.1f;       //按钮放大倍率
+    constexpr float btn_scale = 1.3f;       //按钮放大倍率
     const float btnY = visibleSize.y / 2;   //按钮高度
     const Vec2 bg(visibleSize / 2);         //背景位置
-    const Vec2 stg(980, 500);               //章节位置
+    const Vec2 stg(1024, 560);               //章节位置
     const Vec2 btn_left(400, btnY);         //左移位置
-    const Vec2 btn_back(330, 953);       //返回按钮位置
-    const Vec2 btn_right(1560, btnY);       //右移位置
+    const Vec2 btn_back(370, 1035);         //返回按钮位置
+    const Vec2 btn_right(1650, btnY);       //右移位置
 
     /**************************************/
 
@@ -165,7 +165,7 @@ bool Enter::init()
     auto back_btn = btn_create(
         "EnterScene/contents/home_normal.png",
         "EnterScene/contents/home_pressed.png",
-        btn_back, btn_scale, 3);
+        btn_back, bg_scale, 3);
     back_btn->addTouchEventListener([&](Ref* eSender, Widget::TouchEventType type) {
         switch (type)
         {

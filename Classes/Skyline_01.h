@@ -7,6 +7,7 @@
 
 USING_NS_CC;
 
+/* 主场景 */
 class Map_1_01 : public Scene
 {
 public:
@@ -16,8 +17,10 @@ public:
 	// 初始化
 	virtual bool init();
 
-
+	// 定义create
 	CREATE_FUNC(Map_1_01);
+
+	bool is_popup = false;
 
 };
 

@@ -2,6 +2,7 @@
 #include "StartScene.h"
 #include "EnterScene.h"
 #include "Skyline_01.h"
+#include "GameMenu.h"
 #include "AudioEngine.h"
 #include "ui/CocosGUI.h"
 #include "ui/UIButton.h"
@@ -16,6 +17,8 @@ Scene* Map_1_01::create_Scene()
 {
 	return Map_1_01::create();
 }
+
+
 
 /* 初始化场景 */
 bool Map_1_01::init()
@@ -99,6 +102,34 @@ bool Map_1_01::init()
         "Levels/btn/gamemenu_btn_normal.png",
         "Levels/btn/gamemenu_btn_pressed.png",
         gmmenu, btn_scale, 0);
+    game_menu->setName("Menu");
+    game_menu->addTouchEventListener([this, v_size=visibleSize](Ref* sender, Widget::TouchEventType type) {
+        auto menu_layer = PauseMenu::create_Layer();    //创建弹出菜单
+        //if (is_popup)
+        //    return;
+        auto menu = (Button*)(this->getChildByName("Menu"));
+        // 创建调暗层
+        auto dimlayer = LayerColor::create(Color4B(0, 0, 0, 128), v_size.width, v_size.height);
+        //auto dimlayer = Widget::create();
+        //dimlayer->setContentSize(v_size);
+        //dimlayer->setPosition(v_size);
+        //dimlayer->setColor(Color3B(0, 0, 0));
+        //dimlayer->setOpacity(128);
+        switch (type)
+        {
+            case ui::Widget::TouchEventType::BEGAN:
+                break;
+            case ui::Widget::TouchEventType::ENDED:
+                this->addChild(menu_layer, 10);
+                this->addChild(dimlayer, 9);
+                dimlayer->setName("dimmer");
+                menu->setEnabled(false);
+                this->is_popup = true;
+                break;
+            default:
+                break;
+        }
+        });
     /* 创建暂停键 */
     auto game_pause = btn_create(
         "Levels/btn/game_pause.png",
