@@ -95,13 +95,16 @@ bool OptionScene_3::init()
 
     /************     参数     ************/
 
-    const Vec2 po_bg(visibleSize / 2);     //地图位置
-    constexpr float btn_scale = 1.1f;      //按钮放大倍率
+
+    constexpr int btnY1 = 800;              //大按钮高度
+    constexpr int btnY2 = 280;              //小按钮高度
+    constexpr float btn_scale = 1.5f;       //按钮放大倍率
     constexpr float map_scale = 1.5f;      //地图放大倍率
-    const Vec2 po_btn_home(360, 920);      //home按钮位置
-    const Vec2 po_options(750, 922);          //column_options位置
-    const Vec2 po_statistics(980, 920);       //column_statistics位置
-    const Vec2 po_producer(1190, 925);        //column_producer位置
+    const Vec2 po_btn_home(400, 750);      //home按钮位置
+    const Vec2 po_bg(visibleSize / 2);     //地图位置
+    const Vec2 po_options(600, btnY1);          //column_options位置
+    const Vec2 po_statistics(820, btnY1);       //column_statistics位置
+    const Vec2 po_producer(1040, btnY1);        //column_producer位置
 
     /**************************************/
 
@@ -109,11 +112,11 @@ bool OptionScene_3::init()
     /* 创建背景 */
     auto bg = sp_create("optionBG3.png", po_bg, map_scale, -1);
     /* 创建可点击对象 */
-    auto options = sp_create("statistics_pressed.png", po_options, map_scale, 0);
+    auto options = sp_create("options_normal.png", po_options, 2.3, 0);
     options->setName("options");
     auto statistics = sp_create("statistics_normal.png", po_statistics, 2.3, 0);
     statistics->setName("statistics");
-    auto producer = sp_create("producer_normal.png", po_producer, 2.2, 0);
+    auto producer = sp_create("producer_pressed.png", po_producer, map_scale, 0);
 
     /********** 创建按钮 **********/
     /* 返回 */

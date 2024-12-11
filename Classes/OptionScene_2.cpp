@@ -76,13 +76,6 @@ bool OptionScene_2::init()
                 case ui::Widget::TouchEventType::BEGAN:
                     break;
                 case ui::Widget::TouchEventType::ENDED:
-                    switch (btn_type) {
-                    case 1:
-                        back_onButtonClicked(this);
-                        break;
-                    default:
-                        break;
-                    };
                     break;
                 default:
                     break;
@@ -95,25 +88,31 @@ bool OptionScene_2::init()
 
     /************     参数     ************/
 
-    const Vec2 po_bg(visibleSize / 2);     //地图位置
-    const Vec2 po_bg_bottom(1000, 150);    //bg_bottom位置
-    constexpr float btn_scale = 1.1f;      //按钮放大倍率
+    constexpr int btnY1 = 800;              //大按钮高度
+    constexpr int btnY2 = 280;              //小按钮高度
+    constexpr float btn_scale = 1.5f;       //按钮放大倍率
     constexpr float map_scale = 1.5f;      //地图放大倍率
-    const Vec2 po_btn_home(360, 920);      //home按钮位置
-    const Vec2 po_options(750, 922);          //column_options位置
-    const Vec2 po_statistics(980, 920);       //column_statistics位置
-    const Vec2 po_producer(1190, 925);        //column_producer位置
-    const Vec2 po_adventure_mode(550, 480);     //音效 字幕位置 
-    const Vec2 po_hide_levels(980, 480);     //BGM 字幕位置
-    const Vec2 po_boss_mode(1400, 480);    //BOSS模式 字幕位置 
-    const Vec2 po_all_items(757, 412);       //摧毁道具 字幕位置 
-    const Vec2 po_all_money(550, 480);     //总钱数 字幕位置 
-    const Vec2 po_all_monsters(980, 480);     //打败怪物数目 字幕位置
-    const Vec2 po_all_bosses(1400, 480);    //打败BOSS数目 字幕位置 
-    //const Vec2 po_all_items(757, 412);       //摧毁道具 字幕位置 
-    const Vec2 po_map_1(757, 350);       //冒险地图数目 字幕位置 
-    const Vec2 po_map_2(1177, 412);      //隐藏地图数目 字幕位置 
-    const Vec2 po_map_3(1177, 350);      //BOSS地图数目 字幕位置 
+    const Vec2 sound_btn(670, 570);          //音效按钮
+    const Vec2 BGM_btn(970, 570);        //背景音乐按钮
+    const Vec2 reset_btn(810, 370);       //重置游戏按钮
+    const Vec2 po_btn_home(400, 750);      //home按钮位置
+    const Vec2 po_sound_effect(650, 650);     //音效 字幕位置 
+    const Vec2 po_BGM(950, 650);     //BGM 字幕位置
+    const Vec2 po_bg(visibleSize / 2);     //地图位置
+    const Vec2 po_bg_bottom(844, 133);    //bg_bottom位置
+    const Vec2 po_options(600, btnY1);          //column_options位置
+    const Vec2 po_statistics(820, btnY1);       //column_statistics位置
+    const Vec2 po_producer(1040, btnY1);        //column_producer位置
+    const Vec2 po_adventure_mode(800, 600);     //冒险模式 字幕位置 
+    const Vec2 po_hide_levels(800, 538);     //隐藏关卡 字幕位置
+    const Vec2 po_boss_mode(815, 476);    //BOSS模式 字幕位置 
+    const Vec2 po_map_1(1177, 600);       //冒险地图数目 字幕位置 
+    const Vec2 po_map_2(1177, 538);      //隐藏地图数目 字幕位置 
+    const Vec2 po_map_3(1177, 470);      //BOSS地图数目 字幕位置 
+    const Vec2 po_all_money(785, 410);     //总钱数 字幕位置 
+    const Vec2 po_all_monsters(832, 340);     //打败怪物数目 字幕位置
+    const Vec2 po_all_bosses(842, 276);    //打败BOSS数目 字幕位置 
+    const Vec2 po_all_items(832, 210);       //摧毁道具 字幕位置 
 
     /**************************************/
 
@@ -121,9 +120,9 @@ bool OptionScene_2::init()
     /* 创建背景 */
     auto bg = sp_create("optionBG2.png", po_bg, map_scale, -1);
     /* 创建可点击对象 */
-    auto options = sp_create("statistics_pressed.png", po_options, map_scale, 0);
+    auto options = sp_create("options_normal.png", po_options, 2.3, 0);
     options->setName("options");
-    auto statistics = sp_create("statistics_normal.png", po_statistics, 2.3, 0);
+    auto statistics = sp_create("statistics_pressed.png", po_statistics, map_scale, 0);
     auto producer = sp_create("producer_normal.png", po_producer, 2.2, 0);
     producer->setName("producer");
     /* 创建字幕 */
@@ -141,9 +140,9 @@ bool OptionScene_2::init()
     /********** 创建按钮 **********/
     /* 返回 */
     auto btn_back = btn_create(
-        "OptionScene_1/contents/option_1_back_normal.png",
-        "OptionScene_1/contents/option_1_back_pressed.png",
-        "OptionScene_1/contents/option_1_back_normal.png",
+        "OptionScene/contents/option_1_back_normal.png",
+        "OptionScene/contents/option_1_back_pressed.png",
+        "OptionScene/contents/option_1_back_normal.png",
         po_btn_home, 3);
 
     /********** 创建事件 **********/
