@@ -126,8 +126,6 @@ bool Map_1_01::init()
     auto _4brr2 = sp_create("Barrier_Four_3.png", brr4_2, map_scale, 0);
     auto _4brr3 = sp_create("Barrier_Four_3.png", brr4_3, map_scale, 0);
 
-
-
     /*********** 创建按钮 **********/
     /* 创建菜单 */
     auto game_menu = btn_create(
@@ -164,6 +162,23 @@ bool Map_1_01::init()
         "Levels/btn/game_pause.png",
         gmpause, btn_scale, 0);
     game_pause->setName("pause");
+
+
+
+
+
+
+
+
+
+
+
+
+    /* 创建倒计时 */
+    auto count = CountDown::create_Layer();
+    this->addChild(count, 10);
+
+    /*this->removeChild(count);*/
 
 
 	return true;

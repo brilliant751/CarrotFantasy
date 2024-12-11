@@ -4,8 +4,10 @@
 #define __MAP_CHOOSE__
 
 #include "cocos2d.h"
+#include "ui/CocosGUI.h"
 
 using namespace std;
+using namespace ui;
 
 USING_NS_CC;
 
@@ -35,6 +37,8 @@ private:
 	Sprite* cur_map;
 	Sprite* towers;
 	Sprite* waves;
+	Sprite* map_lock;
+	Button* btn_start;
 	int level = 0;
 	each_map all_map[3] = {
 	{"level_1.png","total_15_waves.png","towers_1.png"},
@@ -42,6 +46,7 @@ private:
 	{"level_3.png","total_20_waves.png","towers_3.png"}
 	};
 	string stars_url[3] = { "stars_1.png","stars_2.png" ,"stars_3.png" };//stars∂‘”¶stars_url[stars-1]
+	bool is_open[3] = { 1,0,0 };
 	string all_clear_url = "all_clear.png";
 };
 

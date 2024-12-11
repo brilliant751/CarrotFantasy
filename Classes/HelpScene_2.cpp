@@ -98,21 +98,21 @@ bool HelpScene_2::init()
     /************     参数     ************/
 
     const Vec2 po_bg(visibleSize / 2);     //地图位置    
-    const Vec2 po_monsters(980, 500);      //monsters底图位置
+    const Vec2 po_monsters(810, 430);      //monsters底图位置
     constexpr float btn_scale = 1.1f;      //按钮放大倍率
     constexpr float map_scale = 1.5f;      //地图放大倍率
-    const Vec2 po_btn_back(360, 920);      //home按钮位置
-    const Vec2 po_help(750, 922);          //column_help位置 
-    const Vec2 po_monster(980, 920);       //column monster位置  
-    const Vec2 po_tower(1200, 925);        //column_tower位置 
-    const Vec2 po_monster_1(550, 480);     //monster_1字幕位置 
-    const Vec2 po_monster_2(980, 480);     //monster_2字幕位置
-    const Vec2 po_monster_3(1400, 480);    //monster_3字幕位置 
-    const Vec2 po_speed_1(757, 412);       //speed_1字幕位置 
-    const Vec2 po_blood_1(757, 350);       //blood_1字幕位置 
-    const Vec2 po_speed_2(1177, 412);      //speed_2字幕位置 
-    const Vec2 po_blood_2(1177, 350);      //blood_2字幕位置 
-    const Vec2 po_caption(980, 265);       //bottom字幕位置 
+    const Vec2 po_btn_back(300, 800);      //home按钮位置
+    const Vec2 po_help(640, 800);          //column_help位置
+    const Vec2 po_monster(810, 797);       //column monster位置
+    const Vec2 po_tower(980, 802);        //column_tower位置
+    const Vec2 po_monster_1(450, 420);     //monster_1字幕位置 
+    const Vec2 po_monster_2(810, 420);     //monster_2字幕位置
+    const Vec2 po_monster_3(1150, 420);    //monster_3字幕位置 
+    const Vec2 po_speed_1(625, 357);       //speed_1字幕位置 
+    const Vec2 po_blood_1(625, 306);       //blood_1字幕位置 
+    const Vec2 po_speed_2(976, 357);      //speed_2字幕位置 
+    const Vec2 po_blood_2(976, 306);      //blood_2字幕位置 
+    const Vec2 po_caption(810, 250);       //bottom字幕位置 
 
     /**************************************/
 

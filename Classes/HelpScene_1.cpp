@@ -129,19 +129,19 @@ bool HelpScene_1::init()
     /************     参数     ************/
 
     const Vec2 po_bg(visibleSize / 2);     //地图位置
-    const Vec2 po_bg_bottom(1000, 150);    //bg_bottom位置
+    const Vec2 po_bg_bottom(823, 150);    //bg_bottom位置
     constexpr float btn_scale = 1.1f;      //按钮放大倍率
     constexpr float map_scale = 1.5f;      //地图放大倍率
-    const Vec2 po_btn_back(360, 920);      //home按钮位置
-    const Vec2 po_help(750, 922);          //column_help位置
-    const Vec2 po_monster(980, 920);       //column monster位置
-    const Vec2 po_tower(1190, 925);        //column_tower位置
-    const Vec2 po_caption(980, 250);       //caption位置
-    const Vec2 po_page_left(960, 150);     //页数左位置
-    const Vec2 po_page_middle(980, 150);   //页数中位置
-    const Vec2 po_page_right(1000, 150);   //页数右位置
-    const Vec2 po_btn_left(350, 540);      //左移按钮位置
-    const Vec2 po_btn_right(1610, 540);    //右移按钮位置
+    const Vec2 po_btn_back(300, 800);      //home按钮位置
+    const Vec2 po_help(640, 800);          //column_help位置
+    const Vec2 po_monster(810, 797);       //column monster位置
+    const Vec2 po_tower(960, 802);        //column_tower位置
+    const Vec2 po_caption(810, 250);       //caption位置
+    const Vec2 po_page_left(790, 153);     //页数左位置
+    const Vec2 po_page_middle(810, 153);   //页数中位置
+    const Vec2 po_page_right(830, 153);   //页数右位置
+    const Vec2 po_btn_left(285, 480);      //左移按钮位置
+    const Vec2 po_btn_right(1335, 480);    //右移按钮位置
 
     /**************************************/
 

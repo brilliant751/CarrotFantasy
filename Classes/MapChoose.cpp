@@ -29,6 +29,15 @@ void MapChoose::left_onButtonClicked(Ref* sender) {
         cur_map->setSpriteFrame(all_map[--level].map_url);
         towers->setSpriteFrame(all_map[level].towers_url);
         waves->setSpriteFrame(all_map[level].waves_url);
+        if (is_open[level]) {
+            map_lock->setZOrder(-1);            
+            btn_start->setEnabled(true);   
+
+        }
+        else {
+            map_lock->setZOrder(1);            
+            btn_start->setEnabled(false);
+        }
     }
 }
 
@@ -38,6 +47,14 @@ void MapChoose::right_onButtonClicked(Ref* sender) {
         cur_map->setSpriteFrame(all_map[++level].map_url);    
         towers->setSpriteFrame(all_map[level].towers_url);
         waves->setSpriteFrame(all_map[level].waves_url);
+        if (is_open[level]) {
+            map_lock->setZOrder(-1);          
+            btn_start->setEnabled(true);
+        }
+        else {
+            map_lock->setZOrder(1);           
+            btn_start->setEnabled(false);
+        }
     }
 }
 
@@ -142,18 +159,19 @@ bool MapChoose::init()
     /************     参数     ************/
 
     const Vec2 po_bg(visibleSize / 2);      //底图位置
-    const Vec2 po_map(1024, 600);           //地图位置
-    const Vec2 po_towers(1024, 280);        //可用防御塔位置
-    const Vec2 po_waves(1250, 900);         //波次位置
+    const Vec2 po_map(visibleSize / 2);     //地图位置
+    const Vec2 po_towers(810, 217);        //可用防御塔位置
+    const Vec2 po_waves(980, 720);         //波次位置
     constexpr float btn_scale = 1.2f;       //按钮放大倍率
     constexpr float map_scale = 1.5f;       //地图放大倍率
-    const Vec2 po_bg_left(518, 235);        //左下背景位置
-    const Vec2 po_bg_right(1551, 233);      //右下背景位置
-    const Vec2 po_btn_back(370, 1035);      //返回按钮位置
-    const Vec2 po_btn_help(1680, 1035);     //帮助按钮位置
-    const Vec2 po_btn_start(1025, 180);     //开始按钮位置
-    const Vec2 po_btn_left(400, 600);       //左移按钮位置
-    const Vec2 po_btn_right(1650, 600);     //右移按钮位置
+    const Vec2 po_bg_left(408, 190);        //左下背景位置
+    const Vec2 po_bg_right(1225, 190);      //右下背景位置
+    const Vec2 po_btn_back(275, 820);      //返回按钮位置
+    const Vec2 po_btn_help(1345, 820);     //帮助按钮位置
+    const Vec2 po_btn_start(810, 150);     //开始按钮位置
+    const Vec2 po_btn_left(300, 480);       //左移按钮位置
+    const Vec2 po_btn_right(1320, 480);     //右移按钮位置
+    const Vec2 po_lock(990, 380);
 
 
     /**************************************/
@@ -163,10 +181,14 @@ bool MapChoose::init()
     auto bg_left = sp_create("bg_left.png", po_bg_left, map_scale, 0);
     auto bg_right = sp_create("bg_right.png", po_bg_right, map_scale, 0);
 
-    /* 定义cur_map towers waves */
+    
+
+    /* 定义cur_map towers waves lock*/
     cur_map = sp_create(all_map[level].map_url, po_map, 1.7, 0);
+    cur_map->setName("map");
     towers = sp_create(all_map[level].towers_url, po_towers, map_scale, 0);
     waves = sp_create(all_map[level].waves_url, po_waves, map_scale, 0);
+    map_lock = sp_create("map_lock.png", po_lock, map_scale, -1);
 
     /* 创建按钮 */
     //返回
@@ -182,10 +204,10 @@ bool MapChoose::init()
         "MapChoose/contents/btn_help_normal.png",
         po_btn_help, 2, 1.2);
     //开始
-    auto btn_start = btn_create(
+    btn_start = btn_create(
         "MapChoose/contents/btn_start_normal.png",
         "MapChoose/contents/btn_start_pressed.png",
-        "MapChoose/contents/btn_start_normal.png",
+        "MapChoose/contents/btn_start_locked.png",
         po_btn_start, 3);
     //左移
     auto btn_left = btn_create(
@@ -199,6 +221,23 @@ bool MapChoose::init()
         "MapChoose/contents/btn_right_pressed.png",
         "MapChoose/contents/btn_right_normal.png",
         po_btn_right, 5);
+
+    /* 创建事件 */
+    auto map_click_listener = EventListenerTouchOneByOne::create();
+    map_click_listener->onTouchBegan = [&](Touch* touch, Event* event) {
+        if (!is_open[level])
+            return false;
+        auto pos = touch->getLocation();
+        auto sp = (Sprite*)(this->getChildByName("map"));
+        if (sp->getBoundingBox().containsPoint(pos))
+            return true;
+        return false;
+        };
+    map_click_listener->onTouchMoved = [](Touch* touch, Event* event) {};
+    map_click_listener->onTouchEnded = [&](Touch* touch, Event* event) {
+        this->start_onButtonClicked(this);
+        };
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(map_click_listener, this);
     
    
 

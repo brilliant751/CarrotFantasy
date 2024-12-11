@@ -20,7 +20,6 @@ public:
 	// ∂®“Âcreate
 	CREATE_FUNC(Map_1_01);
 
-	bool is_popup = false;
 
 };
 
