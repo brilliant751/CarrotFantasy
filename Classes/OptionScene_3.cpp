@@ -121,10 +121,10 @@ bool OptionScene_3::init()
     /********** 创建按钮 **********/
     /* 返回 */
     auto btn_back = btn_create(
-        "OptionScene_1/contents/option_1_back_normal.png",
-        "OptionScene_1/contents/option_1_back_pressed.png",
-        "OptionScene_1/contents/option_1_back_normal.png",
-        po_btn_home, 3);
+        "OptionScene/contents/option_1_back_normal.png",
+        "OptionScene/contents/option_1_back_pressed.png",
+        "OptionScene/contents/option_1_back_normal.png",
+        po_btn_home, 1);
 
     /********** 创建事件 **********/
     /* statistics */

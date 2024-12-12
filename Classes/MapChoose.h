@@ -46,7 +46,7 @@ private:
 	{"level_3.png","total_20_waves.png","towers_3.png"}
 	};
 	string stars_url[3] = { "stars_1.png","stars_2.png" ,"stars_3.png" };//stars∂‘”¶stars_url[stars-1]
-	bool is_open[3] = { 1,0,0 };
+	bool is_open[3] = { 1,1,0 };
 	string all_clear_url = "all_clear.png";
 };
 

@@ -1,6 +1,7 @@
 
 #include "EnterScene.h"
 #include "Skyline_01.h"
+#include "Skyline_02.h"
 #include "MapChoose.h"
 #include "HelpScene_1.h"
 #include "AudioEngine.h"
@@ -71,7 +72,7 @@ void MapChoose::back_onButtonClicked(Ref* sender) {
 
 /* 开始按钮进入到第一关 */
 void MapChoose::start_onButtonClicked(Ref* sender) {
-    auto next = Map_1_01::create_Scene();
+    auto next = Map_1_02::create_Scene();
     Director::getInstance()->pushScene(next);
 }
 

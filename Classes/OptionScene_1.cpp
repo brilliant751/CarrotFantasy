@@ -141,6 +141,13 @@ bool OptionScene_1::init()
                 case ui::Widget::TouchEventType::BEGAN:
                     break;
                 case ui::Widget::TouchEventType::ENDED:
+                    switch (btn_type) {
+                    case 1:
+                        back_onButtonClicked(this);
+                        break;
+                    default:
+                        break;
+                    };
                     break;
                 default:
                     break;
@@ -200,7 +207,7 @@ bool OptionScene_1::init()
         "OptionScene/contents/option_1_back_normal.png",
         "OptionScene/contents/option_1_back_pressed.png",
         "OptionScene/contents/option_1_back_normal.png",
-        po_btn_home, 1.5);
+        po_btn_home, 1);
 
 
     /**************************************/
