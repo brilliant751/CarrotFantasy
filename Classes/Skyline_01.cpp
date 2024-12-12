@@ -1,4 +1,4 @@
-
+ï»¿#pragma execution_character_set("utf-8")
 #include "StartScene.h"
 #include "EnterScene.h"
 #include "Skyline_01.h"
@@ -11,39 +11,39 @@ USING_NS_CC;
 using namespace ui;
 using namespace std;
 
-#define GR_LEN 95   //·½¸ñ±ß³¤
+#define GR_LEN 95   //æ–¹æ ¼è¾¹é•¿
 
-/********** ×ø±êÏßÎ»ÖÃ **********/
-// µØÍ¼´óÐ¡Îª 12 * 8 ¸ö·½¸ñ
+/********** åæ ‡çº¿ä½ç½® **********/
+// åœ°å›¾å¤§å°ä¸º 12 * 8 ä¸ªæ–¹æ ¼
 constexpr int mapX[13] = { 0, 95, 190, 285, 380, 475, 570, 665, 760, 855, 950, 1045, 1140 };
 constexpr int mapY[9] = { 0, 95, 190, 285, 380, 475, 570, 665, 760 };
 /********************************/
 
-/* ´´½¨³¡¾° */
+/* åˆ›å»ºåœºæ™¯ */
 Scene* Map_1_01::create_Scene()
 {
 	return Map_1_01::create();
 }
 
-/* ³õÊ¼»¯³¡¾° */
+/* åˆå§‹åŒ–åœºæ™¯ */
 bool Map_1_01::init()
 {
 	if (!Scene::init())
 		return false;
 
-	const Vec2 origin = Vec2(240, 100); //µØÍ¼×ø±êÆðµã
+	const Vec2 origin = Vec2(240, 100); //åœ°å›¾åæ ‡èµ·ç‚¹
 	auto visibleSize = Director::getInstance()->getVisibleSize();   //(1620,960)
 
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/1-01/1-01.plist");
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/Barriers/Barriers.plist");
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/Carrot/Carrot.plist");
 
-    /* ´´½¨¾«ÁéµÄ±Õ°üº¯Êý */
-    //lambda±í´ïÊ½
-    //pctname£º  Í¼¼¯ÖÐµÄÃû³Æ
-    //pos£º      ×ø±ê
-    //scale£º    ·Å´ó±¶ÂÊ
-    //layer£º    ·ÅÖÃ²ãÊý
+    /* åˆ›å»ºç²¾çµçš„é—­åŒ…å‡½æ•° */
+    //lambdaè¡¨è¾¾å¼
+    //pctnameï¼š  å›¾é›†ä¸­çš„åç§°
+    //posï¼š      åæ ‡
+    //scaleï¼š    æ”¾å¤§å€çŽ‡
+    //layerï¼š    æ”¾ç½®å±‚æ•°
     auto sp_create = [&](const string& pctname, const Vec2& pos, const float& scale = 1.0f, int layer = 0) {
         Sprite* newsp = Sprite::create();
         newsp->initWithSpriteFrameName(pctname);
@@ -53,13 +53,44 @@ bool Map_1_01::init()
         return newsp;
         };
 
-    /* ´´½¨°´Å¥µÄ±Õ°üº¯Êý */
-    //lambda±í´ïÊ½
-    //normal£º   Õý³£×´Ì¬ÏÔÊ¾
-    //pressed£º  µã»÷×´Ì¬ÏÔÊ¾
-    //pos£º      ×ø±ê
-    //scale£º    ·Å´ó±¶ÂÊ
-    //layer£º    ·ÅÖÃ²ãÊý
+    /* åˆ›å»ºæ–‡æœ¬çš„é—­åŒ…å‡½æ•° */
+    //lambdaè¡¨è¾¾å¼
+    //int num/string textï¼š     æ–‡æœ¬æ•°å­—/æ–‡æœ¬å†…å®¹
+    //ttfï¼š      å­—ä½“æ–‡ä»¶å
+    //sizeï¼š     å­—ä½“å¤§å°
+    //posï¼š      åæ ‡
+    //layerï¼š    æ”¾ç½®å±‚æ•°
+    //color:     é¢œè‰²åˆ†ç±»ï¼š
+    //                    0 - ç™½è‰²
+    //                    1 - åœŸé»„
+    auto lb_create1 = [&](const int num, const string& ttf, const int size, const Vec2& pos, int layer = 0, int color = 0) {
+        string text = to_string(num);
+        auto myLabel = Label::createWithTTF(text, ttf, size);
+        myLabel->setPosition(pos);
+        myLabel->enableBold();
+        if (color == 1)
+            myLabel->setColor(Color3B(255, 246, 143));
+        this->addChild(myLabel, layer);
+        return myLabel;
+        };
+
+    auto lb_create2 = [&](const string text, const string& ttf, const int size, const Vec2& pos, int layer = 0, int color = 0) {
+        auto myLabel = Label::createWithTTF(text, ttf, size);
+        myLabel->setPosition(pos);
+        myLabel->enableBold();
+        if (color == 1)
+            myLabel->setColor(Color3B(255, 246, 143));
+        this->addChild(myLabel, layer);
+        return myLabel;
+        };
+    
+        /* åˆ›å»ºæŒ‰é’®çš„é—­åŒ…å‡½æ•° */
+    //lambdaè¡¨è¾¾å¼
+    //normalï¼š   æ­£å¸¸çŠ¶æ€æ˜¾ç¤º
+    //pressedï¼š  ç‚¹å‡»çŠ¶æ€æ˜¾ç¤º
+    //posï¼š      åæ ‡
+    //scaleï¼š    æ”¾å¤§å€çŽ‡
+    //layerï¼š    æ”¾ç½®å±‚æ•°
     auto btn_create = [&](const string& normal, const string& pressed,
         const Vec2& pos, const float& scale = 1.0f, int layer = 1)
         {
@@ -71,21 +102,26 @@ bool Map_1_01::init()
             return btn;
         };
 
-    /************     ²ÎÊý     ************/
+    /************     å‚æ•°     ************/
 
-    constexpr int topY = 814;               //¶¥²¿¸ß¶È
-    constexpr float btn_scale = 1.4f;       //°´Å¥·Å´ó±¶ÂÊ
-    constexpr float map_scale = 1.5f;       //µØÍ¼·Å´ó±¶ÂÊ
-    constexpr float word_scale = 2.0f;      //ÎÄ×Ö·Å´ó±¶ÂÊ
-    const Vec2 bg(visibleSize / 2);         //µØÍ¼Î»ÖÃ
-    const Vec2 topbg(810, topY);            //¶¥²¿Î»ÖÃ
-    const Vec2 gmmenu(1270, topY);          //²Ëµ¥Î»ÖÃ
-    const Vec2 gmpause(1180, topY);         //ÔÝÍ£Î»ÖÃ
-    const Vec2 spd(1070, topY);             //±¶ËÙÎ»ÖÃ
-
-    const Vec2 crt(1250, origin.y + mapY[6]);             //ÂÜ²·Î»ÖÃ
-    const Vec2 born(origin.x + (mapX[1] + mapX[2]) / 2.0f, origin.y + mapY[6]); //¹ÖÎï³öÉúµã
-    /* ÕÏ°­ÎïÎ»ÖÃ */
+    constexpr int topY = 814;               //é¡¶éƒ¨é«˜åº¦
+    constexpr float btn_scale = 1.4f;       //æŒ‰é’®æ”¾å¤§å€çŽ‡
+    constexpr float map_scale = 1.5f;       //åœ°å›¾æ”¾å¤§å€çŽ‡
+    constexpr float word_scale = 2.0f;      //æ–‡å­—æ”¾å¤§å€çŽ‡
+    const Vec2 bg(visibleSize / 2);         //åœ°å›¾ä½ç½®
+    const Vec2 topbg(810, topY);            //é¡¶éƒ¨ä½ç½®
+    const Vec2 gmmenu(1270, topY);          //èœå•ä½ç½®
+    const Vec2 gmpause(1180, topY);         //æš‚åœä½ç½®
+    const Vec2 spd(1070, topY);             //å€é€Ÿä½ç½®
+    const Vec2 po_bg_waves(740, topY + 10);  //wavesæ¡†ä½ç½®
+    const Vec2 po_waves_left(715, topY + 10);  //waves_leftä½ç½®
+    const Vec2 po_waves_right(765, topY + 10);  //waves_rightä½ç½®
+    const Vec2 crt(1250, origin.y + mapY[6]);              //èåœä½ç½®
+    const Vec2 po_chp_bg(1330, origin.y + mapY[6] - 10);   //èåœè¡€æ¡åº•å›¾ä½ç½®
+    const Vec2 po_chp_num(1343, origin.y + mapY[6] - 10);  //èåœè¡€æ¡æ•°å­—ä½ç½®
+    const Vec2 po_lb_total_waves(880, topY + 10);           //å…±å‡ æ³¢ä½ç½®
+    const Vec2 born(origin.x + (mapX[1] + mapX[2]) / 2.0f, origin.y + mapY[6]); //æ€ªç‰©å‡ºç”Ÿç‚¹
+    /* éšœç¢ç‰©ä½ç½® */
     const Vec2 brr1_1(origin.x + (mapX[4] + mapX[5]) / 2.0f, origin.y + (mapY[4] + mapY[5]) / 2.0f);
     const Vec2 brr1_2(origin.x + (mapX[7] + mapX[8]) / 2.0f, origin.y + (mapY[4] + mapY[5]) / 2.0f);
     const Vec2 brr1_3(origin.x + (mapX[2] + mapX[3]) / 2.0f, origin.y + (mapY[3] + mapY[4]) / 2.0f);
@@ -97,26 +133,47 @@ bool Map_1_01::init()
 
     /**************************************/
 
-    /*********** ´´½¨¾«Áé **********/
-    /* ´´½¨±³¾° */
+    /*********** åˆ›å»ºç²¾çµ **********/
+    /* åˆ›å»ºèƒŒæ™¯ */
     auto map_bg = sp_create("1-01_bg.png", bg, map_scale, -2);
 
-    /* ´´½¨ÂÜ²· */
+    /* åˆ›å»ºèåœ */
     auto carrot = sp_create("HP_MAX.PNG", crt, map_scale, 0);
 
-    /* ´´½¨¶¥²¿×´Ì¬À¸ */
+    /* åˆ›å»ºèåœè¡€æ¡åº•å›¾ */
+    auto chp_bg = sp_create("Hp.png", po_chp_bg, map_scale, 0);
+
+    /* åˆ›å»ºé¡¶éƒ¨çŠ¶æ€æ  */
     auto top_bg = sp_create("top_bg.png", topbg, map_scale, -1);
 
-    /* ´´½¨ÔÝÍ£ÖÐÏÔÊ¾ */
-    auto pausing = sp_create("paused.png", topbg, word_scale, 0);
+    ///* åˆ›å»ºæš‚åœä¸­æ˜¾ç¤º */
+    //auto pausing = sp_create("paused.png", topbg, word_scale, 0);
 
-    /* ´´½¨¹ÖÎï³öÉúµã */
+    /* åˆ›å»ºæ€ªç‰©å‡ºç”Ÿç‚¹ */
     auto start_point = sp_create("start_point.png", born, map_scale, 0);
 
-    /* ´´½¨±¶ËÙ¼ü */
+    /* åˆ›å»ºå€é€Ÿé”® */
     auto spd_shift = sp_create("game_speed_1.png", spd, map_scale, 0);
+    spd_shift->setName("spd_shift");
 
-    /* ´´½¨ÕÏ°­Îï */
+    /* wavesæ¡† */
+    auto bg_waves = sp_create("game)waves.png", po_bg_waves, map_scale, 0);
+    
+    /*********** åˆ›å»ºæ ‡ç­¾ ***********/
+    /* åˆ›å»ºèåœè¡€æ¡æ•°å­— */
+    auto chp_num = lb_create1(c_hp, "fonts/HPSimplified_Bd.ttf", 27, po_chp_num, 1);
+
+    /* åˆ›å»ºtotal_waves */
+    auto lb_total_waves = lb_create2("/15æ³¢æ€ªç‰©", "fonts/æ–¹æ­£ç²—é»‘å®‹ç®€ä½“.ttf", 34, po_lb_total_waves, 2);
+
+    /* åˆ›å»ºwavesåä½ */
+    auto waves_left = lb_create1(waves / 10, "fonts/æ–¹æ­£ç²—é»‘å®‹ç®€ä½“.ttf", 34, po_waves_left, 2, 1);
+
+    /* åˆ›å»ºwavesä¸ªä½ */
+    auto waves_right = lb_create1(waves % 10, "fonts/æ–¹æ­£ç²—é»‘å®‹ç®€ä½“.ttf", 34, po_waves_right, 2, 1);
+
+
+    /* åˆ›å»ºéšœç¢ç‰© */
     auto _1brr1 = sp_create("Barrier_One_1.png", brr1_1, map_scale, 0);
     auto _1brr2 = sp_create("Barrier_One_1.png", brr1_2, map_scale, 0);
     auto _1brr3 = sp_create("Barrier_One_2.png", brr1_3, map_scale, 0);
@@ -126,17 +183,17 @@ bool Map_1_01::init()
     auto _4brr2 = sp_create("Barrier_Four_3.png", brr4_2, map_scale, 0);
     auto _4brr3 = sp_create("Barrier_Four_3.png", brr4_3, map_scale, 0);
 
-    /*********** ´´½¨°´Å¥ **********/
-    /* ´´½¨²Ëµ¥ */
+    /*********** åˆ›å»ºæŒ‰é’® **********/
+    /* åˆ›å»ºèœå• */
     auto game_menu = btn_create(
         "Levels/btn/gamemenu_btn_normal.png",
         "Levels/btn/gamemenu_btn_pressed.png",
         gmmenu, btn_scale, 0);
     game_menu->setName("Menu");
     game_menu->addTouchEventListener([this, v_size=visibleSize](Ref* sender, Widget::TouchEventType type) {
-        auto menu_layer = PauseMenu::create_Layer();    //´´½¨µ¯³ö²Ëµ¥
+        auto menu_layer = PauseMenu::create_Layer();    //åˆ›å»ºå¼¹å‡ºèœå•
         auto menu = (Button*)(this->getChildByName("Menu"));
-        /* ´´½¨µ÷°µ²ã */
+        /* åˆ›å»ºè°ƒæš—å±‚ */
         auto dimlayer = LayerColor::create(Color4B(0, 0, 0, 128), v_size.width, v_size.height);
         dimlayer->setName("dimmer");
         switch (type)
@@ -146,22 +203,74 @@ bool Map_1_01::init()
             case ui::Widget::TouchEventType::ENDED:
                 this->addChild(menu_layer, 10);
                 this->addChild(dimlayer, 9);
-                /* ÔÝÍ£Ö÷³¡¾°µÄ¼àÌýÊÂ¼þ */
-                //´Ë´¦»áÑ­»·ÔÝÍ£ËùÓÐchild½áµãµÄ¼àÌýÊÂ¼þ
+                /* æš‚åœä¸»åœºæ™¯çš„ç›‘å¬äº‹ä»¶ */
+                //æ­¤å¤„ä¼šå¾ªçŽ¯æš‚åœæ‰€æœ‰childç»“ç‚¹çš„ç›‘å¬äº‹ä»¶
                 this->getEventDispatcher()->pauseEventListenersForTarget(this, true);
-                /* »Ö¸´µ¯´°²ãµÄ¼àÌýÊÂ¼þ */
+                /* æ¢å¤å¼¹çª—å±‚çš„ç›‘å¬äº‹ä»¶ */
                 this->getEventDispatcher()->resumeEventListenersForTarget(menu_layer, true);
                 break;
             default:
                 break;
         }
         });
-    /* ´´½¨ÔÝÍ£¼ü */
+    
+    /* åˆ›å»ºæš‚åœé”® */
     auto game_pause = btn_create(
         "Levels/btn/game_pause.png",
         "Levels/btn/game_pause.png",
         gmpause, btn_scale, 0);
-    game_pause->setName("pause");
+    game_pause->setName("game_pause");
+    game_pause->addTouchEventListener([this, v_size = visibleSize](Ref* sender, Widget::TouchEventType type) {
+        auto btn = (Button*)(this->getChildByName("game_pause"));
+        switch (type)
+        {
+            case ui::Widget::TouchEventType::BEGAN:
+                break;
+            case ui::Widget::TouchEventType::ENDED:
+                if (is_pause == 0) {
+                    btn->loadTextures("Levels/btn/game_continue_normal.png",
+                        "Levels/btn/game_continue_pressed.png",
+                        "Levels/btn/game_continue_normal.png");
+                    is_pause = 1;
+                    //todo:æš‚åœçŠ¶æ€
+                }
+                else {
+                    btn->loadTextures("Levels/btn/game_pause.png",
+                        "Levels/btn/game_pause.png",
+                        "Levels/btn/game_pause.png");
+                    is_pause = 0;
+                    //todo:å¼€å§‹çŠ¶æ€
+                }
+                break;
+            default:
+                break;
+        }
+        });
+
+
+    /* åˆ›å»ºäº‹ä»¶ */
+    /* spd */
+    auto spd_click_listener = EventListenerTouchOneByOne::create();
+    spd_click_listener->onTouchBegan = [&](Touch* touch, Event* event) {
+        auto pos = touch->getLocation();
+        auto sp = (Sprite*)(this->getChildByName("spd_shift"));
+        if (sp->getBoundingBox().containsPoint(pos))
+            return true;
+        return false;
+        };
+    spd_click_listener->onTouchMoved = [](Touch* touch, Event* event) {};
+    spd_click_listener->onTouchEnded = [&](Touch* touch, Event* event) {      
+        auto sp = (Sprite*)(this->getChildByName("spd_shift"));
+        if (speed == 1) {
+            sp->setSpriteFrame("game_speed_2.png");
+            speed = 2;
+        }
+        else {
+            sp->setSpriteFrame("game_speed_1.png");
+            speed = 1;
+        }
+        };
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(spd_click_listener, this);
 
 
 
@@ -174,11 +283,14 @@ bool Map_1_01::init()
 
 
 
-    /* ´´½¨µ¹¼ÆÊ± */
+
+
+
+    /* åˆ›å»ºå€’è®¡æ—¶ */
     auto count = CountDown::create_Layer();
     this->addChild(count, 10);
 
-    /*this->removeChild(count);*/
+    
 
 
 	return true;

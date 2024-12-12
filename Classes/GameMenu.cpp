@@ -162,7 +162,6 @@ bool CountDown::init() {
     string count_url[3] = {
         "start_time_1.png","start_time_2.png","start_time_3.png"
     };
-    int co = 2;
     /* 创建精灵的闭包函数 */
     //lambda表达式
     //pctname：  图集中的名称
@@ -179,12 +178,44 @@ bool CountDown::init() {
         };
     auto back = sp_create("start_time_bg.png", po, scale, 0);
     auto lightning = sp_create("start_lightning.png", po, scale, 1);
-    auto count = sp_create(count_url[co], po, scale, 1);
+    count = sp_create(count_url[co], po, scale, 1);
+    count->setName("count");
     lightning->setAnchorPoint(Vec2(0.5, 0.5));
     auto roll = Sequence::create(RotateBy::create(3.0f, -1080.0f),nullptr);
     lightning->runAction(roll);
     //缩放+切换
     //消失
+    auto delay = DelayTime::create(0.8f);
+    auto scaleTo = ScaleTo::create(0.2f, 0.0f);
+    auto scaleBack = ScaleTo::create(0.01f, 1.0f);
+    auto change = CallFunc::create([this]() {
+        auto sp = (Sprite*)(this->getChildByName("count"));
+        if (co >= 1) {
+            co--;
+            sp->setSpriteFrame(this->count_url[co]);
+            auto scaleTo = ScaleTo::create(1.0f, 0.0f);           
+        }
+        else 
+            Director::getInstance()->getRunningScene()->removeChild(this);
+        });
+    auto action_sequence = Sequence::create(delay,scaleTo, change, scaleBack, nullptr);
+    auto rep = Repeat::create(action_sequence, 3);
+    
+    auto ban = CallFunc::create([]() {
+        /* 暂停主场景的监听事件 */
+        //此处会循环暂停所有child结点的监听事件
+        auto cur_scene = Director::getInstance()->getRunningScene();
+        cur_scene->getEventDispatcher()->pauseEventListenersForTarget(cur_scene, true);
+        });
+    auto resume= CallFunc::create([]() {
+        /* 恢复主场景的监听事件 */
+        //此处会循环恢复所有child结点的监听事件
+        auto cur_scene = Director::getInstance()->getRunningScene();
+        cur_scene->getEventDispatcher()->resumeEventListenersForTarget(cur_scene, true);
+        });
+    auto all_sequence = Sequence::create(ban, rep, resume, nullptr);
+    count->runAction(all_sequence);
 
     return true;
 }
+

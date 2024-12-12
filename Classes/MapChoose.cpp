@@ -70,10 +70,21 @@ void MapChoose::back_onButtonClicked(Ref* sender) {
     Director::getInstance()->popScene();
 }
 
-/* 开始按钮进入到第一关 */
+/* 开始按钮进入关卡 */
 void MapChoose::start_onButtonClicked(Ref* sender) {
-    auto next = Map_1_02::create_Scene();
-    Director::getInstance()->pushScene(next);
+    if (level == 0) {
+        auto next = Map_1_01::create_Scene();
+       Director::getInstance()->pushScene(next);
+    } 
+    else if (level == 1) {
+        auto next = Map_1_02::create_Scene();
+        Director::getInstance()->pushScene(next);
+    }
+    else if (level == 2) {
+        /*auto next = Map_1_03::create_Scene();
+        Director::getInstance()->pushScene(next);*/
+    }
+    
 }
 
 bool MapChoose::init()

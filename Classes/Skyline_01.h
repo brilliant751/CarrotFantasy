@@ -20,7 +20,12 @@ public:
 	// ∂®“Âcreate
 	CREATE_FUNC(Map_1_01);
 
-
+private:
+	int speed = 1;
+	bool is_pause = 0;
+	int c_hp = 10;
+	int waves = 1;
+	int total_waves = 15;
 };
 
 #endif //!__SKYLINE_01__

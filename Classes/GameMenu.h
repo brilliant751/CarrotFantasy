@@ -4,6 +4,7 @@
 #define __GAME_MENU__
 
 #include "cocos2d.h"
+using namespace std;
 
 USING_NS_CC;
 
@@ -33,6 +34,12 @@ public:
 
 	// ∂®“Âcreate
 	CREATE_FUNC(CountDown);
+private:
+	Sprite* count;
+	string count_url[3] = {
+		"start_time_1.png","start_time_2.png","start_time_3.png"
+	};
+	int co = 2;
 
 
 };

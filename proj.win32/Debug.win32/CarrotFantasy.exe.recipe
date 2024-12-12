@@ -2,10 +2,10 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\fans\CarrotFantasy\proj.win32\Debug.win32\libcocos2d.dll</FullPath>
+      <FullPath>E:\VS\范式\期末\CarrotFantasy\proj.win32\Debug.win32\libcocos2d.dll</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>C:\fans\CarrotFantasy\proj.win32\Debug.win32\CarrotFantasy.exe</FullPath>
+      <FullPath>E:\VS\范式\期末\CarrotFantasy\proj.win32\Debug.win32\CarrotFantasy.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />
