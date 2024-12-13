@@ -19,9 +19,23 @@ public:
 	virtual bool init();
 
 	void back_onButtonClicked(Ref* sender);
+	void reset_onButtonClicked(Ref* sender);
 
 	CREATE_FUNC(OptionScene_1);
 
+};
+/* 重置确认弹窗 */
+class PopReset : public Layer
+{
+public:
+	// 创建一个层
+	static Layer* create_Layer();
+
+	// 初始化
+	virtual bool init();
+
+	// 定义create
+	CREATE_FUNC(PopReset);
 };
 
 #endif

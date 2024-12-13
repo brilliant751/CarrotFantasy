@@ -24,27 +24,41 @@ Scene* OptionScene_1::create_Scene()
     return OptionScene_1::create();
 }
 //创建弹窗层
-class PopupLayer : public cocos2d::Layer {
-public:
-    static PopupLayer* createlayer();
-    virtual bool init();
-    CREATE_FUNC(PopupLayer);
-};
-
-PopupLayer* PopupLayer::createlayer() {
-    auto layer = PopupLayer::createlayer();
-    return layer;
+Layer* PopReset::create_Layer()
+{
+    return PopReset::create();
 }
 
-bool PopupLayer::init() {
-    if (!Layer::init()) {
+bool PopReset::init() {
+    if (!Layer::init())
         return false;
-    }
-    // 创建一个全屏的灰暗层作为背景
-    auto dimLayer = LayerColor::create(Color4B(0, 0, 0, 128), Director::getInstance()->getVisibleSize().width,
-        Director::getInstance()->getVisibleSize().height);
-    this->addChild(dimLayer);
-    // 添加弹窗内容，如文本、按钮等
+
+    auto visibleSize = Director::getInstance()->getVisibleSize();   //(1620，960)
+
+    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/GameMenu/GameMenu.plist");
+
+    /* 创建精灵的闭包函数 */
+    //lambda表达式
+    //pctname：  图集中的名称
+    //pos：      坐标
+    //scale：    放大倍率
+    //layer：    放置层数
+    auto sp_create = [&](const string& pctname, const Vec2& pos, const float& scale = 1.0f, int layer = 0) {
+        Sprite* newsp = Sprite::create();
+        newsp->initWithSpriteFrameName(pctname);
+        newsp->setPosition(pos);
+        newsp->setScale(scale);
+        this->addChild(newsp, layer);
+        return newsp;
+        };
+
+    /* 创建按钮的闭包函数 */
+    //lambda表达式
+    //normal：   正常状态显示
+    //pressed：  点击状态显示
+    //pos：      坐标
+    //scale：    放大倍率
+    //layer：    放置层数
     auto btn_create = [&](const string& normal, const string& pressed,
         const Vec2& pos, const float& scale = 1.0f, int layer = 1)
         {
@@ -57,29 +71,54 @@ bool PopupLayer::init() {
         };
     /************     参数     ************/
 
-    const Vec2 reset_yes_btn(540, 440);          //确认按钮
-    const Vec2 reset_no_btn(980, 440);        //取消按钮
+    const Vec2 reset_yes_btn(603, 440);          //确认按钮
+    const Vec2 reset_no_btn(1023, 440);        //取消按钮
     constexpr float btn_scale = 1.5f;       //按钮放大倍率
     /**************************************/
 
-       /* 创建 重置游戏确定 按钮 */
-    auto reset2 = btn_create(
-        "OptionScene/contents/reset_yes_normal.png",
-        "OptionScene/contents/reset_yes_pressed.png",
-        reset_yes_btn, btn_scale);
+
+        /*********** 创建按钮 **********/
     /* 创建 重置游戏取消 按钮 */
     auto reset3 = btn_create(
         "OptionScene/contents/reset_no_normal.png",
         "OptionScene/contents/reset_no_pressed.png",
         reset_no_btn, btn_scale);
-
-    reset3->addClickEventListener([](Ref* sender) {
-        // 如果是层（Layer），从父节点移除自身
-        if (auto layer = dynamic_cast<Layer*>(sender)) {
-            layer->removeFromParent();
+    reset3->addTouchEventListener([this](Ref* sender, Widget::TouchEventType type) {
+        auto main_scene = Director::getInstance()->getRunningScene();
+        switch (type)
+        {
+        case ui::Widget::TouchEventType::BEGAN:
+            break;
+        case ui::Widget::TouchEventType::ENDED:
+            main_scene->removeChildByName("dimmer");    //除去调暗层
+            main_scene->removeChild(this);      //关闭弹窗
+            /* 恢复主场景的监听事件 */
+            main_scene->getEventDispatcher()->resumeEventListenersForTarget(main_scene, true);
+            break;
+        default:
+            break;
         }
         });
-    this->addChild(reset3);
+
+    /* 创建 重置游戏确定 按钮 */
+    auto reset2 = btn_create(
+        "OptionScene/contents/reset_yes_normal.png",
+        "OptionScene/contents/reset_yes_pressed.png",
+        reset_yes_btn, btn_scale);
+    reset2->addTouchEventListener([this](Ref* sender, Widget::TouchEventType type) {
+        auto main_scene = Director::getInstance()->getRunningScene();
+        switch (type)
+        {
+        case ui::Widget::TouchEventType::BEGAN:
+            break;
+        case ui::Widget::TouchEventType::ENDED:
+            Director::getInstance()->popScene();
+            break;
+        default:
+            break;
+        }
+        });
+
     return true;
 }
 
@@ -87,6 +126,11 @@ bool PopupLayer::init() {
 /* 返回按钮切换至StartScene */
 void OptionScene_1::back_onButtonClicked(Ref* sender) {
     Director::getInstance()->popScene();
+}
+
+void OptionScene_1::reset_onButtonClicked(Ref* sender) {
+    auto Reset = PopReset::create_Layer();
+    this->addChild(Reset, 10);
 }
 
 /* 场景初始化 */
@@ -145,6 +189,8 @@ bool OptionScene_1::init()
                     case 1:
                         back_onButtonClicked(this);
                         break;
+                    case 2:
+                        reset_onButtonClicked(this);
                     default:
                         break;
                     };
@@ -189,19 +235,14 @@ bool OptionScene_1::init()
         "OptionScene/contents/sound_effect_open.png",
         "OptionScene/contents/sound_effect_close.png",
         "OptionScene/contents/sound_effect_close.png",
-        sound_btn, btn_scale);
+        sound_btn,0, btn_scale);
     /* 创建 开启背景音乐 按钮 */
     auto btn_BGM = btn_create(
         "OptionScene/contents/BGM_open.png",
         "OptionScene/contents/BGM_close.png",
         "OptionScene/contents/BGM_close.png",
-        BGM_btn, btn_scale);
-    /* 创建 重置游戏 按钮 */
-    auto reset1_btn = btn_create(
-        "OptionScene/contents/reset_normal.png",
-        "OptionScene/contents/reset_pressed.png",
-        "OptionScene/contents/reset_normal.png",
-        reset_btn, btn_scale);
+        BGM_btn, 0,btn_scale);
+
     /* 返回 */
     auto btn_back = btn_create(
         "OptionScene/contents/option_1_back_normal.png",
@@ -262,6 +303,38 @@ bool OptionScene_1::init()
         return true;
         };
     _eventDispatcher->addEventListenerWithSceneGraphPriority(producer_click_listener, this);
+
+    /* 创建 重置游戏 按钮 */
+    auto reset1_btn = btn_create(
+        "OptionScene/contents/reset_normal.png",
+        "OptionScene/contents/reset_pressed.png",
+        "OptionScene/contents/reset_normal.png",
+        reset_btn, 2);
+    reset1_btn->setName("reset1_btn");
+    reset1_btn->addTouchEventListener([this, v_size = visibleSize](Ref* sender, Widget::TouchEventType type) {
+        auto reset_layer = PopReset::create_Layer();    //创建弹出确认按钮
+        auto reset = this->getChildByName<Button*>("reset");
+        /* 创建调暗层 */
+        auto dimlayer = LayerColor::create(Color4B(0, 0, 0, 128), v_size.width, v_size.height);
+        dimlayer->setName("dimmer");
+        switch (type)
+        {
+        case ui::Widget::TouchEventType::BEGAN:
+            break;
+        case ui::Widget::TouchEventType::ENDED:
+            this->addChild(reset_layer, 10);
+            this->addChild(dimlayer, 9);
+            /* 暂停主场景的监听事件 */
+            //此处会循环暂停所有child结点的监听事件
+            this->getEventDispatcher()->pauseEventListenersForTarget(this, true);
+            /* 恢复弹窗层的监听事件 */
+            this->getEventDispatcher()->resumeEventListenersForTarget(reset_layer, true);
+            break;
+        default:
+            break;
+        }
+        });
+
 
     return true;
 }
