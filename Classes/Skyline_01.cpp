@@ -1,4 +1,5 @@
 ﻿#pragma execution_character_set("utf-8")
+#include <cmath>
 #include "StartScene.h"
 #include "EnterScene.h"
 #include "Skyline_01.h"
@@ -6,6 +7,8 @@
 #include "AudioEngine.h"
 #include "ui/CocosGUI.h"
 #include "ui/UIButton.h"
+#include "monsters.h"
+#include "Monster_info.h"
 
 USING_NS_CC;
 using namespace ui;
@@ -18,6 +21,70 @@ using namespace std;
 constexpr int mapX[13] = { 0, 95, 190, 285, 380, 475, 570, 665, 760, 855, 950, 1045, 1140 };
 constexpr int mapY[9] = { 0, 95, 190, 285, 380, 475, 570, 665, 760 };
 /********************************/
+const Vec2 origin = Vec2(240, 100); //地图坐标起点
+
+bool is_stop = false;   //标记游戏是否暂停（菜单用）
+int speed;      //游戏倍速
+
+// 怪物行走路线
+const Vec2 route[] = {
+        Vec2(origin.x + (mapX[1] + mapX[2]) / 2.0f, origin.y + (mapY[5] + mapY[6]) / 2.0f),
+        Vec2(origin.x + (mapX[1] + mapX[2]) / 2.0f, origin.y + (mapY[2] + mapY[3]) / 2.0f),
+        Vec2(origin.x + (mapX[4] + mapX[5]) / 2.0f, origin.y + (mapY[2] + mapY[3]) / 2.0f),
+        Vec2(origin.x + (mapX[4] + mapX[5]) / 2.0f, origin.y + (mapY[3] + mapY[4]) / 2.0f),
+        Vec2(origin.x + (mapX[7] + mapX[8]) / 2.0f, origin.y + (mapY[3] + mapY[4]) / 2.0f),
+        Vec2(origin.x + (mapX[7] + mapX[8]) / 2.0f, origin.y + (mapY[2] + mapY[3]) / 2.0f),
+        Vec2(origin.x + (mapX[10] + mapX[11]) / 2.0f, origin.y + (mapY[2] + mapY[3]) / 2.0f),
+        Vec2(origin.x + (mapX[10] + mapX[11]) / 2.0f, origin.y + (mapY[5] + mapY[6]) / 2.0f),
+        };
+int rt = 1; //栈顶指针
+
+/* 刷新操作 */
+// 控制怪物每一帧的移动
+void Monster::update(float dt)
+{
+    if (is_stop)
+        return;
+    if (rt == 8)
+    {
+        this->unscheduleUpdate();
+        this->removeFromParentAndCleanup(true);
+        return;
+    }
+    Vec2 cur;
+    cur = getPosition();
+    if (cur.x < route[rt].x)
+    {
+        if (cur.x + info.speed * speed > route[rt].x)
+            cur.x = route[rt].x;
+        else
+            cur.x += info.speed * speed;
+    }
+    else if (cur.x > route[rt].x)
+    {
+        if (cur.x - info.speed * speed < route[rt].x)
+            cur.x = route[rt].x;
+        else
+            cur.x -= info.speed * speed;
+    }
+    else if (cur.y < route[rt].y)
+    {
+        if (cur.y + info.speed * speed > route[rt].y)
+            cur.y = route[rt].y;
+        else
+            cur.y += info.speed * speed;
+    }
+    else if (cur.y > route[rt].y)
+    {
+        if (cur.y - info.speed * speed < route[rt].y)
+            cur.y = route[rt].y;
+        else
+            cur.y -= info.speed * speed;
+    }
+    else
+        ++rt;
+    setPosition(cur);
+}
 
 /* 创建场景 */
 Scene* Map_1_01::create_Scene()
@@ -31,12 +98,21 @@ bool Map_1_01::init()
 	if (!Scene::init())
 		return false;
 
-	const Vec2 origin = Vec2(240, 100); //地图坐标起点
-	auto visibleSize = Director::getInstance()->getVisibleSize();   //(1620,960)
+    /* 初始化全局变量 */
+    is_stop = false;
+    rt = 1;
+    speed = 1;
 
+    /* 初始化句柄 */
+    //引入图集
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/1-01/1-01.plist");
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/Barriers/Barriers.plist");
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/Carrot/Carrot.plist");
+    //设置60帧
+    Director::getInstance()->setAnimationInterval(1.0f / 60.0f);
+
+    /* 初始化局部变量 */
+	auto visibleSize = Director::getInstance()->getVisibleSize();   //(1620,960)
 
     /* 创建精灵的闭包函数 */
     //lambda表达式
@@ -130,6 +206,8 @@ bool Map_1_01::init()
     const Vec2 brr4_1(origin.x + mapX[6], origin.y + mapY[6]);
     const Vec2 brr4_2(origin.x + mapX[4], origin.y + mapY[6]);
     const Vec2 brr4_3(origin.x + mapX[8], origin.y + mapY[6]);
+    /* 怪物位置 */
+    
 
     /**************************************/
 
@@ -146,8 +224,9 @@ bool Map_1_01::init()
     /* 创建顶部状态栏 */
     auto top_bg = sp_create("top_bg.png", topbg, map_scale, -1);
 
-    ///* 创建暂停中显示 */
-    //auto pausing = sp_create("paused.png", topbg, word_scale, 0);
+    /* 创建暂停中显示 */
+    auto pausing = sp_create("paused.png", topbg, word_scale, -2);
+    pausing->setName("pausing");
 
     /* 创建怪物出生点 */
     auto start_point = sp_create("start_point.png", born, map_scale, 0);
@@ -158,6 +237,7 @@ bool Map_1_01::init()
 
     /* waves框 */
     auto bg_waves = sp_create("game)waves.png", po_bg_waves, map_scale, 0);
+    bg_waves->setName("bgwaves");
     
     /*********** 创建标签 ***********/
     /* 创建萝卜血条数字 */
@@ -165,12 +245,15 @@ bool Map_1_01::init()
 
     /* 创建total_waves */
     auto lb_total_waves = lb_create2("/15波怪物", "fonts/方正粗黑宋简体.ttf", 34, po_lb_total_waves, 2);
+    lb_total_waves->setName("totalwaves");
 
     /* 创建waves十位 */
     auto waves_left = lb_create1(waves / 10, "fonts/方正粗黑宋简体.ttf", 34, po_waves_left, 2, 1);
+    waves_left->setName("wavesleft");
 
     /* 创建waves个位 */
     auto waves_right = lb_create1(waves % 10, "fonts/方正粗黑宋简体.ttf", 34, po_waves_right, 2, 1);
+    waves_right->setName("wavesright");
 
 
     /* 创建障碍物 */
@@ -192,7 +275,7 @@ bool Map_1_01::init()
     game_menu->setName("Menu");
     game_menu->addTouchEventListener([this, v_size=visibleSize](Ref* sender, Widget::TouchEventType type) {
         auto menu_layer = PauseMenu::create_Layer();    //创建弹出菜单
-        auto menu = (Button*)(this->getChildByName("Menu"));
+        auto menu = this->getChildByName<Button*>("Menu");
         /* 创建调暗层 */
         auto dimlayer = LayerColor::create(Color4B(0, 0, 0, 128), v_size.width, v_size.height);
         dimlayer->setName("dimmer");
@@ -208,6 +291,7 @@ bool Map_1_01::init()
                 this->getEventDispatcher()->pauseEventListenersForTarget(this, true);
                 /* 恢复弹窗层的监听事件 */
                 this->getEventDispatcher()->resumeEventListenersForTarget(menu_layer, true);
+                is_stop = true;
                 break;
             default:
                 break;
@@ -221,25 +305,45 @@ bool Map_1_01::init()
         gmpause, btn_scale, 0);
     game_pause->setName("game_pause");
     game_pause->addTouchEventListener([this, v_size = visibleSize](Ref* sender, Widget::TouchEventType type) {
-        auto btn = (Button*)(this->getChildByName("game_pause"));
+        auto btn = this->getChildByName<Button*>("game_pause");
+        auto mons = this->getChildByTag<Monster*>(0);
+        auto pausing = this->getChildByName<Sprite*>("pausing");
+        auto bg_waves = this->getChildByName<Sprite*>("bgwaves");
+        auto total_waves = this->getChildByName<Sprite*>("totalwaves");
+        auto waves_left = this->getChildByName<Sprite*>("wavesleft");
+        auto waves_right = this->getChildByName<Sprite*>("wavesright");
         switch (type)
         {
-            case ui::Widget::TouchEventType::BEGAN:
+            case Widget::TouchEventType::BEGAN:
                 break;
-            case ui::Widget::TouchEventType::ENDED:
+            case Widget::TouchEventType::ENDED:
                 if (is_pause == 0) {
                     btn->loadTextures("Levels/btn/game_continue_normal.png",
                         "Levels/btn/game_continue_pressed.png",
                         "Levels/btn/game_continue_normal.png");
                     is_pause = 1;
-                    //todo:暂停状态
+                    mons->unscheduleUpdate();   //怪物停止移动
+                    /* 标签切换 */
+                    bg_waves->setZOrder(-2);
+                    total_waves->setZOrder(-2);
+                    waves_left->setZOrder(-2);
+                    waves_right->setZOrder(-2);
+                    pausing->setZOrder(2);
+                    //todo:进入暂停状态
                 }
                 else {
                     btn->loadTextures("Levels/btn/game_pause.png",
                         "Levels/btn/game_pause.png",
                         "Levels/btn/game_pause.png");
                     is_pause = 0;
-                    //todo:开始状态
+                    mons->scheduleUpdate();     //怪物开始移动
+                    /* 标签切换 */
+                    bg_waves->setZOrder(2);
+                    total_waves->setZOrder(2);
+                    waves_left->setZOrder(2);
+                    waves_right->setZOrder(2);
+                    pausing->setZOrder(-2);
+                    //todo:进入开始状态
                 }
                 break;
             default:
@@ -248,19 +352,19 @@ bool Map_1_01::init()
         });
 
 
-    /* 创建事件 */
-    /* spd */
+    /*********** 创建事件 **********/
+    /* 改变速度 */
     auto spd_click_listener = EventListenerTouchOneByOne::create();
     spd_click_listener->onTouchBegan = [&](Touch* touch, Event* event) {
         auto pos = touch->getLocation();
-        auto sp = (Sprite*)(this->getChildByName("spd_shift"));
+        auto sp = this->getChildByName<Sprite*>("spd_shift");
         if (sp->getBoundingBox().containsPoint(pos))
             return true;
         return false;
         };
     spd_click_listener->onTouchMoved = [](Touch* touch, Event* event) {};
     spd_click_listener->onTouchEnded = [&](Touch* touch, Event* event) {      
-        auto sp = (Sprite*)(this->getChildByName("spd_shift"));
+        auto sp = this->getChildByName<Sprite*>("spd_shift");
         if (speed == 1) {
             sp->setSpriteFrame("game_speed_2.png");
             speed = 2;
@@ -273,14 +377,16 @@ bool Map_1_01::init()
     _eventDispatcher->addEventListenerWithSceneGraphPriority(spd_click_listener, this);
 
 
-
-
-
-
-
-
-
-
+    /*********** 创建怪物 **********/
+    // 待量产
+    auto mon1 = Monster::create_Monster(PUPIL_1);
+    mon1->setPosition(born);
+    mon1->setScale(map_scale);
+    mon1->setTexture("Monsters/Monsters01-22.png");
+    mon1->setAnchorPoint(Vec2(0.5, 0));
+    mon1->setTag(0);
+    addChild(mon1, 2);
+    mon1->scheduleUpdate(); //实现按路径移动
 
 
 

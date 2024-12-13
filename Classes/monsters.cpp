@@ -8,13 +8,15 @@ using namespace ui;
 using namespace std;
 
 /* 创建怪物 */
-Sprite* Monsters::create_Sprite()
+Monster* Monster::create_Monster(monf type)
 {
-	return Monsters::create();
+	auto mt = Monster::create();
+	mt->setType(type);
+	return mt;
 }
 
 /* 怪物初始化 */
-bool Monsters::init()
+bool Monster::init()
 {
 	if (!Sprite::init())
 		return false;

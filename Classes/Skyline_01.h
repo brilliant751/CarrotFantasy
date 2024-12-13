@@ -21,7 +21,6 @@ public:
 	CREATE_FUNC(Map_1_01);
 
 private:
-	int speed = 1;
 	bool is_pause = 0;
 	int c_hp = 10;
 	int waves = 1;

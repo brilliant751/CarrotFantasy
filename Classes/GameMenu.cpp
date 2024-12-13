@@ -8,6 +8,7 @@ USING_NS_CC;
 using namespace ui;
 using namespace std;
 
+extern bool is_stop;    //标记游戏是否暂停
 
 /* 创建Layer */
 Layer* PauseMenu::create_Layer()
@@ -19,7 +20,6 @@ Layer* CountDown::create_Layer()
 {
     return CountDown::create();
 }
-
 
 /* 初始化 */
 bool PauseMenu::init()
@@ -98,6 +98,7 @@ bool PauseMenu::init()
                 main_scene->removeChild(this);      //关闭弹窗
                 /* 恢复主场景的监听事件 */
                 main_scene->getEventDispatcher()->resumeEventListenersForTarget(main_scene, true);
+                is_stop = false;
                 break;
             default:
                 break;
@@ -127,7 +128,6 @@ bool PauseMenu::init()
         }
         });
     
-    
     /* 创建 选择关卡 按钮 */
     auto back = btn_create(
         "Levels/btn/return_normal.png",
@@ -147,21 +147,23 @@ bool PauseMenu::init()
                 break;
         }
         });
-
-
     return true;
 }
 
+/* 初始化 */
 bool CountDown::init() {
     if (!Layer::init())
         return false;
 
-    auto visibleSize = Director::getInstance()->getVisibleSize();   //(2050，1200)
-    const Vec2 po = (visibleSize / 2);
-    const float scale = 1.5f;
+    /* 初始化局部变量 */
+    auto visibleSize = Director::getInstance()->getVisibleSize();   //(1620,960)
+    const Vec2 po = (visibleSize / 2);  //倒计时位置
+    const float scale = 1.5f;       //放大倍率
+    //数字url
     string count_url[3] = {
         "start_time_1.png","start_time_2.png","start_time_3.png"
     };
+
     /* 创建精灵的闭包函数 */
     //lambda表达式
     //pctname：  图集中的名称
@@ -176,18 +178,26 @@ bool CountDown::init() {
         this->addChild(newsp, layer);
         return newsp;
         };
+    
+    /*********** 创建精灵 **********/
+    /* 创建底板 */
     auto back = sp_create("start_time_bg.png", po, scale, 0);
+    /* 创建圈圈 */
     auto lightning = sp_create("start_lightning.png", po, scale, 1);
+    lightning->setAnchorPoint(Vec2(0.5, 0.5));
+    /* 创建数字 */
     count = sp_create(count_url[co], po, scale, 1);
     count->setName("count");
-    lightning->setAnchorPoint(Vec2(0.5, 0.5));
+
+    /*********** 创建动作 **********/
+    /* 转圈圈 */
     auto roll = Sequence::create(RotateBy::create(3.0f, -1080.0f),nullptr);
     lightning->runAction(roll);
-    //缩放+切换
-    //消失
-    auto delay = DelayTime::create(0.8f);
-    auto scaleTo = ScaleTo::create(0.2f, 0.0f);
-    auto scaleBack = ScaleTo::create(0.01f, 1.0f);
+    /* 倒计时 */
+    auto delay = DelayTime::create(0.8f);   //停留
+    auto scaleTo = ScaleTo::create(0.2f, 0.0f);     //变小
+    auto scaleBack = ScaleTo::create(0.01f, 1.0f);  //变大
+    // 切换数字
     auto change = CallFunc::create([this]() {
         auto sp = (Sprite*)(this->getChildByName("count"));
         if (co >= 1) {
@@ -198,22 +208,28 @@ bool CountDown::init() {
         else 
             Director::getInstance()->getRunningScene()->removeChild(this);
         });
+    // 一次切换
     auto action_sequence = Sequence::create(delay,scaleTo, change, scaleBack, nullptr);
+    // 重复三次
     auto rep = Repeat::create(action_sequence, 3);
-    
+    // 控制主场景
     auto ban = CallFunc::create([]() {
         /* 暂停主场景的监听事件 */
         //此处会循环暂停所有child结点的监听事件
         auto cur_scene = Director::getInstance()->getRunningScene();
         cur_scene->getEventDispatcher()->pauseEventListenersForTarget(cur_scene, true);
+        is_stop = true;
         });
     auto resume= CallFunc::create([]() {
         /* 恢复主场景的监听事件 */
         //此处会循环恢复所有child结点的监听事件
         auto cur_scene = Director::getInstance()->getRunningScene();
         cur_scene->getEventDispatcher()->resumeEventListenersForTarget(cur_scene, true);
+        is_stop = false;
         });
+    // 整个动作
     auto all_sequence = Sequence::create(ban, rep, resume, nullptr);
+    // 运行
     count->runAction(all_sequence);
 
     return true;

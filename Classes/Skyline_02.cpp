@@ -128,7 +128,7 @@ bool Map_1_02::init()
     const Vec2 planet_3(origin.x + (mapX[11]+mapX[10])/2.0f , origin.y + (mapY[6] + mapY[5]) / 2.0f);
     const Vec2 planet_4(origin.x + (mapX[4] + mapX[5]) / 2.0f, origin.y + (mapY[4] + mapY[5]) / 2.0f);
     const Vec2 balloon(origin.x + mapX[11], origin.y + mapY[4]);
-    const Vec2 trees(origin.x + mapX[5] / 2.0f, origin.y + (mapY[6] + mapY[5]) / 2.0f);
+    const Vec2 trees(origin.x + mapX[2], origin.y + mapY[6]);
     const Vec2 cloud_1(origin.x + (mapX[7] + mapX[6]) / 2.0f, origin.y + (mapY[4] + mapY[5]) / 2.0f);
     const Vec2 cloud_2(origin.x + (mapX[5] + mapX[6]) / 2.0f, origin.y + mapY[5] / 2.0f);
     const Vec2 rainbow(origin.x + (mapX[2]) / 2.0f, origin.y + (mapY[4] + mapY[1]) / 2.0f);
@@ -253,8 +253,8 @@ bool Map_1_02::init()
         });
 
 
-    /* 创建事件 */
-    /* spd */
+    /*********** 创建事件 **********/
+    /* 创建倍速 */
     auto spd_click_listener = EventListenerTouchOneByOne::create();
     spd_click_listener->onTouchBegan = [&](Touch* touch, Event* event) {
         auto pos = touch->getLocation();
