@@ -96,6 +96,7 @@ bool MapChoose::init()
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("MapChoose/MapChoose.plist");
+    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/GameMenu/GameMenu.plist");
 
     /* 创建精灵的闭包函数 */
     //lambda表达式

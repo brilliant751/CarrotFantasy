@@ -292,8 +292,8 @@ bool Map_1_02::init()
 
 
     /* 创建倒计时 */
-  /*  auto count = CountDown::create_Layer();
-    this->addChild(count, 10);*/
+    auto count = CountDown::create_Layer();
+    this->addChild(count, 10);
 
 
 

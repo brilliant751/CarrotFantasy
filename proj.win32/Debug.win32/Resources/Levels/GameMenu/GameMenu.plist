@@ -34,6 +34,81 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
+            <key>start_lightning.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{-2,33}</string>
+                <key>spriteSize</key>
+                <string>{169,107}</string>
+                <key>spriteSourceSize</key>
+                <string>{173,173}</string>
+                <key>textureRect</key>
+                <string>{{195,899},{169,107}}</string>
+                <key>textureRotated</key>
+                <false/>
+            </dict>
+            <key>start_time_1.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{71,114}</string>
+                <key>spriteSourceSize</key>
+                <string>{71,114}</string>
+                <key>textureRect</key>
+                <string>{{195,1008},{71,114}}</string>
+                <key>textureRotated</key>
+                <true/>
+            </dict>
+            <key>start_time_2.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{92,114}</string>
+                <key>spriteSourceSize</key>
+                <string>{92,114}</string>
+                <key>textureRect</key>
+                <string>{{366,996},{92,114}}</string>
+                <key>textureRotated</key>
+                <true/>
+            </dict>
+            <key>start_time_3.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{95,114}</string>
+                <key>spriteSourceSize</key>
+                <string>{95,114}</string>
+                <key>textureRect</key>
+                <string>{{366,899},{95,114}}</string>
+                <key>textureRotated</key>
+                <true/>
+            </dict>
+            <key>start_time_bg.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{192,192}</string>
+                <key>spriteSourceSize</key>
+                <string>{192,192}</string>
+                <key>textureRect</key>
+                <string>{{1,899},{192,192}}</string>
+                <key>textureRotated</key>
+                <false/>
+            </dict>
             <key>win_bg.png</key>
             <dict>
                 <key>aliases</key>
@@ -61,9 +136,9 @@
             <key>realTextureFileName</key>
             <string>GameMenu.png</string>
             <key>size</key>
-            <string>{450,898}</string>
+            <string>{481,1092}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:23eff4525b47274835e80872cb9f1438:a9b1a2b9114772cd62cd95fcdca254ce:ce18f9cfef1be654cc1f1a55bc8be556$</string>
+            <string>$TexturePacker:SmartUpdate:140a6beb5bcfa645e2b11bae5c0f58b8:9ac752a7644139382bafbad8df2301e0:ce18f9cfef1be654cc1f1a55bc8be556$</string>
             <key>textureFileName</key>
             <string>GameMenu.png</string>
         </dict>

@@ -1,6 +1,7 @@
 
 #include "GameMenu.h"
 #include "Skyline_01.h"
+#include "Skyline_02.h"
 #include "ui/CocosGUI.h"
 #include "ui/UIButton.h"
 
@@ -28,8 +29,6 @@ bool PauseMenu::init()
         return false;
 
     auto visibleSize = Director::getInstance()->getVisibleSize();   //(2050，1200)
-
-    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/GameMenu/GameMenu.plist");
 
     /* 创建精灵的闭包函数 */
     //lambda表达式
@@ -155,6 +154,7 @@ bool CountDown::init() {
     if (!Layer::init())
         return false;
 
+
     /* 初始化局部变量 */
     auto visibleSize = Director::getInstance()->getVisibleSize();   //(1620,960)
     const Vec2 po = (visibleSize / 2);  //倒计时位置
@@ -234,4 +234,5 @@ bool CountDown::init() {
 
     return true;
 }
+
 
