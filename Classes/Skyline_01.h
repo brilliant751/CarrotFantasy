@@ -19,12 +19,14 @@ public:
 
 	// ∂®“Âcreate
 	CREATE_FUNC(Map_1_01);
+	void update_create(float dt);
 
 private:
 	bool is_pause = 0;
 	int c_hp = 10;
 	int waves = 1;
 	int total_waves = 15;
+	int money = 120;
 };
 
 #endif //!__SKYLINE_01__

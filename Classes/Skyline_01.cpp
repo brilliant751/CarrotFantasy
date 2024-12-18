@@ -1,5 +1,6 @@
 ﻿#pragma execution_character_set("utf-8")
 #include <cmath>
+#include <iostream>
 #include "StartScene.h"
 #include "EnterScene.h"
 #include "Skyline_01.h"
@@ -9,22 +10,38 @@
 #include "ui/UIButton.h"
 #include "monsters.h"
 #include "Monster_info.h"
+#include "tools.h"
 
 USING_NS_CC;
 using namespace ui;
 using namespace std;
 
 #define GR_LEN 95   //方格边长
+int map_clicked_1 = 0;//状态
+int tag1_1;
+int tag1_2;
 
 /********** 坐标线位置 **********/
 // 地图大小为 12 * 8 个方格
 constexpr int mapX[13] = { 0, 95, 190, 285, 380, 475, 570, 665, 760, 855, 950, 1045, 1140 };
 constexpr int mapY[9] = { 0, 95, 190, 285, 380, 475, 570, 665, 760 };
 /********************************/
-const Vec2 origin = Vec2(240, 100); //地图坐标起点
+//const Vec2 origin = Vec2(240, 100); //地图坐标起点
 
 bool is_stop = false;   //标记游戏是否暂停（菜单用）
 int speed;      //游戏倍速
+
+int occupy_1[8][12] = {
+    -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+    0,0,0,2,2,2,2,2,2,0,0,0,
+    0,1,0,2,2,2,2,2,2,0,1,1,
+    0,1,0,0,2,0,0,2,0,0,1,0,
+    0,1,2,0,1,1,1,1,0,2,1,0,
+    0,1,1,1,1,2,2,1,1,1,1,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,
+    1,1,0,0,0,0,0,0,0,0,1,1
+};
+
 
 // 怪物行走路线
 const Vec2 route[] = {
@@ -86,6 +103,20 @@ void Monster::update(float dt)
     setPosition(cur);
 }
 
+//create 
+void Map_1_01::update_create(float dt) {
+    auto sp1 = this->getChildByName<Sprite*>("create_bottom");
+    auto sp2 = this->getChildByName<Sprite*>("create_shit");
+    if (money >= 100)
+        sp1->setSpriteFrame("bottom_yes_create.png");
+    else
+        sp1->setSpriteFrame("bottom_no_create.png");
+    if (money >= 120)
+        sp2->setSpriteFrame("shit_yes_create.png");
+    else
+        sp2->setSpriteFrame("shit_no_create.png");
+}
+
 /* 创建场景 */
 Scene* Map_1_01::create_Scene()
 {
@@ -105,9 +136,10 @@ bool Map_1_01::init()
 
     /* 初始化句柄 */
     //引入图集
-    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/1-01/1-01.plist");
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/Barriers/Barriers.plist");
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/Carrot/Carrot.plist");
+    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/tower_click/tower_click.plist");
+
     //设置60帧
     Director::getInstance()->setAnimationInterval(1.0f / 60.0f);
 
@@ -196,6 +228,7 @@ bool Map_1_01::init()
     const Vec2 po_chp_bg(1330, origin.y + mapY[6] - 10);   //萝卜血条底图位置
     const Vec2 po_chp_num(1343, origin.y + mapY[6] - 10);  //萝卜血条数字位置
     const Vec2 po_lb_total_waves(880, topY + 10);           //共几波位置
+    const Vec2 po_lb_money(390, topY + 10);           //金币位置
     const Vec2 born(origin.x + (mapX[1] + mapX[2]) / 2.0f, origin.y + mapY[6]); //怪物出生点
     /* 障碍物位置 */
     const Vec2 brr1_1(origin.x + (mapX[4] + mapX[5]) / 2.0f, origin.y + (mapY[4] + mapY[5]) / 2.0f);
@@ -238,7 +271,34 @@ bool Map_1_01::init()
     /* waves框 */
     auto bg_waves = sp_create("game)waves.png", po_bg_waves, map_scale, 0);
     bg_waves->setName("bgwaves");
+
+    /* 创建点击格子 + 不可点击格子 */
+    for (int i = 1; i < 8; i++)
+        for (int j = 0; j < 12; j++) {
+            Vec2 po = get_po(i, j);
+            if (occupy_1[i][j] == 0) {
+                auto sp1 = sp_create("start_sprite.png", po, map_scale, -10);
+                sp1->setTag(i * 12 + j);
+                auto sp2 = sp_create("grid.png", po, map_scale, -10);
+                sp2->setTag(96 + i * 12 + j);
+            }
+            else if (occupy_1[i][j] == 1) {
+                auto sp = sp_create("cant_build.png", po, map_scale, 2);
+                sp->setTag(192 + i * 12 + j);
+                sp->setOpacity(0);
+            }
+        }
+
+    /* 创建建造bottom精灵 */
+    auto create_bottom = sp_create("bottom_no_create.png", bg, map_scale, -10);
+    create_bottom->setName("create_bottom");
+
+    /* 创建建造shit精灵 */
+    auto create_shit = sp_create("shit_no_create.png", bg, map_scale, -10);
+    create_shit->setName("create_shit");
     
+    this->schedule(schedule_selector(Map_1_01::update_create), 0.1f);
+
     /*********** 创建标签 ***********/
     /* 创建萝卜血条数字 */
     auto chp_num = lb_create1(c_hp, "fonts/HPSimplified_Bd.ttf", 27, po_chp_num, 1);
@@ -255,6 +315,10 @@ bool Map_1_01::init()
     auto waves_right = lb_create1(waves % 10, "fonts/方正粗黑宋简体.ttf", 34, po_waves_right, 2, 1);
     waves_right->setName("wavesright");
 
+    /* 创建金币数量 */
+    auto lb_money = lb_create1(money, "fonts/HPSimplified_Bd.ttf", 35, po_lb_money, 1);
+    lb_money->setName("lb_money");
+    
 
     /* 创建障碍物 */
     auto _1brr1 = sp_create("Barrier_One_1.png", brr1_1, map_scale, 0);
@@ -324,11 +388,11 @@ bool Map_1_01::init()
                     is_pause = 1;
                     mons->unscheduleUpdate();   //怪物停止移动
                     /* 标签切换 */
-                    bg_waves->setZOrder(-2);
-                    total_waves->setZOrder(-2);
-                    waves_left->setZOrder(-2);
-                    waves_right->setZOrder(-2);
-                    pausing->setZOrder(2);
+                    bg_waves->setZOrder(-3);
+                    total_waves->setZOrder(-3);
+                    waves_left->setZOrder(-3);
+                    waves_right->setZOrder(-3);
+                    pausing->setZOrder(3);
                     //todo:进入暂停状态
                 }
                 else {
@@ -342,7 +406,7 @@ bool Map_1_01::init()
                     total_waves->setZOrder(2);
                     waves_left->setZOrder(2);
                     waves_right->setZOrder(2);
-                    pausing->setZOrder(-2);
+                    pausing->setZOrder(-3);
                     //todo:进入开始状态
                 }
                 break;
@@ -350,8 +414,7 @@ bool Map_1_01::init()
                 break;
         }
         });
-
-
+    
     /*********** 创建事件 **********/
     /* 改变速度 */
     auto spd_click_listener = EventListenerTouchOneByOne::create();
@@ -376,6 +439,78 @@ bool Map_1_01::init()
         };
     _eventDispatcher->addEventListenerWithSceneGraphPriority(spd_click_listener, this);
 
+    /* 点击地图 */
+    //int map_clicked = 0;//状态
+
+    auto map_click_listener= EventListenerTouchOneByOne::create();
+    map_click_listener->onTouchBegan = [&](Touch* touch, Event* event) {
+        auto pos = touch->getLocation();
+        if (pos.y >= 765)
+            return false;
+        return true;
+        };
+    map_click_listener->onTouchMoved = [](Touch* touch, Event* event) {};
+    map_click_listener->onTouchEnded = [&](Touch* touch, Event* event) {
+        auto pos = touch->getLocation();
+        int line = get_line(pos.y);
+        int row = get_row(pos.x);
+        auto create1 = this->getChildByName<Sprite*>("create_bottom");
+        auto create2 = this->getChildByName<Sprite*>("create_shit");
+        auto grid1 = this->getChildByTag<Sprite*>(tag1_1);//之前的
+        auto grid2 = this->getChildByTag<Sprite*>(tag1_2);//之前的
+        int state = occupy_1[line][row];
+        int up = line < 4 ? -1 : 1;
+        int right = 0;
+        if (row == 0)
+            right = 1;
+        else if (row == 11)
+            right = -1;
+        Vec2 po = get_po(line, row);
+        Vec2 po1(po.x + (right - 1) * 55, po.y + 95 * up);
+        Vec2 po2(po.x + (right + 1) * 55, po.y + 95 * up);
+        if (map_clicked_1 == 1) {//已经点击了一个可建造炮塔的位置
+            if (create1->getBoundingBox().containsPoint(pos)) {//点击建造bottom
+                if (money >= 100) {
+                    //todo:建造bottom 
+                }
+            }
+            else if (create2->getBoundingBox().containsPoint(pos)) {//点击建造shit
+                if (money >= 120) {
+                    //todo:建造shit
+
+                }
+            }
+            else {//点其他任何位置                              
+                create1->setZOrder(-10);
+                create2->setZOrder(-10);
+                grid1->setZOrder(-10);
+                grid2->setZOrder(-10);
+                map_clicked_1 = 0;
+            }
+        }
+        else {//还未点击一个可以建造炮塔的位置
+            if (state == 1) {//现在点击了一个不可点击的位置
+                auto ban = this->getChildByTag<Sprite*>(192 + line * 12 + row);
+                ban->setOpacity(255);
+                auto fadeout = FadeOut::create(1.0f);
+                ban->runAction(fadeout);
+            }
+            else if (state == 0) {//现在点击了一个可以建造炮塔的位置
+                tag1_1 = line * 12 + row;
+                tag1_2 = 96 + tag1_1;
+                grid1 = this->getChildByTag<Sprite*>(tag1_1);
+                grid2 = this->getChildByTag<Sprite*>(tag1_2);
+                create1->setPosition(po1);
+                create2->setPosition(po2);
+                create1->setZOrder(2);
+                create2->setZOrder(2);
+                grid1->setZOrder(2);
+                grid2->setZOrder(2);
+                map_clicked_1 = 1;
+            }
+        }
+        };
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(map_click_listener, this);
 
     /*********** 创建怪物 **********/
     // 待量产

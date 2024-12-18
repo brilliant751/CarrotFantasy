@@ -95,6 +95,7 @@ bool MapChoose::init()
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/1-01/1-01.plist");
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("MapChoose/MapChoose.plist");
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/GameMenu/GameMenu.plist");
 
