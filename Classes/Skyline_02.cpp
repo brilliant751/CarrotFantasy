@@ -12,11 +12,45 @@ using namespace ui;
 using namespace std;
 
 #define GR_LEN 95   //方格边长
+static int top = 0;    // 栈顶指针
 
 /********** 坐标线位置 **********/
 // 地图大小为 12 * 8 个方格
 constexpr int mapX[13] = { 0, 95, 190, 285, 380, 475, 570, 665, 760, 855, 950, 1045, 1140 };
 constexpr int mapY[9] = { 0, 95, 190, 285, 380, 475, 570, 665, 760 };
+
+int occupy[12][8] = { 
+    0,0,0,0,0,0,0,0,0,0,0,0,
+    0,2,2,0,0,0,0,0,0,0,0,0,
+    0,2,2,0,1,1,1,1,1,1,2,0,
+    0,0,0,0,2,0,2,0,2,1,2,2,
+    0,0,1,1,1,1,1,1,1,1,2,2,
+    2,2,1,2,0,0,0,0,0,0,0,0,
+    0,0,1,1,1,1,1,1,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0
+};
+//表示格子是否被占用
+//0代表未占用，1代表怪物可走的路径，2代表可清除障碍物
+
+const Vec2 origin = Vec2(240, 100); //地图坐标起点
+
+//将参数位置转为格子值
+int judgePosition(const Vec2& pos)
+{
+    int x, y;
+    x = (pos.x- origin.x) / 95+1;
+    y = (pos.y - origin.y) / 95+1;
+    return occupy[x][y];
+}
+//将参数位置转为格子中心值
+Vec2 rePosition(const Vec2& pos)
+{
+    int x, y;
+    x = (pos.x - origin.x) / 95;
+    y = (pos.y - origin.y) / 95;
+    return Vec2(origin.x+mapX[x]+mapX[1] / 2.0f, origin.y+ mapY[y] + mapY[1] / 2.0f);
+}
+
 /********************************/
 
 /* 创建场景 */
@@ -31,7 +65,6 @@ bool Map_1_02::init()
     if (!Scene::init())
         return false;
 
-    const Vec2 origin = Vec2(240, 100); //地图坐标起点
     auto visibleSize = Director::getInstance()->getVisibleSize();   //(1620,960)
 
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/1-02/1_02.plist");
@@ -172,6 +205,11 @@ bool Map_1_02::init()
     /* waves框 */
     auto bg_waves = sp_create("game)waves02.png", po_bg_waves, map_scale, 0);
 
+    /* 创建炮塔位置 */
+    auto grid_02 = sp_create("grid_02.png",bg, map_scale, -2);
+    grid_02->setName("grid");
+
+
     /*********** 创建标签 ***********/
     /* 创建萝卜血条数字 */
     auto chp_num = lb_create1(c_hp, "fonts/HPSimplified_Bd.ttf", 27, po_chp_num, 1);
@@ -189,6 +227,20 @@ bool Map_1_02::init()
 
 
     /*********** 创建按钮 **********/
+        /* 创建炮塔选项（预建立） */
+    auto bottom = btn_create(
+        "Levels/btn/1/bottom_CanClick0.png",
+        "Levels/btn/1/bottom_CanClick1.png",
+        bg, btn_scale,-2);
+    auto shit = btn_create(
+        "Levels/btn/1/shit_CanClick0.png",
+        "Levels/btn/1/shit_CanClick1.png",
+        bg, btn_scale,-2);
+    auto fan = btn_create(
+        "Levels/btn/1/fan_CanClick0.png",
+        "Levels/btn/1/fan_CanClick1.png",
+        bg, btn_scale,-2);
+
      /* 创建菜单 */
     auto game_menu = btn_create(
         "Levels/btn/gamemenu_btn_normal.png",
@@ -253,6 +305,7 @@ bool Map_1_02::init()
         });
 
 
+
     /*********** 创建事件 **********/
     /* 创建倍速 */
     auto spd_click_listener = EventListenerTouchOneByOne::create();
@@ -277,7 +330,37 @@ bool Map_1_02::init()
         };
     _eventDispatcher->addEventListenerWithSceneGraphPriority(spd_click_listener, this);
 
+    /* 点击事件 */
+    auto touch_listener = EventListenerTouchOneByOne::create();
+    touch_listener->onTouchBegan = [&](Touch* touch, Event* event) {
+            return true;
+        };
+    touch_listener->onTouchMoved = [](Touch* touch, Event* event) {};
+    touch_listener->onTouchEnded = [&](Touch* touch, Event* event) {
+        auto pos = touch->getLocation();    //获取点击位置
+        auto sp = this->getChildByName<Sprite*>("grid");
 
+        switch (judgePosition(pos)) {
+        case 0:
+        {
+            //可放置炮塔
+
+            sp->setPosition(rePosition(pos));
+            this->addChild(sp, 2);
+        }
+            break;
+        case 1:
+            //怪物路径
+            break;
+        case 2:
+            //可攻击障碍物
+            break;
+        case 3:
+            break;
+        }
+        return true;
+        };
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(touch_listener, this);  
 
 
 
