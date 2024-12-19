@@ -4,7 +4,7 @@
     <dict>
         <key>frames</key>
         <dict>
-            <key>bottom_no_create.png</key>
+            <key>bottle_no_create.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -19,7 +19,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>bottom_yes_create.png</key>
+            <key>bottle_yes_create.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>

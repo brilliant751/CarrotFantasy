@@ -99,6 +99,8 @@ bool MapChoose::init()
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("MapChoose/MapChoose.plist");
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/GameMenu/GameMenu.plist");
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Monsters/Monsters.plist");
+    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Towers/Towers.plist");
+
 
     /* 创建精灵的闭包函数 */
     //lambda表达式

@@ -60,6 +60,9 @@
     <ClCompile Include="..\Classes\tools.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Towers.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -111,6 +114,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\tools.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Towers.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Towers_info.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

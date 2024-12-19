@@ -25,17 +25,21 @@ public:
 
 	// 定时刷新类函数
 	void create_monster(float dt);	//创建怪物
+	void create_tower(int type,Vec2 po,int line,int row);	//创建防御塔
 	void update_create(float dt);	//刷新建造按钮
+	void update_money(float dt);    //刷新金币
 
 private:
 	const int total_waves = 15;		//总波次
 	int c_hp = 10;			//萝卜生命值
 	bool is_pause = 0;		//是否暂停
-	int money = 120;		//金钱
+	int money = 5000;		//金钱
 	int waves = 1;			//波次
+	int cur_line;
+	int cur_row;
+	Vec2 cur_pos;
 
 	/* 创建怪物参数 */
-	Vec2 pos;
 	float mons_scale = 1.5f;
 	string mons_url[16] = { "", "Monster01_0.png" };
 	//    XX     XX      XX
