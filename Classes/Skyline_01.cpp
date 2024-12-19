@@ -26,11 +26,11 @@ int tag1_2;
 constexpr int mapX[13] = { 0, 95, 190, 285, 380, 475, 570, 665, 760, 855, 950, 1045, 1140 };
 constexpr int mapY[9] = { 0, 95, 190, 285, 380, 475, 570, 665, 760 };
 /********************************/
-//const Vec2 origin = Vec2(240, 100); //地图坐标起点
 
 bool is_stop = false;   //标记游戏是否暂停（菜单用）
 int speed;      //游戏倍速
 
+// 记录地图位置占用情况
 int occupy_1[8][12] = {
     -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
     0,0,0,2,2,2,2,2,2,0,0,0,
@@ -44,7 +44,7 @@ int occupy_1[8][12] = {
 
 
 // 怪物行走路线
-const Vec2 route[] = {
+const Vec2 path[] = {
         Vec2(origin.x + (mapX[1] + mapX[2]) / 2.0f, origin.y + (mapY[5] + mapY[6]) / 2.0f),
         Vec2(origin.x + (mapX[1] + mapX[2]) / 2.0f, origin.y + (mapY[2] + mapY[3]) / 2.0f),
         Vec2(origin.x + (mapX[4] + mapX[5]) / 2.0f, origin.y + (mapY[2] + mapY[3]) / 2.0f),
@@ -54,56 +54,27 @@ const Vec2 route[] = {
         Vec2(origin.x + (mapX[10] + mapX[11]) / 2.0f, origin.y + (mapY[2] + mapY[3]) / 2.0f),
         Vec2(origin.x + (mapX[10] + mapX[11]) / 2.0f, origin.y + (mapY[5] + mapY[6]) / 2.0f),
         };
-int rt = 1; //栈顶指针
+const int top = 8; //栈顶位置
 
-/* 刷新操作 */
-// 控制怪物每一帧的移动
-void Monster::update(float dt)
+/* 生成怪物 */
+void Map_1_01::create_monster(float dt)
 {
-    if (is_stop)
+    if (get_tag_waves(mons_tag) != waves)
+        update_tag(mons_tag, waves);
+    if (mons_tag % 100 > 5)
         return;
-    if (rt == 8)
-    {
-        this->unscheduleUpdate();
-        this->removeFromParentAndCleanup(true);
-        return;
-    }
-    Vec2 cur;
-    cur = getPosition();
-    if (cur.x < route[rt].x)
-    {
-        if (cur.x + info.speed * speed > route[rt].x)
-            cur.x = route[rt].x;
-        else
-            cur.x += info.speed * speed;
-    }
-    else if (cur.x > route[rt].x)
-    {
-        if (cur.x - info.speed * speed < route[rt].x)
-            cur.x = route[rt].x;
-        else
-            cur.x -= info.speed * speed;
-    }
-    else if (cur.y < route[rt].y)
-    {
-        if (cur.y + info.speed * speed > route[rt].y)
-            cur.y = route[rt].y;
-        else
-            cur.y += info.speed * speed;
-    }
-    else if (cur.y > route[rt].y)
-    {
-        if (cur.y - info.speed * speed < route[rt].y)
-            cur.y = route[rt].y;
-        else
-            cur.y -= info.speed * speed;
-    }
-    else
-        ++rt;
-    setPosition(cur);
+    auto mon1 = Monster::create_Monster(PUPIL_1);
+    mon1->setSpriteFrame(mons_url[waves]);
+    mon1->setPosition(path[0]);
+    mon1->setScale(mons_scale);
+    mon1->setAnchorPoint(Vec2(0.5, 0));
+    mon1->setTag(mons_tag++);
+    mon1->set_route(path, top);
+    addChild(mon1, 2);
+    mon1->scheduleUpdate(); //实现按路径移动
 }
 
-//create 
+/* 建造防御塔按钮刷新 */
 void Map_1_01::update_create(float dt) {
     auto sp1 = this->getChildByName<Sprite*>("create_bottom");
     auto sp2 = this->getChildByName<Sprite*>("create_shit");
@@ -131,7 +102,7 @@ bool Map_1_01::init()
 
     /* 初始化全局变量 */
     is_stop = false;
-    rt = 1;
+    //rt = 1;
     speed = 1;
 
     /* 初始化句柄 */
@@ -369,13 +340,21 @@ bool Map_1_01::init()
         gmpause, btn_scale, 0);
     game_pause->setName("game_pause");
     game_pause->addTouchEventListener([this, v_size = visibleSize](Ref* sender, Widget::TouchEventType type) {
+        //auto mons = this->getChildByTag<Monster*>(0);
+        auto scene = Director::getInstance()->getRunningScene();
         auto btn = this->getChildByName<Button*>("game_pause");
-        auto mons = this->getChildByTag<Monster*>(0);
         auto pausing = this->getChildByName<Sprite*>("pausing");
         auto bg_waves = this->getChildByName<Sprite*>("bgwaves");
         auto total_waves = this->getChildByName<Sprite*>("totalwaves");
         auto waves_left = this->getChildByName<Sprite*>("wavesleft");
         auto waves_right = this->getChildByName<Sprite*>("wavesright");
+        // 抓取当前场景所有怪物
+        Monster* mons[20];
+        int cur_tag = this->mons_tag;
+        int least = 10101, co = 0;
+        update_tag(least, this->waves);
+        for (;cur_tag > least;)
+            mons[co++] = scene->getChildByTag<Monster*>(--cur_tag);
         switch (type)
         {
             case Widget::TouchEventType::BEGAN:
@@ -386,7 +365,8 @@ bool Map_1_01::init()
                         "Levels/btn/game_continue_pressed.png",
                         "Levels/btn/game_continue_normal.png");
                     is_pause = 1;
-                    mons->unscheduleUpdate();   //怪物停止移动
+                    for (int i = 0; i < co; ++i)
+                        mons[i]->unscheduleUpdate();   //怪物停止移动
                     /* 标签切换 */
                     bg_waves->setZOrder(-3);
                     total_waves->setZOrder(-3);
@@ -400,7 +380,8 @@ bool Map_1_01::init()
                         "Levels/btn/game_pause.png",
                         "Levels/btn/game_pause.png");
                     is_pause = 0;
-                    mons->scheduleUpdate();     //怪物开始移动
+                    for (int i = 0; i < co; ++i)
+                        mons[i]->scheduleUpdate();   //怪物停止移动
                     /* 标签切换 */
                     bg_waves->setZOrder(2);
                     total_waves->setZOrder(2);
@@ -514,14 +495,17 @@ bool Map_1_01::init()
 
     /*********** 创建怪物 **********/
     // 待量产
-    auto mon1 = Monster::create_Monster(PUPIL_1);
-    mon1->setPosition(born);
-    mon1->setScale(map_scale);
-    mon1->setTexture("Monsters/Monsters01-22.png");
-    mon1->setAnchorPoint(Vec2(0.5, 0));
-    mon1->setTag(0);
-    addChild(mon1, 2);
-    mon1->scheduleUpdate(); //实现按路径移动
+    //auto mon1 = Monster::create_Monster(PUPIL_1);
+    //mon1->setPosition(born);
+    //mon1->setScale(map_scale);
+    //mon1->setTexture("Monsters/Monsters01-22.png");
+    //mon1->setAnchorPoint(Vec2(0.5, 0));
+    //mon1->setTag(0);
+    //mon1->set_route(path, top);
+    //addChild(mon1, 2);
+    //mon1->scheduleUpdate(); //实现按路径移动
+
+    this->schedule(schedule_selector(Map_1_01::create_monster), 1.0f / speed);
 
 
 

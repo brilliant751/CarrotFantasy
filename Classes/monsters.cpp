@@ -15,6 +15,51 @@ Monster* Monster::create_Monster(monf type)
 	return mt;
 }
 
+void Monster::update(float dt)
+{
+    if (is_stop)
+        return;
+    if (rt == top)
+    {
+        this->unscheduleUpdate();
+        this->removeFromParentAndCleanup(true);
+        return;
+    }
+    Vec2 cur;
+    cur = getPosition();
+    if (cur.x < route[rt].x)
+    {
+        if (cur.x + info.speed * speed > route[rt].x)
+            cur.x = route[rt].x;
+        else
+            cur.x += info.speed * speed;
+    }
+    else if (cur.x > route[rt].x)
+    {
+        if (cur.x - info.speed * speed < route[rt].x)
+            cur.x = route[rt].x;
+        else
+            cur.x -= info.speed * speed;
+    }
+    else if (cur.y < route[rt].y)
+    {
+        if (cur.y + info.speed * speed > route[rt].y)
+            cur.y = route[rt].y;
+        else
+            cur.y += info.speed * speed;
+    }
+    else if (cur.y > route[rt].y)
+    {
+        if (cur.y - info.speed * speed < route[rt].y)
+            cur.y = route[rt].y;
+        else
+            cur.y -= info.speed * speed;
+    }
+    else
+        ++rt;
+    setPosition(cur);
+}
+
 /* ¹ÖÎï³õÊ¼»¯ */
 bool Monster::init()
 {

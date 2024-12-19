@@ -218,6 +218,7 @@ bool CountDown::init() {
         //此处会循环暂停所有child结点的监听事件
         auto cur_scene = Director::getInstance()->getRunningScene();
         cur_scene->getEventDispatcher()->pauseEventListenersForTarget(cur_scene, true);
+        cur_scene->pauseSchedulerAndActions();
         is_stop = true;
         });
     auto resume= CallFunc::create([]() {
@@ -225,6 +226,7 @@ bool CountDown::init() {
         //此处会循环恢复所有child结点的监听事件
         auto cur_scene = Director::getInstance()->getRunningScene();
         cur_scene->getEventDispatcher()->resumeEventListenersForTarget(cur_scene, true);
+        cur_scene->resumeSchedulerAndActions();
         is_stop = false;
         });
     // 整个动作
