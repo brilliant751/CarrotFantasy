@@ -13,6 +13,7 @@
 #include "Towers_info.h"
 #include "Towers.h"
 #include "tools.h"
+#include"Carrot.h"
 
 USING_NS_CC;
 using namespace ui;
@@ -203,8 +204,6 @@ bool Map_1_01::init()
     const Vec2 po_waves_left(715, topY + 10);  //waves_left位置
     const Vec2 po_waves_right(765, topY + 10);  //waves_right位置
     const Vec2 crt(1250, origin.y + mapY[6]);              //萝卜位置
-    const Vec2 po_chp_bg(1330, origin.y + mapY[6] - 10);   //萝卜血条底图位置
-    const Vec2 po_chp_num(1343, origin.y + mapY[6] - 10);  //萝卜血条数字位置
     const Vec2 po_lb_total_waves(880, topY + 10);           //共几波位置
     const Vec2 po_lb_money(390, topY + 10);           //金币位置
     const Vec2 born(origin.x + (mapX[1] + mapX[2]) / 2.0f, origin.y + mapY[6]); //怪物出生点
@@ -232,10 +231,8 @@ bool Map_1_01::init()
     auto map_bg = sp_create(this, "1-01_bg.png", bg, map_scale, -2);
 
     /* 创建萝卜 */
-    auto carrot = sp_create(this, "HP_MAX.PNG", crt, map_scale, 0);
-
-    /* 创建萝卜血条底图 */
-    auto chp_bg = sp_create(this, "Hp.png", po_chp_bg, map_scale, 0);
+    auto carrot = Carrot::create_Carrot(crt,this);
+    carrot->setName("carrot");
 
     /* 创建顶部状态栏 */
     auto top_bg = sp_create(this, "top_bg.png", topbg, map_scale, -1);
@@ -300,8 +297,6 @@ bool Map_1_01::init()
 
 
     /*********** 创建标签 ***********/
-    /* 创建萝卜血条数字 */
-    auto chp_num = lb_create(this, c_hp, "fonts/HPSimplified_Bd.ttf", 27, po_chp_num, 1);
 
     /* 创建total_waves */
     auto lb_total_waves = lb_create(this, "/15波怪物", "fonts/方正粗黑宋简体.ttf", 34, po_lb_total_waves, 2);

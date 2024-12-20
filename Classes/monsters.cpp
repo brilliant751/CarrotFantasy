@@ -2,6 +2,8 @@
 #include "monsters.h"
 #include "ui/UIButton.h"
 #include "AudioEngine.h"
+#include"Carrot.h"
+
 
 USING_NS_CC;
 using namespace ui;
@@ -22,6 +24,8 @@ void Monster::update(float dt)
         return;
     if (rt == top)
     {
+        auto sp = Director::getInstance()->getRunningScene()->getChildByName<Carrot*>("carrot");
+        sp->cut_chp();       
         this->unscheduleUpdate();
         this->removeFromParentAndCleanup(true);
         return;
