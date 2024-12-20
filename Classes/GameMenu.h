@@ -43,4 +43,17 @@ private:
 
 
 };
+
+/* 可攻击对象 */
+class Target : public Sprite
+{
+public:
+	int hp;	//血量
+	CREATE_FUNC(Target);
+	void setHP(int max_hp) { hp = max_hp; }
+};
+
+
+
+
 #endif // !__GAME_MENU__

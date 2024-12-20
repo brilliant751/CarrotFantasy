@@ -95,9 +95,11 @@ bool PauseMenu::init()
             case ui::Widget::TouchEventType::ENDED:
                 main_scene->removeChildByName("dimmer");    //除去调暗层
                 main_scene->removeChild(this);      //关闭弹窗
-                /* 恢复主场景的监听事件 */
+                // 恢复主场景的监听事件
                 main_scene->getEventDispatcher()->resumeEventListenersForTarget(main_scene, true);
-                is_stop = false;
+                // 恢复主场景的刷新和动作
+                main_scene->resumeSchedulerAndActions();
+                is_stop = false;    //标记开始
                 break;
             default:
                 break;
@@ -154,11 +156,11 @@ bool CountDown::init() {
     if (!Layer::init())
         return false;
 
-
     /* 初始化局部变量 */
     auto visibleSize = Director::getInstance()->getVisibleSize();   //(1620,960)
     const Vec2 po = (visibleSize / 2);  //倒计时位置
     const float scale = 1.5f;       //放大倍率
+
     //数字url
     string count_url[3] = {
         "start_time_1.png","start_time_2.png","start_time_3.png"
@@ -214,20 +216,22 @@ bool CountDown::init() {
     auto rep = Repeat::create(action_sequence, 3);
     // 控制主场景
     auto ban = CallFunc::create([]() {
-        /* 暂停主场景的监听事件 */
-        //此处会循环暂停所有child结点的监听事件
+        /* 暂停主场景的活动 */
         auto cur_scene = Director::getInstance()->getRunningScene();
+        // 此处会循环暂停所有child结点的监听事件
         cur_scene->getEventDispatcher()->pauseEventListenersForTarget(cur_scene, true);
+        // 暂停主场景的刷新和动作
         cur_scene->pauseSchedulerAndActions();
-        is_stop = true;
+        is_stop = true;     //标记暂停
         });
     auto resume= CallFunc::create([]() {
-        /* 恢复主场景的监听事件 */
-        //此处会循环恢复所有child结点的监听事件
+        /* 恢复主场景的活动 */
         auto cur_scene = Director::getInstance()->getRunningScene();
+        // 此处会循环恢复所有child结点的监听事件
         cur_scene->getEventDispatcher()->resumeEventListenersForTarget(cur_scene, true);
+        // 暂停主场景的刷新和动作
         cur_scene->resumeSchedulerAndActions();
-        is_stop = false;
+        is_stop = false;    // 标记开始
         });
     // 整个动作
     auto all_sequence = Sequence::create(ban, rep, resume, nullptr);

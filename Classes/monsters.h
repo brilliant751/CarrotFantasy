@@ -6,6 +6,7 @@
 #include "cocos2d.h"
 
 #include "Monster_info.h"
+#include "GameMenu.h"
 
 using namespace std;
 
@@ -13,8 +14,9 @@ USING_NS_CC;
 
 extern int speed;
 extern bool is_stop;
+extern clock_t timer;
 
-class Monster : public cocos2d::Sprite
+class Monster : public Target
 {
 public:
 	// ¥¥Ω®π÷ŒÔ

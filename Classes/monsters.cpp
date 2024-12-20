@@ -12,6 +12,7 @@ Monster* Monster::create_Monster(monf type)
 {
 	auto mt = Monster::create();
 	mt->setType(type);
+    mt->setHP(mt->info.hp);
 	return mt;
 }
 

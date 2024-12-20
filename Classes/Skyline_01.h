@@ -23,9 +23,14 @@ public:
 	// 定义create
 	CREATE_FUNC(Map_1_01);
 
+	// 创建防御塔
+	void create_tower(int type,Vec2 po,int line,int row);
+
+	// 更新波次
+	void update_waves();
+
 	// 定时刷新类函数
 	void create_monster(float dt);	//创建怪物
-	void create_tower(int type,Vec2 po,int line,int row);	//创建防御塔
 	void update_create(float dt);	//刷新建造按钮
 	void update_money(float dt);    //刷新金币
 
@@ -37,14 +42,22 @@ private:
 	int waves = 1;			//波次
 	int cur_line;
 	int cur_row;
+	int tag1_1;//选中虚线TAG
+	int tag1_2;//  选择实线tag
 	Vec2 cur_pos;
 
 	/* 创建怪物参数 */
 	float mons_scale = 1.5f;
-	string mons_url[16] = { "", "Monster01_0.png" };
+	string mons_url[16] = { "", 
+		"Monster01_0.png", "Monster02_0.png", "Monster02_0.png", 
+		"Monster02_0.png", "Monster02_0.png", "Monster02_0.png", 
+		"Monster02_0.png", "Monster02_0.png", "Monster02_0.png", 
+		"Monster02_0.png", "Monster02_0.png", "Monster02_0.png",
+		"Monster02_0.png", "Monster02_0.png", "Monster02_0.png" };
 	//    XX     XX      XX
 	// 关卡序号 波次 第几个怪物
 	int mons_tag = 10101;
+	int least = 10101;
 
 };
 
