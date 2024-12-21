@@ -94,8 +94,8 @@ Monster* Tower::get_first_monster() {
     int cur_tag = scene->get_mons_tag();
     int least = 10101, co = 0;
     update_tag(least, scene->get_waves());
-    while (cur_tag > least)
-        mons[co++] = scene->getChildByTag<Monster*>(--cur_tag);
+    while (cur_tag >= least)
+        mons[co++] = scene->getChildByTag<Monster*>(least++);
 
     Vec2 tower_po = this->getPosition();//·ÀÓùËþÎ»ÖÃ
 
@@ -168,8 +168,8 @@ void Tower::biu_fan(Vec2& start, float x, float y) {
     biu->setSpriteFrame(this->get_bullet_url());
     auto scene = Director::getInstance()->getRunningScene();
     scene->addChild(biu, 4);
-    auto rotate = RotateBy::create(0.5f, 360.0f);
-    auto ahead = MoveBy::create(1.0f / 120, Vec2(x, y));
+    auto rotate = RotateBy::create(1.0f / 60, 30.0f);
+    auto ahead = MoveBy::create(1.0f / 60, Vec2(x, y));
     //auto delay = DelayTime::create(0.2f);
     auto call_check = CallFunc::create([biu = biu]() {
         Vec2 cur_pos = biu->getPosition();

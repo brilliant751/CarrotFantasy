@@ -47,7 +47,7 @@ const tower_info shit{
 };
 
 const tower_info fan{
-	{2,4,8},{40,80,160},{0,0,0},{0,0,0},{2.1 * g_l,2.6 * g_l,3 * g_l},
+	{2,4,8},{70,140,200},{0,0,0},{0,0,0},{2.1 * g_l,2.6 * g_l,3 * g_l},
 	{160,220,260},{128,304,512},
 	{"fan_D1.png","fan_D2.png","fan_D3.png"},
 	{"fan_origin1.png","fan_origin2.png","fan_origin3.png"},
