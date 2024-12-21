@@ -241,4 +241,23 @@ bool CountDown::init() {
     return true;
 }
 
+/* ´´½¨ÑªÌõ */
+void Target::create_slider()
+{
+    auto scene = (Scene*)getParent();
+    Vec2 pos = this->getPosition();
+    pos.y += 70;
+    hp_slider = LoadingBar::create();
+    hp_slider->loadTexture("Monsters/contents/hp_slider.png");
+    hp_slider->setScale(1.5f);
+    hp_slider->setPercent(100.0f);
+    hp_slider->setPosition(pos);
+    hp_slider->setAnchorPoint(Vec2(0.5f, 1.0f));
+    scene->addChild(hp_slider, 4);
+    hp_holder = sp_create(scene, "hp_holder.png", pos, 1.5f, 3);
+    hp_holder->setAnchorPoint(Vec2(0.5f, 1.0f));
+    selected = sp_create(scene, "selected.png", pos, 1.5f, -5);
+    selected->setAnchorPoint(Vec2(0.5f, 0.0f));
+}
+
 

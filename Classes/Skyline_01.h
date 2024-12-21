@@ -30,6 +30,9 @@ public:
 	// 更新波次
 	void update_waves();
 
+	// 获取障碍物数量
+	int get_n_barrier() { return n_barrier; };
+
 	// 定时刷新类函数
 	void create_monster(float dt);	//创建怪物
 	void update_create(float dt);	//刷新建造按钮
@@ -51,6 +54,7 @@ private:
 	int c_hp = 10;			//萝卜生命值
 	bool is_pause = 0;		//是否暂停
 	int money = 5000;		//金钱
+	int n_barrier = 8;		//障碍物数量
 	int cur_line;
 	int cur_row;
 	int tag1_1;		//选中虚线TAG

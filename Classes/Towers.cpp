@@ -12,6 +12,7 @@ extern int waves;   //怪物波次
 extern int speed;   //游戏速度
 extern Monster* cur_mons[20];   //场上怪物
 extern int lives;   //场上怪物数量
+extern Target* target;
 
 /* 创建防御塔 */
 Tower* Tower::create_Tower(int type, int line, int row, Scene* scene)
@@ -95,10 +96,13 @@ int Tower::tower_rotate_direction() {
     return -clock_wise;//逆时针为正方向
 }
 
-Monster* Tower::get_first_monster() {
+Monster* Tower::get_first_monster() {//获取范围内第一个Montser
     for (int i = 0; i < lives; ++i)
-        if (cur_mons[i])
-            return cur_mons[i];
+        if (cur_mons[i]) {
+            float d = cal_distance(this->getPosition(), cur_mons[i]->getPosition());
+            if (d <= this->info.radius[this->get_level()])
+                return cur_mons[i];
+        }
     return NULL;
 }
 
@@ -134,11 +138,37 @@ void Tower::tower_rotate_1(float dt) {
     //this->bullet->setRotation(change_angle);
 }
 
-void Tower::shoot_3(float dt) {//风扇 0.4s 2格     5/60=1/12 格   每1/60s
-    Monster* mon = this->get_first_monster();
-    if (!mon)
-        return;
+void Tower::shoot_1_2(float dt) {
     Vec2 po1 = this->getPosition();//子弹起始坐标
+    Target* mon = NULL;//Tower此时攻击对象
+    if (target) {//先判断有没有选中对象以及是否在范围内
+        float d = cal_distance(po1, target->getPosition());//计算距离
+        if (d <= this->info.radius[this->get_level()])//在范围内
+            mon = target;
+        else //寻找在范围内的第一个怪物
+            mon = this->get_first_monster();
+    }
+    else //寻找在范围内的第一个怪物
+        mon = this->get_first_monster();
+    if (!mon)//无怪物就不发射
+        return;
+    /* 有在范围内的怪物 发射子弹 */
+    this->biu_1_2(po1, mon);
+}
+
+void Tower::shoot_3(float dt) {//风扇 0.4s 2格     5/60=1/12 格   每1/60s
+    Vec2 po1 = this->getPosition();//子弹起始坐标
+    Target* mon = NULL;//Tower此时攻击对象
+    if (target) {//先判断有没有选中对象以及是否在范围内
+        float d = cal_distance(po1, target->getPosition());//计算距离
+        if (d <= this->info.radius[this->get_level()])//在范围内
+            mon = target;
+    }
+    else //寻找在范围内的第一个怪物
+        mon = this->get_first_monster();
+    if (!mon)//无怪物就不发射
+        return;
+    /* 有在范围内的怪物 发射子弹 */
     Vec2 po2 = mon->getPosition();//怪物坐标
     //向量 子弹指向怪物
     float x = po2.x - po1.x;//向量x方向
@@ -151,6 +181,7 @@ void Tower::shoot_3(float dt) {//风扇 0.4s 2格     5/60=1/12 格   每1/60s
 }
 
 void Tower::biu_fan(Vec2& start, float x, float y) {
+    /* 创建子弹 并初始化 */
     auto biu = Sprite::create();
     biu->setPosition(start);
     biu->setScale(1.5);
@@ -163,15 +194,11 @@ void Tower::biu_fan(Vec2& start, float x, float y) {
     auto call_check = CallFunc::create([this, biu = biu]() {
 
         Vec2 cur_pos = biu->getPosition();
-        /*for (int i = 0; i < lives; i++)
-            if (cur_mons[i])
-                if (cur_mons->getBoundingBox().containsPoint(cur_pos))
-                    cur_mons->get_hurt(this->get_info().attack[this->get_level()]);
-                */
-
-
-        if (cur_pos.x >= 1380 || cur_pos.x <= 240 || cur_pos.y >= 860 || cur_pos.y <= 100)
-            biu->removeFromParentAndCleanup(true);
+        for (int i = 0; i < lives; i++)
+            if (cur_mons[i] && cur_mons[i]->getBoundingBox().containsPoint(cur_pos))
+                cur_mons[i]->get_hurt(this->get_info().attack[this->get_level()]);               
+                if (cur_pos.x >= 1380 || cur_pos.x <= 240 || cur_pos.y >= 860 || cur_pos.y <= 100)
+                    biu->removeFromParentAndCleanup(true);
         });
     //auto seq = Sequence::create(delay, call_check, nullptr);
     //auto spawn = Spawn::create(rotate, ahead, seq, nullptr);
@@ -179,49 +206,51 @@ void Tower::biu_fan(Vec2& start, float x, float y) {
 
     auto repeat = RepeatForever::create(spawn);
     biu->runAction(repeat);
-
 }
 
-void Tower::biu_1_2(Vec2& start, Monster* target) {
+// bottle shit子弹发射起始位置(Tower位置) 发射对象
+void Tower::biu_1_2(Vec2 & start, Target * cur_target) {
+    /* 实时变换方向的子弹发射 */
+    //创建并初始化
     auto biu = Sprite::create();
     biu->setPosition(start);
-    biu->setScale(1.5);
+    biu->setScale(1.5f);
     biu->setSpriteFrame(this->get_bullet_url());
     auto scene = Director::getInstance()->getRunningScene();
     scene->addChild(biu, 4);
 
-    auto call_check = CallFunc::create([this, biu = biu, target = target]() {
+    auto call_check = CallFunc::create([this, biu = biu, cur_target = cur_target]() {
         Vec2 po1 = biu->getPosition();
-        Vec2 po2 = target->getPosition();
-        if (!target) {
-            biu->removeFromParentAndCleanup(true);
+
+        if (!cur_target) {//发射目标在子弹到达前挂掉了or本来就不存在
+            biu->removeFromParentAndCleanup(true);//子弹原地消失
             return;
         }
-        else if (target->getBoundingBox().containsPoint(po1)) {
-            //target->get_hurt(this->get_info().attack[this->get_level()]);
-
+        else if (cur_target->getBoundingBox().containsPoint(po1)) {//子弹到达发射目标
+            cur_target->get_hurt(this->get_info().attack[this->get_level()]);//伤害
             //动画效果todo
-
-            biu->removeFromParentAndCleanup(true);
+            biu->removeFromParentAndCleanup(true);//消失
             return;
         }
         //先不管角度了
-        // 
+        // 子弹还没到达且发射目标存在
         //向量 子弹指向怪物
+        Vec2 po2 = cur_target->getPosition();
         float x = po2.x - po1.x;//向量x方向
-        float y = po2.y - po1.y;//向量y方向
+        float y = po2.y - po1.y + 40;//向量y方向
 
         float d = cal_distance(po1, po2);//向量长度
 
         float beilv = 1.0f / 12 * 95 / d;//现在要求1/60s走多长 先求倍率 即beilv*d=1/150*95
-        auto ahead = MoveBy::create(1.0f / 60, Vec2(x, y));
-        biu->runAction(ahead);
+        auto ahead = MoveBy::create(1.0f / 60, Vec2(x * beilv, y * beilv));//一帧的运动
+        biu->runAction(ahead);//执行
         });
 
-    auto delay = DelayTime::create(1.0f / 60);;
+    //auto del
+    auto delay = DelayTime::create(1.5f / 60);
     auto seq = Sequence::create(call_check, delay, nullptr);
     auto repeat = RepeatForever::create(seq);
-
+    biu->runAction(repeat);
 
 }
 

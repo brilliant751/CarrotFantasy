@@ -14,15 +14,13 @@
 #include "Towers.h"
 #include "Enemy.h"
 #include "tools.h"
-#include"Carrot.h"
+#include "Carrot.h"
 
 USING_NS_CC;
 using namespace ui;
 using namespace std;
 
 #define GR_LEN 95       //方格边长
-
-
 
 /********** 坐标线位置 **********/
 // 地图大小为 12 * 8 个方格
@@ -37,7 +35,7 @@ clock_t timer;  //计时器
 int waves;      //游戏波次
 Monster* cur_mons[20] = { NULL };   //当前所有怪物
 int lives;      //栈顶指针，当前场上怪物数量
-Enemy* target;
+Target* target; //锁定对象
 
 // 记录地图位置占用情况
 //-1无响应 0可建造位置 1不可建造位置 2障碍物 3防御塔 
@@ -267,10 +265,6 @@ bool Map_1_01::init()
     auto sell = sp_create(this, "sell.png", bg, map_scale, -10);
     sell->setName("sell");
 
-    /* 创建 标记 精灵 */
-    auto selected = sp_create(this, "selected.png", bg, map_scale, 4);
-    selected->setName("selected");
-
     // 刷新建造防御塔按钮
     this->schedule(schedule_selector(Map_1_01::update_create), 0.1f);
     // 刷新金币数量
@@ -305,14 +299,32 @@ bool Map_1_01::init()
     lb_sell_money->setName("lb_sell_money");
 
     /* 创建障碍物 */
-    auto _1brr1 = sp_create(this, "Barrier_One_1.png", brr1_1, map_scale, 0);
-    auto _1brr2 = sp_create(this, "Barrier_One_1.png", brr1_2, map_scale, 0);
-    auto _1brr3 = sp_create(this, "Barrier_One_2.png", brr1_3, map_scale, 0);
-    auto _1brr4 = sp_create(this, "Barrier_One_2.png", brr1_4, map_scale, 0);
-    auto _2brr1 = sp_create(this, "Barrier_Two_1.png", brr2_1, map_scale, 0);
-    auto _4brr1 = sp_create(this, "Barrier_Four_1.png", brr4_1, map_scale, 0);
-    auto _4brr2 = sp_create(this, "Barrier_Four_3.png", brr4_2, map_scale, 0);
-    auto _4brr3 = sp_create(this, "Barrier_Four_3.png", brr4_3, map_scale, 0);
+    //    3000      XX
+    //           第几个障碍物
+    auto _1brr1 = targ_create(this, "Barrier_One_1.png", brr1_1, map_scale, 0);
+    _1brr1->setTag(300001);
+    _1brr1->setHP(1000);
+    auto _1brr2 = targ_create(this, "Barrier_One_1.png", brr1_2, map_scale, 0);
+    _1brr2->setTag(300002);
+    _1brr2->setHP(1000);
+    auto _1brr3 = targ_create(this, "Barrier_One_2.png", brr1_3, map_scale, 0);
+    _1brr3->setTag(300003);
+    _1brr3->setHP(1000);
+    auto _1brr4 = targ_create(this, "Barrier_One_2.png", brr1_4, map_scale, 0);
+    _1brr4->setTag(300004);
+    _1brr4->setHP(1000);
+    auto _2brr1 = targ_create(this, "Barrier_Two_1.png", brr2_1, map_scale, 0);
+    _2brr1->setTag(300005);
+    _2brr1->setHP(1000);
+    auto _4brr1 = targ_create(this, "Barrier_Four_1.png", brr4_1, map_scale, 0);
+    _4brr1->setTag(300006);
+    _4brr1->setHP(1000);
+    auto _4brr2 = targ_create(this, "Barrier_Four_3.png", brr4_2, map_scale, 0);
+    _4brr2->setTag(300007);
+    _4brr2->setHP(1000);
+    auto _4brr3 = targ_create(this, "Barrier_Four_3.png", brr4_3, map_scale, 0);
+    _4brr3->setTag(300008);
+    _1brr1->setHP(1000);
 
     /*********** 创建按钮 **********/
     /* 创建菜单 */
@@ -446,7 +458,7 @@ bool Map_1_01::init()
     _eventDispatcher->addEventListenerWithSceneGraphPriority(spd_click_listener, this);
 
     /* 点击地图 */
-    auto map_click_listener= EventListenerTouchOneByOne::create();
+    auto map_click_listener = EventListenerTouchOneByOne::create();
     map_click_listener->onTouchBegan = [&](Touch* touch, Event* event) {
         auto pos = touch->getLocation();
         if (pos.y >= 765 || pos.y <= 100 || pos.x >= 1380 || pos.x <= 240)
@@ -498,6 +510,7 @@ bool Map_1_01::init()
             if (create1->getBoundingBox().containsPoint(pos)) {//点击建造bottle
                 if (money >= 100) {
                     auto tower = Tower::create_Tower(0, cur_line, cur_row, this);
+                    tower->schedule(schedule_selector(Tower::shoot_1_2), 1.0f);//发射
                     /* 2 0x yy */
                     //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
                     tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
@@ -517,6 +530,7 @@ bool Map_1_01::init()
             else if (create2->getBoundingBox().containsPoint(pos)) {//点击建造shit
                 //if (money >= 120) {
                 //    auto tower = Tower::create_Tower(1, cur_line, cur_row, this);
+                //    tower->schedule(schedule_selector(Tower::shoot_1_2), 2.0f);//发射
                 //    /* 2 0x yy */
                 //    //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
                 //    tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
@@ -585,16 +599,55 @@ bool Map_1_01::init()
             up_money->setZOrder(-10);
             sell_money->setZOrder(-10);
             //为防止range超出范围 放在靠中间的位置
-            range->setPosition(Vec2(500,500));
+            range->setPosition(Vec2(500, 500));
             //更新格子状态
             map_clicked_1 = 0;
         }
         else {//之前还未点击一个可以建造炮塔的位置
-            if (state == 1) {//现在点击了一个不可点击的位置
-                auto ban = this->getChildByTag<Sprite*>(192 + cur_line * 12 + cur_row);//获取ban精灵
-                ban->setOpacity(255);                    //恢复透明度为100%
-                auto fadeout = FadeOut::create(1.0f);    //逐渐淡去
-                ban->runAction(fadeout);                 //执行动作
+            if (state == 1) {//现在点击了一个不可点击的位置 or monster
+                bool show_ban = 1;
+                for (int i = 0; i < lives; i++) {
+                    if (cur_mons[i] && cur_mons[i]->getBoundingBox().containsPoint(pos)) {
+                        if (target == cur_mons[i]) {
+                            target = NULL;//取消选中
+                            cur_mons[i]->get_selected_sprite()->setZOrder(-10);//把精灵放下去
+                            show_ban = 0;
+                        }
+                        else {
+                            if (target)//之前选中了其他目标 
+                                target->get_selected_sprite()->setZOrder(-10);//把之前的精灵放下去
+                            target = cur_mons[i];//选中
+                            cur_mons[i]->get_selected_sprite()->setZOrder(5);//把精灵放上来
+                            show_ban = 0;
+                        }
+                        break;
+                    }
+                }
+                if (show_ban) {
+                    auto ban = this->getChildByTag<Sprite*>(192 + cur_line * 12 + cur_row);//获取ban精灵
+                    ban->setOpacity(255);                    //恢复透明度为100%
+                    auto fadeout = FadeOut::create(1.0f);    //逐渐淡去
+                    ban->runAction(fadeout);                 //执行动作
+                }
+
+            }
+            else if (state == 2) {//现在点击了一个障碍物
+                for (int i = 1; i <= this->get_n_barrier(); i++) {
+                    auto temp = this->getChildByTag<Target*>(300000 + i);
+                    if (temp->getBoundingBox().containsPoint(pos)) {//寻找点击的障碍物
+                        if (target == temp) {//之前选中了此障碍物
+                            target = NULL;//取消选中
+                            temp->get_selected_sprite()->setZOrder(-10);//把精灵放下去
+                        }
+                        else{
+                            if (target)//之前选中了其他目标 
+                                target->get_selected_sprite()->setZOrder(-10);//把之前的精灵放下去
+                            target = temp; //选中
+                            temp->get_selected_sprite()->setZOrder(5);//把现在的精灵放上来
+                        }
+                        break;
+                    }
+                }
             }
             else if (state == 0) {//现在点击了一个可以建造炮塔的位置
                 grid1 = this->getChildByTag<Sprite*>(tag1_1);//获取虚线框
@@ -636,7 +689,7 @@ bool Map_1_01::init()
                 }
                 //根据精灵计算标签位置
                 up_money_pos = Vec2(up_pos.x + 12, up_pos.y - 30);
-                sell_money_pos = Vec2(sell_pos.x + 12, sell_pos.y - 30);                
+                sell_money_pos = Vec2(sell_pos.x + 12, sell_pos.y - 30);
 
                 /* 设置攻击范围大小 */
                 range->setScale(range_scale);

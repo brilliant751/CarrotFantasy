@@ -10,12 +10,13 @@ USING_NS_CC;
 
 class Enemy:public Sprite {
 public://±ãÓÚ¼Ì³Ð
-	int hp;
+	int hp = 1000;
 	Sprite* hp_holder;
 	Sprite* hp_slider;
-	CREATE_FUNC(Enemy);
-	virtual bool init() { if (!Sprite::init())return false; return true; }
 
+
+	virtual bool init() { if (!Sprite::init())return false; return true; }
+	CREATE_FUNC(Enemy);
 };
 
 

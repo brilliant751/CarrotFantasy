@@ -26,7 +26,7 @@ public:
 	// 初始化
 	virtual bool init();
 	// 创建血条
-	
+	void create_slider();
 	// 重写更新函数
 	void update(float dt) override;
 	// 设置路线

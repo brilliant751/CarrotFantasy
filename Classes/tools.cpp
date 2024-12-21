@@ -1,5 +1,6 @@
 #include "cocos2d.h"
 #include "ui/cocosGUI.h"
+#include "GameMenu.h"
 using namespace std;
 USING_NS_CC;
 using namespace ui;
@@ -41,6 +42,21 @@ void update_tag(int& tag, int waves)
     ++tag;
 }
 
+Vec2 pos_check(const Vec2& ex, const Vec2& cur)
+{
+    float dx, dy;
+    dx = cur.x - ex.x;
+    dy = cur.y - ex.y;
+    return Vec2{ dx, dy };
+}
+
+void update_pos(Vec2& pos, const Vec2& ex, const Vec2& cur)
+{
+    Vec2 delta = pos_check(ex, cur);
+    pos.x += delta.x;
+    pos.y += delta.y;
+}
+
 /* 创建精灵 */
     //pctname：  图集中的名称
     //pos：      坐标
@@ -54,7 +70,7 @@ Sprite* sp_create(Scene* parent, const string& pctname, const Vec2& pos, const f
     newsp->setScale(scale);
     parent->addChild(newsp, layer);
     return newsp;
-};
+}
 
 /* 创建按钮的闭包函数 */
 //lambda表达式
@@ -63,16 +79,16 @@ Sprite* sp_create(Scene* parent, const string& pctname, const Vec2& pos, const f
 //pos：      坐标
 //scale：    放大倍率
 //layer：    放置层数
-Button* btn_create(Scene* parent,const string& normal, const string& pressed,
+Button* btn_create(Scene* parent, const string& normal, const string& pressed,
     const Vec2& pos, const float& scale, int layer)
-    {
-        auto btn = Button::create();
-        btn->loadTextures(normal, pressed, normal);
-        btn->setPosition(pos);
-        btn->setScale(scale);
-        parent->addChild(btn, layer);
-        return btn;
-    };
+{
+    auto btn = Button::create();
+    btn->loadTextures(normal, pressed, normal);
+    btn->setPosition(pos);
+    btn->setScale(scale);
+    parent->addChild(btn, layer);
+    return btn;
+}
 
 /* 创建标签 */
 // 整数类型重载
@@ -89,7 +105,7 @@ Label* lb_create(Scene* parent, const int num, const string& ttf, const int size
 
     parent->addChild(myLabel, layer);
     return myLabel;
-};
+}
 
 /* 创建标签 */
 // 字符串类型重载
@@ -102,7 +118,23 @@ Label* lb_create(Scene* parent, const string text, const string& ttf, const int 
         myLabel->setColor(Color3B(255, 246, 143));
     parent->addChild(myLabel, layer);
     return myLabel;
-};
+}
+
+/* 创建可攻击对象 */
+    //pctname：  图集中的名称
+    //pos：      坐标
+    //scale：    放大倍率
+    //layer：    放置层数
+Target* targ_create(Scene* parent, const string& pctname, const Vec2& pos, const float& scale = 1.5f, int layer = 0)
+{
+    Target* newsp = Target::create();
+    newsp->initWithSpriteFrameName(pctname);
+    newsp->setPosition(pos);
+    newsp->setScale(scale);
+    parent->addChild(newsp, layer);
+    newsp->create_slider();
+    return newsp;
+}
 
 //计算距离
 float cal_distance(const Vec2& po1, const Vec2& po2) {

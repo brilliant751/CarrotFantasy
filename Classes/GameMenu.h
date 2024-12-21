@@ -4,9 +4,11 @@
 #define __GAME_MENU__
 
 #include "cocos2d.h"
-using namespace std;
+#include "ui/cocosGUI.h"
 
 USING_NS_CC;
+using namespace ui;
+using namespace std;
 
 /* 弹窗菜单 */
 class PauseMenu : public Layer
@@ -48,9 +50,24 @@ private:
 class Target : public Sprite
 {
 public:
-	int hp;	//血量
+	double hp;	//血量
+	double max_hp;	//血量
+	Sprite* selected;	//锁定标识
+	Sprite* hp_holder;	//血条槽
+	LoadingBar* hp_slider;	//血条
+
 	CREATE_FUNC(Target);
-	void setHP(int max_hp) { hp = max_hp; }
+	void setHP(int max_hp) { this->max_hp = hp = max_hp; }
+	virtual void create_slider();
+	virtual void get_hurt(int damage)
+	{
+		hp -= damage;
+		float percent = hp / max_hp * 100;
+		hp_slider->setPercent(percent);
+	}
+
+	// 获取锁定标识
+	Sprite* get_selected_sprite()const { return selected; }
 };
 
 

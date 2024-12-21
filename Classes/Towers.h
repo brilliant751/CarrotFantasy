@@ -9,6 +9,7 @@
 #include "Monsters.h"
 #include "Skyline_01.h"
 #include "tools.h"
+#include "GameMenu.h"
 
 using namespace std;
 
@@ -50,9 +51,10 @@ public:
 	Monster* get_first_monster();
 	int tower_rotate_direction();
 	void tower_rotate_1(float dt);
+	void shoot_1_2(float dt);
 	void shoot_3(float dt);
 	void biu_fan(Vec2& start, float x, float y);
-	void biu_1_2(Vec2& start, Monster* target);
+	void biu_1_2(Vec2& start, Target* cur_target);
 	const tower_info get_info() { return info; };
 
 
