@@ -14,6 +14,8 @@ int get_line(float y);				//获取格子的行
 int get_row(float x);				//获取格子的列
 int get_tag_waves(int tag);			//获取对应波次
 void update_tag(int& tag, int waves);	//更新tag
+float cal_distance(const Vec2& po1, const Vec2& po2);
+float cal_relative_angle(const Vec2& po1, const Vec2& po2);
 
 
 /************ 创建对象 ************/

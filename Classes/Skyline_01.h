@@ -5,6 +5,7 @@
 
 #include "cocos2d.h"
 #include "tools.h"
+#include "Monsters.h"
 
 USING_NS_CC;
 using namespace std;
@@ -32,8 +33,19 @@ public:
 	// 定时刷新类函数
 	void create_monster(float dt);	//创建怪物
 	void update_create(float dt);	//刷新建造按钮
-	void update_money(float dt);    //刷新金币
-
+	void update_money(float dt);    //刷新金币Monster** get_monsters(float dt);
+	int get_mons_tag() { return mons_tag; };
+	int get_waves() { return waves; };
+	int occupy_1[8][12] = {
+	-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+	0,0,0,2,2,2,2,2,2,0,0,0,
+	0,1,0,2,2,2,2,2,2,0,1,1,
+	0,1,0,0,2,0,0,2,0,0,1,0,
+	0,1,2,0,1,1,1,1,0,2,1,0,
+	0,1,1,1,1,2,2,1,1,1,1,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,
+	1,1,0,0,0,0,0,0,0,0,1,1
+	};
 private:
 	const int total_waves = 15;		//总波次
 	int c_hp = 10;			//萝卜生命值

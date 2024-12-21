@@ -533,21 +533,37 @@ bool Map_1_01::init()
                 }
             }
             else if (create2->getBoundingBox().containsPoint(pos)) {//点击建造shit
-                if (money >= 120) {
-                    auto tower = Tower::create_Tower(1, cur_line, cur_row, this);
+                //if (money >= 120) {
+                //    auto tower = Tower::create_Tower(1, cur_line, cur_row, this);
+                //    /* 2 0x yy */
+                //    //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
+                //    tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
+                //    // 更新格子状态
+                //    occupy_1[cur_line][cur_row] = 3;
+                //    //把不显示的精灵放在下面
+                //    create1->setZOrder(-10);
+                //    create2->setZOrder(-10);
+                //    grid1->setZOrder(-10);
+                //    grid2->setZOrder(-10);
+                //    //更新格子状态
+                //    map_clicked_1 = 0;
+                //    //更新钱
+                //    money -= 120;
+                //}
+                if (money >= 160) {//试一下电风扇
+                    auto tower = Tower::create_Tower(2, cur_line, cur_row, this);
+                    tower->schedule(schedule_selector(Tower::shoot_3), 2.0f);
                     /* 2 0x yy */
                     //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
                     tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
-                    // 更新格子状态
+
                     occupy_1[cur_line][cur_row] = 3;
-                    //把不显示的精灵放在下面
                     create1->setZOrder(-10);
                     create2->setZOrder(-10);
                     grid1->setZOrder(-10);
                     grid2->setZOrder(-10);
-                    //更新格子状态
                     map_clicked_1 = 0;
-                    //更新钱
+
                     money -= 120;
                 }
             }

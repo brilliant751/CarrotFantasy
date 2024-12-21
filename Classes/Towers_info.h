@@ -18,14 +18,14 @@ struct tower_info {
 	int sell[3];
 	string D[3];
 	string origin_url[3];
-	string bullet_url [3] ;
+	string bullet_url[3];
 	string atk_url[3][2];
 	string effect_url[3];
 	float scale[3];
 };
 
 const tower_info bottle{
-	{5,10,15},{10,20,30},{0,0,0},{0,0,0},{1.5 * g_l,2 * g_l,2.5 * g_l},
+	{5,10,15},{10,20,30},{0,0,0},{0,0,0},{1.5 * g_l,2.2 * g_l,2.7 * g_l},
 	{100,180,260},{80,224,432},
 	{"bottle_D1.png","bottle_D1.png","bottle_D1.png"},
 	{"bottle_origin1.png","bottle_origin2.png","bottle_origin3.png"},
@@ -47,7 +47,7 @@ const tower_info shit{
 };
 
 const tower_info fan{
-	{2,4,8},{40,80,160},{0,0,0},{0,0,0},{2 * g_l,2.5 * g_l,3 * g_l},
+	{2,4,8},{40,80,160},{0,0,0},{0,0,0},{2.1 * g_l,2.6 * g_l,3 * g_l},
 	{160,220,260},{128,304,512},
 	{"fan_D1.png","fan_D2.png","fan_D3.png"},
 	{"fan_origin1.png","fan_origin2.png","fan_origin3.png"},

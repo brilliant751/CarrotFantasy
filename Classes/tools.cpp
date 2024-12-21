@@ -103,3 +103,24 @@ Label* lb_create(Scene* parent, const string text, const string& ttf, const int 
     parent->addChild(myLabel, layer);
     return myLabel;
 };
+
+//计算距离
+float cal_distance(const Vec2& po1, const Vec2& po2) {
+    float x1 = po1.x, x2 = po2.x, y1 = po1.y, y2 = po2.y;
+    float s_2 = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+    float s = sqrt(s_2);
+    return s;
+}
+
+//计算相对0°(-180°-> 180°)的角度  po1防御塔 po2怪物 向量方向为防御塔指向怪物 
+float cal_relative_angle(const Vec2& po1, const Vec2& po2) {
+    float x1 = po1.x, x2 = po2.x, y1 = po1.y, y2 = po2.y;
+    float dx = x2 - x1, dy = y2 - y1;
+    if (dx == 0)
+        return (dy > 0 ? 90.0f : 270.0f);
+    float vec_tan = dy / dx;
+    float sim_angle = atan(vec_tan) / M_PI * 180;
+    if (sim_angle < 0)
+        sim_angle += 360;
+    return sim_angle;
+}
