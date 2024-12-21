@@ -34,8 +34,8 @@ public:
 	void create_monster(float dt);	//创建怪物
 	void update_create(float dt);	//刷新建造按钮
 	void update_money(float dt);    //刷新金币Monster** get_monsters(float dt);
-	int get_mons_tag() { return mons_tag; };
-	int get_waves() { return waves; };
+	//int get_mons_tag() { return mons_tag; };
+	//int get_waves() { return waves; };
 	int occupy_1[8][12] = {
 	-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
 	0,0,0,2,2,2,2,2,2,0,0,0,
@@ -51,12 +51,13 @@ private:
 	int c_hp = 10;			//萝卜生命值
 	bool is_pause = 0;		//是否暂停
 	int money = 5000;		//金钱
-	int waves = 1;			//波次
 	int cur_line;
 	int cur_row;
-	int tag1_1;//选中虚线TAG
-	int tag1_2;//  选择实线tag
+	int tag1_1;		//选中虚线TAG
+	int tag1_2;		//  选择实线tag
 	Vec2 cur_pos;
+	int map_clicked_1 = 0;//状态 0 之前还未点击 1 之前已经点击了一个可建造的位置 2 之前已经点击了一个防御塔
+
 
 	/* 创建怪物参数 */
 	float mons_scale = 1.5f;

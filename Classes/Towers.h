@@ -52,7 +52,8 @@ public:
 	void tower_rotate_1(float dt);
 	void shoot_3(float dt);
 	void biu_fan(Vec2& start, float x, float y);
-
+	void biu_1_2(Vec2& start, Monster* target);
+	const tower_info get_info() { return info; };
 
 
 	// ∂®“Âcreate

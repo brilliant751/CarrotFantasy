@@ -11,6 +11,8 @@ USING_NS_CC;
 using namespace ui;
 using namespace std;
 
+int LEVEL;
+
 
 /* 如果文件无法打开，打印报错信息 */
 static void problemLoading(const char* filename)
@@ -95,6 +97,11 @@ bool MapChoose::init()
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+    /* 初始化句柄 */
+    //引入图集
+    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/Barriers/Barriers.plist");
+    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/Carrot/Carrot.plist");
+    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/tower_click/tower_click.plist");
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/1-01/1-01.plist");
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("MapChoose/MapChoose.plist");
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/GameMenu/GameMenu.plist");

@@ -8,6 +8,11 @@ USING_NS_CC;
 using namespace ui;
 using namespace std;
 
+extern int waves;   //怪物波次
+extern int speed;   //游戏速度
+extern Monster* cur_mons[20];   //场上怪物
+extern int lives;   //场上怪物数量
+
 /* 创建防御塔 */
 Tower* Tower::create_Tower(int type, int line, int row, Scene* scene)
 {
@@ -26,6 +31,7 @@ Tower* Tower::create_Tower(int type, int line, int row, Scene* scene)
     return building;
 }
 
+/* 设置坐标 */
 void Tower::_setPosition(const Vec2& pos)
 {
     this->setPosition(pos);
@@ -33,18 +39,21 @@ void Tower::_setPosition(const Vec2& pos)
     this->bullet->setPosition(pos);
 }
 
+/* 设置精灵图片 */
 void Tower::_setSpriteFrame() {
     this->setSpriteFrame(this->info.origin_url[this->level]);
     this->base->setSpriteFrame(this->info.D[this->level]);
     this->bullet->setSpriteFrame(this->info.bullet_url[this->level]);
 }
 
+/* 设置放大倍率 */
 void Tower::_setScale(const float& building_scale, const float& base_scale, const float& bullet_scale) {
     this->setScale(building_scale);
     this->base->setScale(base_scale);
     this->bullet->setScale(bullet_scale);
 }
 
+/* 炮塔升级 */
 void Tower::up_level() {
     level++;
     this->setSpriteFrame(this->info.origin_url[level]);
@@ -87,29 +96,9 @@ int Tower::tower_rotate_direction() {
 }
 
 Monster* Tower::get_first_monster() {
-    auto s = Director::getInstance()->getRunningScene();
-    Map_1_01* scene = static_cast<Map_1_01*>(s);
-    /* 抓取所有怪物 */
-    Monster* mons[20];
-    int cur_tag = scene->get_mons_tag();
-    int least = 10101, co = 0;
-    update_tag(least, scene->get_waves());
-    while (cur_tag >= least)
-        mons[co++] = scene->getChildByTag<Monster*>(least++);
-
-    Vec2 tower_po = this->getPosition();//防御塔位置
-
-    for (int i = 0; i < co; i++)
-    {
-        if (!mons[i])
-            continue;
-        Vec2 mons_po = mons[i]->getPosition();
-        //算距离
-        float distance = cal_distance(tower_po, mons_po);
-        if (distance <= this->get_range())
-            return mons[i];
-    }
-
+    for (int i = 0; i < lives; ++i)
+        if (cur_mons[i])
+            return cur_mons[i];
     return NULL;
 }
 
@@ -171,8 +160,16 @@ void Tower::biu_fan(Vec2& start, float x, float y) {
     auto rotate = RotateBy::create(1.0f / 60, 30.0f);
     auto ahead = MoveBy::create(1.0f / 60, Vec2(x, y));
     //auto delay = DelayTime::create(0.2f);
-    auto call_check = CallFunc::create([biu = biu]() {
+    auto call_check = CallFunc::create([this, biu = biu]() {
+
         Vec2 cur_pos = biu->getPosition();
+        /*for (int i = 0; i < lives; i++)
+            if (cur_mons[i])
+                if (cur_mons->getBoundingBox().containsPoint(cur_pos))
+                    cur_mons->get_hurt(this->get_info().attack[this->get_level()]);
+                */
+
+
         if (cur_pos.x >= 1380 || cur_pos.x <= 240 || cur_pos.y >= 860 || cur_pos.y <= 100)
             biu->removeFromParentAndCleanup(true);
         });
@@ -182,6 +179,49 @@ void Tower::biu_fan(Vec2& start, float x, float y) {
 
     auto repeat = RepeatForever::create(spawn);
     biu->runAction(repeat);
+
+}
+
+void Tower::biu_1_2(Vec2& start, Monster* target) {
+    auto biu = Sprite::create();
+    biu->setPosition(start);
+    biu->setScale(1.5);
+    biu->setSpriteFrame(this->get_bullet_url());
+    auto scene = Director::getInstance()->getRunningScene();
+    scene->addChild(biu, 4);
+
+    auto call_check = CallFunc::create([this, biu = biu, target = target]() {
+        Vec2 po1 = biu->getPosition();
+        Vec2 po2 = target->getPosition();
+        if (!target) {
+            biu->removeFromParentAndCleanup(true);
+            return;
+        }
+        else if (target->getBoundingBox().containsPoint(po1)) {
+            //target->get_hurt(this->get_info().attack[this->get_level()]);
+
+            //动画效果todo
+
+            biu->removeFromParentAndCleanup(true);
+            return;
+        }
+        //先不管角度了
+        // 
+        //向量 子弹指向怪物
+        float x = po2.x - po1.x;//向量x方向
+        float y = po2.y - po1.y;//向量y方向
+
+        float d = cal_distance(po1, po2);//向量长度
+
+        float beilv = 1.0f / 12 * 95 / d;//现在要求1/60s走多长 先求倍率 即beilv*d=1/150*95
+        auto ahead = MoveBy::create(1.0f / 60, Vec2(x, y));
+        biu->runAction(ahead);
+        });
+
+    auto delay = DelayTime::create(1.0f / 60);;
+    auto seq = Sequence::create(call_check, delay, nullptr);
+    auto repeat = RepeatForever::create(seq);
+
 
 }
 

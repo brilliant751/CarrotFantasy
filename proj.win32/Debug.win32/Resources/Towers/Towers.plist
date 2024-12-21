@@ -60,7 +60,7 @@
                 <key>spriteSourceSize</key>
                 <string>{67,40}</string>
                 <key>textureRect</key>
-                <string>{{61,85},{67,40}}</string>
+                <string>{{90,85},{67,40}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -150,7 +150,7 @@
                 <key>spriteSourceSize</key>
                 <string>{61,37}</string>
                 <key>textureRect</key>
-                <string>{{0,85},{61,37}}</string>
+                <string>{{29,85},{61,37}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -559,6 +559,21 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
+            <key>selected.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{29,36}</string>
+                <key>spriteSourceSize</key>
+                <string>{29,36}</string>
+                <key>textureRect</key>
+                <string>{{0,85},{29,36}}</string>
+                <key>textureRotated</key>
+                <false/>
+            </dict>
             <key>sell.png</key>
             <dict>
                 <key>aliases</key>
@@ -574,7 +589,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>shit_D3.png</key>
+            <key>shit_D1.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -604,7 +619,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>shit_D1.png</key>
+            <key>shit_D3.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -810,7 +825,7 @@
                 <key>spriteSourceSize</key>
                 <string>{47,41}</string>
                 <key>textureRect</key>
-                <string>{{128,85},{47,41}}</string>
+                <string>{{157,85},{47,41}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -963,7 +978,7 @@
             <key>size</key>
             <string>{249,1928}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:55ed575f29e60f9e04f7e15119922f26:7f634b7634a3745adbee23b83c9e7ebb:b056938122b954bd6d91f27a320a56cc$</string>
+            <string>$TexturePacker:SmartUpdate:2a1ca3c52be0637f1a2c666f44167f4f:862aa7b3760b83da2087d30a8648cba5:b056938122b954bd6d91f27a320a56cc$</string>
             <key>textureFileName</key>
             <string>Towers.png</string>
         </dict>

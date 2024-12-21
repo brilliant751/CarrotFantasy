@@ -8,7 +8,7 @@
 #include "AudioEngine.h"
 #include "ui/CocosGUI.h"
 #include "ui/UIButton.h"
-#include "monsters.h"
+#include "Monsters.h"
 #include "Monster_info.h"
 #include "Towers_info.h"
 #include "Towers.h"
@@ -20,10 +20,7 @@ using namespace ui;
 using namespace std;
 
 #define GR_LEN 95       //方格边长
-#define MONS_NUM 10     //怪物数量 / 波
-#define MAX_WAVE 3
 
-int map_clicked_1 = 0;//状态 0 之前还未点击 1 之前已经点击了一个可建造的位置 2 之前已经点击了一个防御塔
 
 
 /********** 坐标线位置 **********/
@@ -32,9 +29,13 @@ constexpr int mapX[13] = { 0, 95, 190, 285, 380, 475, 570, 665, 760, 855, 950, 1
 constexpr int mapY[9] = { 0, 95, 190, 285, 380, 475, 570, 665, 760 };
 /********************************/
 
+extern int LEVEL;
 bool is_stop = false;   //标记游戏是否暂停（菜单用）
 int speed;      //游戏倍速
 clock_t timer;  //计时器
+int waves;      //游戏波次
+Monster* cur_mons[20] = { NULL };   //当前所有怪物
+int lives;      //栈顶指针，当前场上怪物数量
 
 // 记录地图位置占用情况
 //-1无响应 0可建造位置 1不可建造位置 2障碍物 3防御塔 
@@ -99,15 +100,12 @@ void Map_1_01::create_monster(float dt)
         update_waves();
         return;
     }
-    auto mon1 = Monster::create_Monster(PUPIL_1);
+    auto mon1 = Monster::create_Monster(PUPIL_1, path, top);
     mon1->setSpriteFrame(mons_url[waves]);
-    mon1->setPosition(path[0]);
-    mon1->setScale(mons_scale);
-    mon1->setAnchorPoint(Vec2(0.5, 0)); //锚点为脚部
     mon1->setTag(mons_tag++);
-    mon1->set_route(path, top);     //设置路线
     addChild(mon1, 2);
-    mon1->scheduleUpdate(); //实现按路径移动
+    //mons_tag++;
+    cur_mons[lives++] = mon1;
     timer = clock();    //记录最后一次刷怪时间
 }
 
@@ -156,38 +154,16 @@ bool Map_1_01::init()
 
     /* 初始化全局变量 */
     is_stop = false;
-    //rt = 1;
-    speed = 1;
-
-    /* 初始化句柄 */
-    //引入图集
-    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/Barriers/Barriers.plist");
-    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/Carrot/Carrot.plist");
-    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/tower_click/tower_click.plist");
+    waves = 1;      //波数为1
+    speed = 1;      //倍速为1
+    LEVEL = 1;      //关卡序号1
+    lives = 0;      //怪物数量0
 
     //设置60帧
     Director::getInstance()->setAnimationInterval(1.0f / 60.0f);
 
     /* 初始化局部变量 */
 	auto visibleSize = Director::getInstance()->getVisibleSize();   //(1620,960)
-
-        /* 创建按钮的闭包函数 */
-    //lambda表达式
-    //normal：   正常状态显示
-    //pressed：  点击状态显示
-    //pos：      坐标
-    //scale：    放大倍率
-    //layer：    放置层数
-    //auto btn_create = [&](const string& normal, const string& pressed,
-    //    const Vec2& pos, const float& scale = 1.0f, int layer = 1)
-    //    {
-    //        auto btn = Button::create();
-    //        btn->loadTextures(normal, pressed, normal);
-    //        btn->setPosition(pos);
-    //        btn->setScale(scale);
-    //        this->addChild(btn, layer);
-    //        return btn;
-    //    };
 
     /************     参数     ************/
 
@@ -386,7 +362,7 @@ bool Map_1_01::init()
         Monster* mons[20];
         int cur_tag = this->mons_tag;
         int least = 10101, co = 0;
-        update_tag(least, this->waves);
+        update_tag(least, waves);
         while (cur_tag > least)
             mons[co++] = this->getChildByTag<Monster*>(--cur_tag);
         switch (type)
