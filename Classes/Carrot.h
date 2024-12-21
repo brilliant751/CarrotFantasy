@@ -22,7 +22,7 @@ private:
 	Label* chp_num;//萝卜血条数字
 public:
 	// 创建萝卜
-	static Carrot* create_Carrot(const Vec2& carrot_pos,Scene* scene);
+	static Carrot* create_Carrot(const Vec2& carrot_pos, Scene* scene);
 	// 初始化
 	virtual bool init();
 
@@ -35,17 +35,21 @@ public:
 
 	void cut_chp();//萝卜掉血
 
-	bool carrot_die() {
-		if (c_hp == 0) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
 
 	// 定义create
 	CREATE_FUNC(Carrot);
+};
+class PopCarrot : public Layer
+{
+public:
+	// 创建一个层
+	static Layer* create_Layer();
+
+	// 初始化
+	virtual bool init();
+
+	// 定义create
+	CREATE_FUNC(PopCarrot);
 };
 #endif // !_CARROT_
 

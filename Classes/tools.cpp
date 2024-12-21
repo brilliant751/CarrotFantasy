@@ -89,6 +89,16 @@ Button* btn_create(Scene* parent, const string& normal, const string& pressed,
     parent->addChild(btn, layer);
     return btn;
 }
+Button* btn_create(Layer* parent, const string& normal, const string& pressed,
+    const Vec2& pos, const float& scale, int layer)
+{
+    auto btn = Button::create();
+    btn->loadTextures(normal, pressed, normal);
+    btn->setPosition(pos);
+    btn->setScale(scale);
+    parent->addChild(btn, layer);
+    return btn;
+}
 
 /* 创建标签 */
 // 整数类型重载

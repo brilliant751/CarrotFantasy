@@ -29,6 +29,8 @@ Label* lb_create(Scene* parent, const string text, const string& ttf, const int 
 Label* lb_create(Scene* parent, const int num, const string& ttf, const int size, const Vec2& pos, int layer = 0, int color = 0);
 // 创建按钮
 Button* btn_create(Scene* parent, const string& normal, const string& pressed, const Vec2& pos, const float& scale = 1.0f, int layer = 1);
+Button* btn_create(Layer* parent, const string& normal, const string& pressed, const Vec2& pos, const float& scale = 1.0f, int layer = 1);
+
 // 创建可攻击对象
 Target* targ_create(Scene* parent, const string& pctname, const Vec2& pos, const float& scale = 1.5f, int layer = 0);
 

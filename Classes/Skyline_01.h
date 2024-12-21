@@ -77,5 +77,16 @@ private:
 	int least = 10101;
 
 };
+class Popwin : public Layer
+{
+public:
+	// 创建一个层
+	static Layer* create_Layer();
 
+	// 初始化
+	virtual bool init();
+
+	// 定义create
+	CREATE_FUNC(Popwin);
+};
 #endif //!__SKYLINE_01__
