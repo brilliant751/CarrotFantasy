@@ -12,6 +12,7 @@
 #include "Monster_info.h"
 #include "Towers_info.h"
 #include "Towers.h"
+#include "Enemy.h"
 #include "tools.h"
 #include"Carrot.h"
 
@@ -36,6 +37,7 @@ clock_t timer;  //计时器
 int waves;      //游戏波次
 Monster* cur_mons[20] = { NULL };   //当前所有怪物
 int lives;      //栈顶指针，当前场上怪物数量
+Enemy* target;
 
 // 记录地图位置占用情况
 //-1无响应 0可建造位置 1不可建造位置 2障碍物 3防御塔 
@@ -264,6 +266,10 @@ bool Map_1_01::init()
     /* 创建 出售 精灵 */
     auto sell = sp_create(this, "sell.png", bg, map_scale, -10);
     sell->setName("sell");
+
+    /* 创建 标记 精灵 */
+    auto selected = sp_create(this, "selected.png", bg, map_scale, 4);
+    selected->setName("selected");
 
     // 刷新建造防御塔按钮
     this->schedule(schedule_selector(Map_1_01::update_create), 0.1f);
