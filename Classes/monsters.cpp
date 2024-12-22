@@ -15,6 +15,7 @@ extern int speed;
 extern bool is_stop;
 extern clock_t timer;
 extern int waves;
+extern Target* target;
 extern Monster* cur_mons[20];   //当前所有怪物
 extern int lives;      //栈顶指针，当前场上怪物数量
 
@@ -28,6 +29,10 @@ void Monster::update(float dt)
         sp->cut_chp();       
         this->unscheduleUpdate();
         auto tag = this->getTag();
+        if (target == this)
+            target = NULL;
+        this->selected->removeFromParentAndCleanup(true);
+        this->hp_holder->removeFromParentAndCleanup(true);
         this->hp_slider->removeFromParentAndCleanup(true);
         this->removeFromParentAndCleanup(true);
         cur_mons[tag % 100 - 1] = NULL;
@@ -41,28 +46,28 @@ void Monster::update(float dt)
         if (cur.x + info.speed * speed * sp_percent > route[rt].x)
             cur.x = route[rt].x;
         else
-            cur.x += info.speed * speed;
+            cur.x += info.speed * speed * sp_percent;
     }
     else if (cur.x > route[rt].x)
     {
-        if (cur.x - info.speed * speed < route[rt].x)
+        if (cur.x - info.speed * speed * sp_percent < route[rt].x)
             cur.x = route[rt].x;
         else
-            cur.x -= info.speed * speed;
+            cur.x -= info.speed * speed * sp_percent;
     }
     else if (cur.y < route[rt].y)
     {
-        if (cur.y + info.speed * speed > route[rt].y)
+        if (cur.y + info.speed * speed * sp_percent > route[rt].y)
             cur.y = route[rt].y;
         else
-            cur.y += info.speed * speed;
+            cur.y += info.speed * speed * sp_percent;
     }
     else if (cur.y > route[rt].y)
     {
-        if (cur.y - info.speed * speed < route[rt].y)
+        if (cur.y - info.speed * speed * sp_percent < route[rt].y)
             cur.y = route[rt].y;
         else
-            cur.y -= info.speed * speed;
+            cur.y -= info.speed * speed * sp_percent;
     }
     else
         ++rt;
@@ -109,7 +114,7 @@ void Monster::create_slider()
     hp_slider = LoadingBar::create();
     hp_slider->loadTexture("Monsters/contents/hp_slider.png");
     hp_slider->setScale(1.5f);
-    hp_slider->setPercent(50.0f);
+    hp_slider->setPercent(100.0f);
     hp_slider->setPosition(pos);
     hp_slider->setAnchorPoint(Vec2(0.5f, 1.0f));
     scene->addChild(hp_slider, 4);

@@ -154,7 +154,7 @@ float cal_distance(const Vec2& po1, const Vec2& po2) {
     return s;
 }
 
-//计算相对0°(-180°-> 180°)的角度  po1防御塔 po2怪物 向量方向为防御塔指向怪物 
+//计算相对0°(0°-> 360°)的角度  po1防御塔 po2怪物 向量方向为防御塔指向怪物 
 float cal_relative_angle(const Vec2& po1, const Vec2& po2) {
     float x1 = po1.x, x2 = po2.x, y1 = po1.y, y2 = po2.y;
     float dx = x2 - x1, dy = y2 - y1;

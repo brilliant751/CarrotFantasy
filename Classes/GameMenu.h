@@ -68,22 +68,8 @@ public:
 
 	virtual int get_type()const { return BARRIER_TARGET; }
 	virtual void create_slider();
-	virtual void get_hurt(int damage)
-	{
-		hp -= damage;
-		float percent = hp / max_hp * 100;
-		if (hp <= 0)
-		{
-			extern int money;
-			extern Monster* cur_mons[20];
-			money += reward;;	//奖励金钱
-			if (get_type())
-				cur_mons[this->getTag() % 100 - 1] = NULL;
-			this->removeFromParentAndCleanup(true);
-			return;
-		}
-		hp_slider->setPercent(percent);
-	}
+	virtual void get_hurt(int damage);
+
 
 	// 获取锁定标识
 	Sprite* get_selected_sprite()const { return selected; }

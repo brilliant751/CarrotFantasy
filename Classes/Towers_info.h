@@ -38,7 +38,7 @@ const tower_info bottle{
 };
 
 const tower_info shit{
-	{3,1.5,1},{5,10,15},{2,4,8},{2,2,2},{1.3 * g_l,1.6 * g_l,1.6 * g_l},
+	{3,1.5,1},{5,10,15},{0.2,0.3,0.3},{2,2,2},{1.3 * g_l,1.6 * g_l,1.6 * g_l},
 	{120,220,260},{96,272,480},
 	{"shit_D1.png","shit_D2.png","shit_D3.png"},
 	{"shit_origin1.png","shit_origin2.png","shit_origin3.png"},

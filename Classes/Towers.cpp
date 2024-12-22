@@ -116,11 +116,11 @@ Monster* Tower::get_first_monster() {//获取范围内第一个Montser
 }
 
 void Tower::tower_rotate_1(float dt) {
-    int direc = tower_rotate_direction();//逆时针为正方向
-    if (direc == 0)
-        return;
-    float de = direc - angle;
-    float change = 0;
+    //int direc = tower_rotate_direction();//逆时针为正方向
+    //if (direc == 0)
+    //    return;
+    //float de = direc - angle;
+    //float change = 0;
     //if (de > 180)
     //    change = 3;
     //else if (de <= 180 && de > 3)
@@ -131,18 +131,18 @@ void Tower::tower_rotate_1(float dt) {
     //    change = 3;
     //else if (de < -180)
     //    change = -3;
-    float change_angle = 2.0f * direc;
-    float next_ag = angle + change_angle;
-    //float next_ag = angle + change;
+    //float change_angle = 2.0f * direc;
+    //float next_ag = angle + change_angle;
+    ////float next_ag = angle + change;
 
-    if (next_ag >= 360)
-        next_ag -= 360;
-    else if (next_ag < 0)
-        next_ag += 360;
-    angle = next_ag;
+    //if (next_ag >= 360)
+    //    next_ag -= 360;
+    //else if (next_ag < 0)
+    //    next_ag += 360;
+    //angle = next_ag;
 
-    this->setRotation(next_ag);
-    this->bullet->setRotation(next_ag);
+    //this->setRotation(next_ag);
+    //this->bullet->setRotation(next_ag);
     //this->setRotation(change_angle);
     //this->bullet->setRotation(change_angle);
 }
@@ -161,8 +161,14 @@ void Tower::shoot_1_2(float dt) {
         mon = this->get_first_monster();
     if (!mon)//无怪物就不发射
         return;
-    /* 有在范围内的怪物 发射子弹 */
-    this->biu_1_2(po1, mon->getTag());
+    /* 有在范围内的怪物 发射子弹 旋转*/
+    Vec2 po2 = mon->getPosition();
+    float angle = -cal_relative_angle(po1, po2) + 180;
+    if (this->get_type() == 0) {
+        auto rotate = RotateTo::create(0.0f, angle);
+        this->runAction(rotate);//拉倒 
+    }
+    this->biu_1_2(po1, mon->getTag(),angle);
 }
 
 void Tower::shoot_3(float dt) {//风扇 0.4s 2格     5/60=1/12 格   每1/60s
@@ -218,7 +224,7 @@ void Tower::biu_fan(Vec2& start, float x, float y) {
 }
 
 // bottle shit子弹发射起始位置(Tower位置) 发射对象
-void Tower::biu_1_2(Vec2& start, const int tag) {
+void Tower::biu_1_2(Vec2& start, const int tag, float angle) {
     /* 实时变换方向的子弹发射 */
     //创建并初始化
     auto biu = Sprite::create();
@@ -226,22 +232,27 @@ void Tower::biu_1_2(Vec2& start, const int tag) {
     biu->setScale(1.5f);
     biu->setSpriteFrame(this->get_bullet_url());
     auto scene = Director::getInstance()->getRunningScene();
-    scene->addChild(biu, 4);
+    
+    auto rotate = RotateTo::create(0.0f, this->get_type() == 0 ? angle : angle - 180);
+    biu->runAction(rotate);
+    scene->addChild(biu, 2);
 
-    auto call_check = CallFunc::create([this, scene = scene, biu = biu, tag = tag]() {
+    float slow = this->get_info().slow_down[this->get_level()];//减速百分比
+    float duration = this->get_info().duration[this->get_level()];//减速持续时间
+    float attack = this->get_info().attack[this->get_level()];//伤害
+    int tower_type = this->get_type();
+    //this, scene = scene, biu = biu, tag = tag,slow=slow,duration=duration,tower_type=tower_type
+    auto call_check = CallFunc::create([=]() {
         Vec2 po1 = biu->getPosition();
-        Target* p = scene->getChildByTag<Target*>(tag);
+        auto p = scene->getChildByTag<Monster*>(tag);
         if (!p) {//发射目标在子弹到达前挂掉了or本来就不存在
             biu->removeFromParentAndCleanup(true);//子弹原地消失
             return;
         }
         else if (p->getBoundingBox().containsPoint(po1)) {//子弹到达发射目标
-            p->get_hurt(this->get_info().attack[this->get_level()]);//伤害
-            if (this->get_type() == 1 && p->get_type() == 1) {//shit 减速 怪物
-                float slow = this->get_info().slow_down[this->get_level()];//减速百分比
-                float duration = this->get_info().duration[this->get_level()];//减速持续时间
-                //p->set_sp_percent(slow,duration);
-            }
+            if (tower_type == 1 && p->get_type() == 1) //shit 减速 怪物
+                p->set_sp_percent(slow,duration);
+            p->get_hurt(attack);//伤害
             //动画效果todo
             biu->removeFromParentAndCleanup(true);//消失
             return;
@@ -255,7 +266,7 @@ void Tower::biu_1_2(Vec2& start, const int tag) {
 
         float d = cal_distance(po1, po2);//向量长度
 
-        float beilv = 1.0f / 12 * 95 / d;//现在要求1/60s走多长 先求倍率 即beilv*d=1/150*95
+        float beilv = 1.0f / 8 * 95 / d;//现在要求1/60s走多长 先求倍率 即beilv*d=1/150*95
         auto ahead = MoveBy::create(1.0f / 60, Vec2(x * beilv, y * beilv));//一帧的运动
         biu->runAction(ahead);//执行
         });

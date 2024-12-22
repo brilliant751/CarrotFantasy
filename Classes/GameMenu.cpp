@@ -10,6 +10,7 @@ using namespace ui;
 using namespace std;
 
 extern bool is_stop;    //标记游戏是否暂停
+extern Target* target;
 
 /* 创建Layer */
 Layer* PauseMenu::create_Layer()
@@ -260,4 +261,24 @@ void Target::create_slider()
     selected->setAnchorPoint(Vec2(0.5f, 0.0f));
 }
 
-
+void Target::get_hurt(int damage)
+{
+    hp -= damage;
+    float percent = hp / max_hp * 100;
+    if (hp <= 0)
+    {
+        extern int money;
+        extern Monster* cur_mons[20];
+        money += reward;;	//奖励金钱
+        if (get_type())
+            cur_mons[this->getTag() % 100 - 1] = NULL;
+        if (target == this)
+            target = NULL;
+        this->selected->removeFromParentAndCleanup(true);
+        this->hp_slider->removeFromParentAndCleanup(true);
+        this->hp_holder->removeFromParentAndCleanup(true);
+        this->removeFromParentAndCleanup(true);
+        return;
+    }
+    hp_slider->setPercent(percent);
+}
