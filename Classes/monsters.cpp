@@ -79,6 +79,7 @@ bool Monster::init()
 {
 	if (!Sprite::init())
 		return false;
+    reward = 20;
 	return true;
 }
 

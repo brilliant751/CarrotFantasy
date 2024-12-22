@@ -53,7 +53,6 @@ private:
 	const int total_waves = 15;		//总波次
 	int c_hp = 10;			//萝卜生命值
 	bool is_pause = 0;		//是否暂停
-	int money = 5000;		//金钱
 	int n_barrier = 8;		//障碍物数量
 	int cur_line;
 	int cur_row;

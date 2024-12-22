@@ -15,9 +15,6 @@ USING_NS_CC;
 #define MONS_NUM 10     //怪物数量 / 波
 #define MAX_WAVE 3
 
-
-
-
 class Monster : public Target
 {
 public:
@@ -25,6 +22,8 @@ public:
 	static Monster* create_Monster(monf type, const Vec2* path, const int& top);
 	// 初始化
 	virtual bool init();
+	// 返回类型
+	virtual int get_type()const { return MONSTER_TARGET; }
 	// 创建血条
 	void create_slider();
 	// 重写更新函数

@@ -33,6 +33,7 @@ bool is_stop = false;   //标记游戏是否暂停（菜单用）
 int speed;      //游戏倍速
 clock_t timer;  //计时器
 int waves;      //游戏波次
+int money = 5000;		//金钱
 Monster* cur_mons[20] = { NULL };   //当前所有怪物
 int lives;      //栈顶指针，当前场上怪物数量
 Target* target; //锁定对象

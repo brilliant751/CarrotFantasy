@@ -5,10 +5,16 @@
 
 #include "cocos2d.h"
 #include "ui/cocosGUI.h"
+//#include "monsters.h"
 
 USING_NS_CC;
 using namespace ui;
 using namespace std;
+
+#define BARRIER_TARGET 0
+#define MONSTER_TARGET 1
+
+class Monster;
 
 /* 弹窗菜单 */
 class PauseMenu : public Layer
@@ -52,17 +58,30 @@ class Target : public Sprite
 public:
 	double hp;	//血量
 	double max_hp;	//血量
+	int reward = 200;
 	Sprite* selected;	//锁定标识
 	Sprite* hp_holder;	//血条槽
 	LoadingBar* hp_slider;	//血条
 
 	CREATE_FUNC(Target);
 	void setHP(int max_hp) { this->max_hp = hp = max_hp; }
+
+	virtual int get_type()const { return BARRIER_TARGET; }
 	virtual void create_slider();
 	virtual void get_hurt(int damage)
 	{
 		hp -= damage;
 		float percent = hp / max_hp * 100;
+		if (hp <= 0)
+		{
+			extern int money;
+			extern Monster* cur_mons[20];
+			money += reward;;	//奖励金钱
+			if (get_type())
+				cur_mons[this->getTag() % 100 - 1] = NULL;
+			this->removeFromParentAndCleanup(true);
+			return;
+		}
 		hp_slider->setPercent(percent);
 	}
 
