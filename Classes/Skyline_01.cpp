@@ -36,6 +36,7 @@ extern bool is_open[3];
 extern string stars_url[3];
 
 bool is_stop = false;   //标记游戏是否暂停（菜单用）
+bool is_paused = false;
 int speed;      //游戏倍速
 clock_t timer;  //计时器
 int waves;      //游戏波次
@@ -176,6 +177,7 @@ bool Map_1_01::init()
 
     /* 初始化全局变量 */
     is_stop = false;
+    is_paused = false;
     waves = 1;      //波数为1
     speed = 1;      //倍速为1
     LEVEL = 1;      //关卡序号1
@@ -410,11 +412,11 @@ bool Map_1_01::init()
             case Widget::TouchEventType::BEGAN:
                 break;
             case Widget::TouchEventType::ENDED:
-                if (is_pause == false) {
+                if (is_paused == false) {
                     btn->loadTextures("Levels/btn/game_continue_normal.png",
                         "Levels/btn/game_continue_pressed.png",
                         "Levels/btn/game_continue_normal.png");
-                    is_pause = true;    //标记暂停
+                    is_paused = true;    //标记暂停
                     for (int i = 0; i < co; ++i)
                         if (mons[i] != nullptr)
                             mons[i]->unscheduleUpdate();   //怪物停止移动
@@ -432,7 +434,7 @@ bool Map_1_01::init()
                     btn->loadTextures("Levels/btn/game_pause.png",
                         "Levels/btn/game_pause.png",
                         "Levels/btn/game_pause.png");
-                    is_pause = 0;       //标记开始
+                    is_paused = 0;       //标记开始
                     for (int i = 0; i < co; ++i)
                         if (mons[i] != nullptr)
                             mons[i]->scheduleUpdate();   //怪物开始移动
@@ -463,9 +465,19 @@ bool Map_1_01::init()
         return false;
         };
     spd_click_listener->onTouchMoved = [](Touch* touch, Event* event) {};
-    spd_click_listener->onTouchEnded = [&](Touch* touch, Event* event) {      
+    spd_click_listener->onTouchEnded = [&](Touch* touch, Event* event) {
         auto sp = this->getChildByName<Sprite*>("spd_shift");
+        // 停止刷新怪物
         this->unschedule(schedule_selector(Map_1_01::create_monster));
+        // 炮塔停止攻击
+        for (int i = 1; i < 8; ++i)
+            for (int j = 0; j < 12; ++j)
+            {
+                int tag = 20000 + 100 * i + j;
+                auto tower = this->getChildByTag<Tower*>(tag);
+                if (tower)
+                    tower->unschedule(schedule_selector(Tower::shoot_1_2));
+            }
         if (speed == 1) {
             sp->setSpriteFrame("game_speed_2.png");
             speed = 2;  //设置2倍速
@@ -476,6 +488,15 @@ bool Map_1_01::init()
         }
         // 更新怪物刷新速度
         this->schedule(schedule_selector(Map_1_01::create_monster), 1.0f / speed);
+        // 更新炮塔攻击速度
+        for (int i = 1; i < 8; ++i)
+            for (int j = 0; j < 12; ++j)
+            {
+                int tag = 20000 + 100 * i + j;
+                auto tower = this->getChildByTag<Tower*>(tag);
+                if (tower)
+                    tower->schedule(schedule_selector(Tower::shoot_1_2), tower->get_info().speed[tower->get_level()] / speed);//发射
+            }
         };
     _eventDispatcher->addEventListenerWithSceneGraphPriority(spd_click_listener, this);
 
@@ -550,40 +571,40 @@ bool Map_1_01::init()
                 }
             }
             else if (create2->getBoundingBox().containsPoint(pos)) {//点击建造shit
-                //if (money >= 120) {
-                //    auto tower = Tower::create_Tower(1, cur_line, cur_row, this);
-                //    tower->schedule(schedule_selector(Tower::shoot_1_2), tower->get_info().speed[tower->get_level()] / speed);
-                //    /* 2 0x yy */
-                //    //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
-                //    tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
-                //    // 更新格子状态
-                //    occupy_1[cur_line][cur_row] = 3;
-                //    //把不显示的精灵放在下面
-                //    create1->setZOrder(-10);
-                //    create2->setZOrder(-10);
-                //    grid1->setZOrder(-10);
-                //    grid2->setZOrder(-10);
-                //    //更新格子状态
-                //    map_clicked_1 = 0;
-                //    //更新钱
-                //    money -= 120;
-                //}
-                if (money >= 160) {//试一下电风扇
-                    auto tower = Tower::create_Tower(2, cur_line, cur_row, this);
-                    tower->schedule(schedule_selector(Tower::shoot_3), tower->get_info().speed[tower->get_level()] / speed);
+                if (money >= 120) {
+                    auto tower = Tower::create_Tower(1, cur_line, cur_row, this);
+                    tower->schedule(schedule_selector(Tower::shoot_1_2), tower->get_info().speed[tower->get_level()] / speed);
                     /* 2 0x yy */
                     //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
                     tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
-
+                    // 更新格子状态
                     occupy_1[cur_line][cur_row] = 3;
+                    //把不显示的精灵放在下面
                     create1->setZOrder(-10);
                     create2->setZOrder(-10);
                     grid1->setZOrder(-10);
                     grid2->setZOrder(-10);
+                    //更新格子状态
                     map_clicked_1 = 0;
-
+                    //更新钱
                     money -= 120;
                 }
+                //if (money >= 160) {//试一下电风扇
+                //    auto tower = Tower::create_Tower(2, cur_line, cur_row, this);
+                //    tower->schedule(schedule_selector(Tower::shoot_3), tower->get_info().speed[tower->get_level()] / speed);
+                //    /* 2 0x yy */
+                //    //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
+                //    tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
+
+                //    occupy_1[cur_line][cur_row] = 3;
+                //    create1->setZOrder(-10);
+                //    create2->setZOrder(-10);
+                //    grid1->setZOrder(-10);
+                //    grid2->setZOrder(-10);
+                //    map_clicked_1 = 0;
+
+                //    money -= 120;
+                //}
             }
             else {//点其他任何位置 即取消选中    
                 //把不显示的精灵放在下面

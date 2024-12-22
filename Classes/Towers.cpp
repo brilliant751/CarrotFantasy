@@ -12,7 +12,9 @@ extern int waves;   //怪物波次
 extern int speed;   //游戏速度
 extern Monster* cur_mons[20];   //场上怪物
 extern int lives;   //场上怪物数量
-extern Target* target;
+extern Target* target;      //锁定目标
+extern bool is_paused;      //标记暂停
+extern bool is_stop;        //标记停止
 
 /* 创建防御塔 */
 Tower* Tower::create_Tower(int type, int line, int row, Scene* scene)
@@ -148,6 +150,8 @@ void Tower::tower_rotate_1(float dt) {
 }
 
 void Tower::shoot_1_2(float dt) {
+    if (is_paused || is_stop)
+        return;
     Vec2 po1 = this->getPosition();//子弹起始坐标
     Target* mon = NULL;//Tower此时攻击对象
     if (target) {//先判断有没有选中对象以及是否在范围内
@@ -172,14 +176,14 @@ void Tower::shoot_1_2(float dt) {
 }
 
 void Tower::shoot_3(float dt) {//风扇 0.4s 2格     5/60=1/12 格   每1/60s
+    if (is_paused || is_stop)
+        return;
     Vec2 po1 = this->getPosition();//子弹起始坐标
     Target* mon = NULL;//Tower此时攻击对象
     if (target) {//先判断有没有选中对象以及是否在范围内
         float d = cal_distance(po1, target->getPosition());//计算距离
         if (d <= this->info.radius[this->get_level()])//在范围内
             mon = target;
-        else //寻找在范围内的第一个怪物
-            mon = this->get_first_monster();
     }
     else //寻找在范围内的第一个怪物
         mon = this->get_first_monster();
@@ -209,10 +213,10 @@ void Tower::biu_fan(Vec2& start, float x, float y) {
     auto rotate = RotateBy::create(1.0f / 60, 30.0f);
     auto ahead = MoveBy::create(1.0f / 60, Vec2(x, y));
     //auto delay = DelayTime::create(0.2f);
-    for (int i = 0; i < 2; i++)
-        for (int j = 0; j < 10; j++)
-            attacked[i][j] = 0; 
-    auto call_check = CallFunc::create([this,scene=scene, biu = biu]() {
+    bool attacked[2][10] = { 0 };
+    auto call_check = CallFunc::create([this,scene=scene, biu = biu, attacked= attacked]() {
+        if (is_paused || is_stop)
+            return;
         Vec2 cur_pos = biu->getPosition();
         for (int i = 0; i < lives; i++)
             if (cur_mons[i] && cur_mons[i]->getBoundingBox().containsPoint(cur_pos) && !attacked[0][i]) {
@@ -234,6 +238,7 @@ void Tower::biu_fan(Vec2& start, float x, float y) {
     auto spawn = Spawn::create(rotate, ahead, call_check, nullptr);
 
     auto repeat = RepeatForever::create(spawn);
+    
     biu->runAction(repeat);
 }
 
@@ -257,6 +262,8 @@ void Tower::biu_1_2(Vec2& start, const int tag, float angle) {
     int tower_type = this->get_type();
     //this, scene = scene, biu = biu, tag = tag,slow=slow,duration=duration,tower_type=tower_type
     auto call_check = CallFunc::create([=]() {
+        if (is_paused || is_stop)
+            return;
         Vec2 po1 = biu->getPosition();
         auto p = scene->getChildByTag<Monster*>(tag);
         if (!p) {//发射目标在子弹到达前挂掉了or本来就不存在
