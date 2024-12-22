@@ -39,7 +39,7 @@ private:
 	Sprite* sp_stars;
 	Sprite* sp_all_clear;
 	Button* btn_start;
-
+	void update_state(float dt);
 	int level = 0;
 	
 	string all_clear_url = "all_clear.png";

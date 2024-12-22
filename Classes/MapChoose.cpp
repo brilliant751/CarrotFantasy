@@ -14,12 +14,27 @@ using namespace std;
 int LEVEL;
 each_map all_map[3] = {
     {"level_1.png","total_15_waves.png","towers_1.png",0,0},
-    {"level_2.png","total_20_waves.png","towers_2.png",1,0},
-    {"level_3.png","total_20_waves.png","towers_3.png",2,0}
+    {"level_2.png","total_20_waves.png","towers_2.png",0,0},
+    {"level_3.png","total_20_waves.png","towers_3.png",0,0}
 };
-bool is_open[3] = { 1,1,0 };
+bool is_open[3] = { 1,0,0 };
 string stars_url[3] = { "stars_1.png","stars_2.png" ,"stars_3.png" };//stars对应stars_url[stars-1]
 
+void MapChoose::update_state(float dt) {
+    auto sp_stars = this->getChildByName<Sprite*>("sp_stars");
+    auto sp_all_clear = this->getChildByName<Sprite*>("sp_all_clear");
+    int stars = all_map[level].stars;
+    if (stars) {
+        sp_stars->setSpriteFrame(stars_url[stars - 1]);
+        sp_stars->setZOrder(1);
+    }
+    else
+        sp_stars->setZOrder(-10);
+    if (all_map[level].all_clear)
+        sp_all_clear->setZOrder(1);
+    else 
+        sp_all_clear->setZOrder(-10);
+}
 
 /* 如果文件无法打开，打印报错信息 */
 static void problemLoading(const char* filename)
@@ -44,14 +59,14 @@ void MapChoose::left_onButtonClicked(Ref* sender) {
             sp_stars->setZOrder(1);
         }
         else
-            sp_stars->setZOrder(-1);
+            sp_stars->setZOrder(-20);
         if (all_map[level].all_clear == 1)
             sp_all_clear->setZOrder(1);
         else
-            sp_all_clear->setZOrder(-10);
+            sp_all_clear->setZOrder(-20);
         
         if (is_open[level]) {
-            map_lock->setZOrder(-10);            
+            map_lock->setZOrder(-20);            
             btn_start->setEnabled(true);   
         }
         else {
@@ -72,14 +87,14 @@ void MapChoose::right_onButtonClicked(Ref* sender) {
             sp_stars->setZOrder(1);
         }
         else
-            sp_stars->setZOrder(-10);
+            sp_stars->setZOrder(-20);
         if (all_map[level].all_clear == 1)
             sp_all_clear->setZOrder(1);
         else
-            sp_all_clear->setZOrder(-10);
+            sp_all_clear->setZOrder(-20);
 
         if (is_open[level]) {
-            map_lock->setZOrder(-10);          
+            map_lock->setZOrder(-20);          
             btn_start->setEnabled(true);
         }
         else {
@@ -105,6 +120,7 @@ void MapChoose::start_onButtonClicked(Ref* sender) {
     if (level == 0) {
         auto next = Map_1_01::create_Scene();
        Director::getInstance()->pushScene(next);
+
     } 
     else if (level == 1) {
         auto next = Map_1_02::create_Scene();
@@ -297,6 +313,7 @@ bool MapChoose::init()
         };
     _eventDispatcher->addEventListenerWithSceneGraphPriority(map_click_listener, this);
     
+    this->schedule(schedule_selector(MapChoose::update_state), 0.2f);
    
 
 

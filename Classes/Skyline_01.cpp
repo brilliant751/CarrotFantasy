@@ -337,16 +337,16 @@ bool Map_1_01::init()
     _1brr4->setHP(1000);
     auto _2brr1 = targ_create(this, "Barrier_Two_1.png", brr2_1, map_scale, 0);
     _2brr1->setTag(300005);
-    _2brr1->setHP(1000);
+    _2brr1->setHP(2000);
     auto _4brr1 = targ_create(this, "Barrier_Four_1.png", brr4_1, map_scale, 0);
     _4brr1->setTag(300006);
-    _4brr1->setHP(1000);
+    _4brr1->setHP(4000);
     auto _4brr2 = targ_create(this, "Barrier_Four_3.png", brr4_2, map_scale, 0);
     _4brr2->setTag(300007);
-    _4brr2->setHP(1000);
+    _4brr2->setHP(4000);
     auto _4brr3 = targ_create(this, "Barrier_Four_3.png", brr4_3, map_scale, 0);
     _4brr3->setTag(300008);
-    _1brr1->setHP(1000);
+    _4brr3->setHP(4000);
 
     /*********** 创建按钮 **********/
     /* 创建菜单 */
@@ -839,7 +839,8 @@ bool Popwin::init() {
         {
         case ui::Widget::TouchEventType::BEGAN:
             break;
-        case ui::Widget::TouchEventType::ENDED:
+        case ui::Widget::TouchEventType::ENDED: {
+
             //查看all_clear情况
             if (!all_map[LEVEL-1].all_clear) 
                 for (int i = 0; i < 8; i++) {
@@ -850,21 +851,14 @@ bool Popwin::init() {
                 }
             //查看星情况+下一张图open
             is_open[LEVEL] = 1;
-            //int stars = main_scene->getChildByName<Carrot*>("carrot")->getStars();
-            //if (stars > all_map[LEVEL - 1].stars) 
-            //    all_map[LEVEL - 1].stars = stars; 
-            //          
+            int stars = main_scene->getChildByName<Carrot*>("carrot")->getStars();
+            if (stars > all_map[LEVEL - 1].stars) 
+                all_map[LEVEL - 1].stars = stars; 
+                      
             Director::getInstance()->popScene();
 
-            //auto scene = Director::getInstance()->getRunningScene();     //mapchoose
-            //auto sp_stars = scene->getChildByName<Sprite*>("sp_stars");
-            //auto sp_all_clear = scene->getChildByName<Sprite*>("sp_all_clear");
-            //sp_stars->setSpriteFrame(stars_url[stars - 1]);
-            //sp_stars->setZOrder(1);
-            //if(all_map[LEVEL - 1].all_clear)
-            //    sp_all_clear->setZOrder(1);
-
             break;
+        }
         default:
             break;
         }
