@@ -1,4 +1,4 @@
-
+#pragma execution_character_set("utf-8")
 #include "Carrot.h"
 #include "ui/UIButton.h"
 #include "AudioEngine.h"
@@ -12,6 +12,7 @@ using namespace ui;
 using namespace std;
 
 extern bool is_stop;
+extern int waves;
 //创建弹窗层
 Layer* PopCarrot::create_Layer()
 {
@@ -29,11 +30,17 @@ bool PopCarrot::init() {
     constexpr float btn_scale = 1.0f;       //按钮放大倍率
     const Vec2 again_btn(663, 370);          //again按钮
     const Vec2 chose_btn(903, 370);        //chose按钮
+    const Vec2 po_map(720, 440);  //当前关卡
+    const Vec2 po_lb_total_waves(880, 500);  //总波次
+    const Vec2 po_waves_left(770, 500);  //总击败波次
+    const Vec2 po_waves_right(810, 500);  //总击败波次
+
     /*********************************/
 
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/GameMenu/GameMenu.plist");
     auto main_scene = Director::getInstance()->getRunningScene();
     auto sp = Director::getInstance()->getRunningScene()->getChildByName<Carrot*>("carrot");
+
 
     /*********** 创建按钮 **********/
       /* 创建 再试一次 按钮 */
@@ -74,6 +81,21 @@ bool PopCarrot::init() {
         });
 
 
+
+    /* 创建waves十位 */
+    auto waves_left = lb_create(main_scene, waves / 10, "fonts/方正粗黑宋简体.ttf", 32, po_waves_left, 13, 1);
+
+
+    /* 创建waves个位 */
+    auto waves_right = lb_create(main_scene, waves % 10, "fonts/方正粗黑宋简体.ttf", 32, po_waves_right, 13, 1);
+
+
+    /* 创建关卡 */
+    auto map = lb_create(main_scene, "01", "fonts/方正粗黑宋简体.ttf", 32, po_map, 13);
+
+
+    /* 创建total_waves */
+    auto total_waves = lb_create(main_scene, "15", "fonts/方正粗黑宋简体.ttf", 34, po_lb_total_waves, 13);
 
     /* 创建 失败弹窗 */
     auto lose = sp_create(main_scene, "lose_bg.png", Pop, 2.0f, 11);

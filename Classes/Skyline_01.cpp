@@ -4,6 +4,7 @@
 #include "StartScene.h"
 #include "EnterScene.h"
 #include "Skyline_01.h"
+#include "Skyline_02.h"
 #include "GameMenu.h"
 #include "AudioEngine.h"
 #include "ui/CocosGUI.h"
@@ -795,8 +796,12 @@ bool Popwin::init() {
     /*********************************/
     const Vec2 Pop(visibleSize / 2);     //失败/成功弹窗位置
     constexpr float btn_scale = 1.0f;       //按钮放大倍率
-    const Vec2 again_btn(663, 370);          //again按钮
+    const Vec2 resume_btn(663, 370);          //resume按钮
     const Vec2 chose_btn(903, 370);        //chose按钮
+    const Vec2 po_lb_total_waves(880, 490);  //总波次
+    const Vec2 po_waves(790, 490);  //总击败波次
+    const Vec2 po_map(720, 430);  //当前关卡
+    const Vec2 star(795, 620);     //星级位置
     /*********************************/
 
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/GameMenu/GameMenu.plist");
@@ -804,24 +809,19 @@ bool Popwin::init() {
     auto sp = Director::getInstance()->getRunningScene()->getChildByName<Carrot*>("carrot");
 
     /*********** 创建按钮 **********/
-      /* 创建 再试一次 按钮 */
-    auto again = btn_create(this,
-        "Levels/GameMenu/again_normal.png",
-        "Levels/GameMenu/again_pressed.png",
-        again_btn, btn_scale, 12);
-    again->addTouchEventListener([this](Ref* sender, Widget::TouchEventType type) {
+      /* 创建 继续游戏 按钮 */
+    auto resume = btn_create(this,
+        "Levels/GameMenu/resume_normal.png",
+        "Levels/GameMenu/resume_selected.png",
+        resume_btn, btn_scale, 12);
+    resume->addTouchEventListener([this](Ref* sender, Widget::TouchEventType type) {
         auto scene = Director::getInstance()->getRunningScene();
         switch (type)
         {
         case ui::Widget::TouchEventType::BEGAN:
             break;
         case ui::Widget::TouchEventType::ENDED:
-            /* 暂停主场景的活动 */
-            // 此处会循环暂停所有child结点的监听事件
-            scene->getEventDispatcher()->resumeEventListenersForTarget(scene, true);
-            // 暂停所有刷新和动作
-            scene->resumeSchedulerAndActions();
-            Director::getInstance()->replaceScene(Map_1_01::create());
+            Director::getInstance()->replaceScene(Map_1_02::create());
             break;
         default:
             break;
@@ -870,7 +870,34 @@ bool Popwin::init() {
         }
         });
 
+    /* 创建total_waves */
+    auto total_waves = lb_create(main_scene, "15", "fonts/方正粗黑宋简体.ttf", 34, po_lb_total_waves, 13);
 
+    /* 创建waves */
+    auto waves = lb_create(main_scene, "1  5", "fonts/方正粗黑宋简体.ttf", 34, po_waves, 13, 1);
+
+    /* 创建关卡 */
+    auto map = lb_create(main_scene, "01", "fonts/方正粗黑宋简体.ttf", 34, po_map, 13);
+
+    /* 创建 星级 */
+    auto stars_1 = sp_create(main_scene, "stars_1.png", star, 1.7f, -3);
+    stars_1->setName("stars_1");
+    auto stars_2 = sp_create(main_scene, "stars_2.png", star, 1.7f, -3);
+    stars_2->setName("stars_2");
+    auto stars_3 = sp_create(main_scene, "stars_3.png", star, 1.7f, -3);
+    stars_3->setName("stars_3");
+
+    switch (sp->getStars()) {
+    case 1:
+        stars_1->setZOrder(12);
+        break;
+    case 2:
+        stars_2->setZOrder(12);
+        break;
+    case 3:
+        stars_3->setZOrder(12);
+        break;
+    }
 
     /* 创建 成功弹窗 */
     auto win = sp_create(main_scene, "win_bg.png", Pop, 2.0f, 11);

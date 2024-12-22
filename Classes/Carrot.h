@@ -35,6 +35,17 @@ public:
 
 	void cut_chp();//ÂÜ²·µôÑª
 
+	int getStars() {
+		if (c_hp > 0 && c_hp < 5) {
+			return 1;
+		}
+		else if (c_hp == 10) {
+			return 3;
+		}
+		else {
+			return 2;
+		}
+	}
 
 	// ¶¨Òåcreate
 	CREATE_FUNC(Carrot);
