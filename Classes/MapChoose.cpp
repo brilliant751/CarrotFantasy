@@ -12,6 +12,12 @@ using namespace ui;
 using namespace std;
 
 int LEVEL;
+each_map all_map[3] = {
+    {"level_1.png","total_15_waves.png","towers_1.png",0,0},
+    {"level_2.png","total_20_waves.png","towers_2.png",1,0},
+    {"level_3.png","total_20_waves.png","towers_3.png",2,0}
+};
+bool is_open[3] = { 1,1,0 };
 
 
 /* 如果文件无法打开，打印报错信息 */
@@ -32,10 +38,20 @@ void MapChoose::left_onButtonClicked(Ref* sender) {
         cur_map->setSpriteFrame(all_map[--level].map_url);
         towers->setSpriteFrame(all_map[level].towers_url);
         waves->setSpriteFrame(all_map[level].waves_url);
+        if (all_map[level].stars > 0) {
+            sp_stars->setSpriteFrame(stars_url[all_map[level].stars - 1]);
+            sp_stars->setZOrder(1);
+        }
+        else
+            sp_stars->setZOrder(-1);
+        if (all_map[level].all_clear == 1)
+            sp_all_clear->setZOrder(1);
+        else
+            sp_all_clear->setZOrder(-10);
+        
         if (is_open[level]) {
-            map_lock->setZOrder(-1);            
+            map_lock->setZOrder(-10);            
             btn_start->setEnabled(true);   
-
         }
         else {
             map_lock->setZOrder(1);            
@@ -50,8 +66,19 @@ void MapChoose::right_onButtonClicked(Ref* sender) {
         cur_map->setSpriteFrame(all_map[++level].map_url);    
         towers->setSpriteFrame(all_map[level].towers_url);
         waves->setSpriteFrame(all_map[level].waves_url);
+        if (all_map[level].stars > 0) {
+            sp_stars->setSpriteFrame(stars_url[all_map[level].stars - 1]);
+            sp_stars->setZOrder(1);
+        }
+        else
+            sp_stars->setZOrder(-10);
+        if (all_map[level].all_clear == 1)
+            sp_all_clear->setZOrder(1);
+        else
+            sp_all_clear->setZOrder(-10);
+
         if (is_open[level]) {
-            map_lock->setZOrder(-1);          
+            map_lock->setZOrder(-10);          
             btn_start->setEnabled(true);
         }
         else {
@@ -195,8 +222,9 @@ bool MapChoose::init()
     const Vec2 po_btn_start(810, 150);     //开始按钮位置
     const Vec2 po_btn_left(300, 480);       //左移按钮位置
     const Vec2 po_btn_right(1320, 480);     //右移按钮位置
-    const Vec2 po_lock(990, 380);
-
+    const Vec2 po_lock(990, 380);           //锁位置
+    const Vec2 po_stars(1000, 350);
+    const Vec2 po_all_clear(810, 350);
 
     /**************************************/
 
@@ -212,7 +240,12 @@ bool MapChoose::init()
     cur_map->setName("map");
     towers = sp_create(all_map[level].towers_url, po_towers, map_scale, 0);
     waves = sp_create(all_map[level].waves_url, po_waves, map_scale, 0);
-    map_lock = sp_create("map_lock.png", po_lock, map_scale, -1);
+    map_lock = sp_create("map_lock.png", po_lock, map_scale, -10);
+    sp_stars = sp_create("stars_1.png", po_stars, map_scale, -10);
+    sp_stars->setName("sp_stars");
+    sp_all_clear = sp_create("all_clear.png", po_all_clear, map_scale, -10);
+    sp_all_clear->setName("sp_all_clear");
+
 
     /* 创建按钮 */
     //返回

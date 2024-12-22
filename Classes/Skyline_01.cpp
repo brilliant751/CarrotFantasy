@@ -15,6 +15,7 @@
 #include "Enemy.h"
 #include "tools.h"
 #include "Carrot.h"
+#include "MapChoose.h"
 
 USING_NS_CC;
 using namespace ui;
@@ -29,6 +30,9 @@ constexpr int mapY[9] = { 0, 95, 190, 285, 380, 475, 570, 665, 760 };
 /********************************/
 
 extern int LEVEL;
+extern each_map all_map[3];
+extern bool is_open[3];
+
 bool is_stop = false;   //标记游戏是否暂停（菜单用）
 int speed;      //游戏倍速
 clock_t timer;  //计时器
@@ -40,16 +44,16 @@ Target* target; //锁定对象
 
 // 记录地图位置占用情况
 //-1无响应 0可建造位置 1不可建造位置 2障碍物 3防御塔 
-int occupy_1[8][12] = {
-    -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-    0,0,0,2,2,2,2,2,2,0,0,0,
-    0,1,0,2,2,2,2,2,2,0,1,1,
-    0,1,0,0,2,0,0,2,0,0,1,0,
-    0,1,2,0,1,1,1,1,0,2,1,0,
-    0,1,1,1,1,2,2,1,1,1,1,0,
-    0,0,0,0,0,0,0,0,0,0,0,0,
-    1,1,0,0,0,0,0,0,0,0,1,1
-};
+//int occupy_1[8][12] = {
+//    -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+//    0,0,0,2,2,2,2,2,2,0,0,0,
+//    0,1,0,2,2,2,2,2,2,0,1,1,
+//    0,1,0,0,2,0,0,2,0,0,1,0,
+//    0,1,2,0,1,1,1,1,0,2,1,0,
+//    0,1,1,1,1,2,2,1,1,1,1,0,
+//    0,0,0,0,0,0,0,0,0,0,0,0,
+//    1,1,0,0,0,0,0,0,0,0,1,1
+//};
 
 // 怪物行走路线
 const Vec2 path[] = {
@@ -248,16 +252,16 @@ bool Map_1_01::init()
     for (int i = 1; i < 8; i++)
         for (int j = 0; j < 12; j++) {
             Vec2 po = get_po(i, j);
-            if (occupy_1[i][j] == 0) {
+            if (occupy_1[i][j] == 1) {
+                auto sp = sp_create(this, "cant_build.png", po, map_scale, 2);
+                sp->setTag(192 + i * 12 + j);
+                sp->setOpacity(0);
+            }
+            else {
                 auto sp1 = sp_create(this, "start_sprite.png", po, map_scale, -10);
                 sp1->setTag(i * 12 + j);
                 auto sp2 = sp_create(this, "grid.png", po, map_scale, -10);
                 sp2->setTag(96 + i * 12 + j);
-            }
-            else if (occupy_1[i][j] == 1) {
-                auto sp = sp_create(this, "cant_build.png", po, map_scale, 2);
-                sp->setTag(192 + i * 12 + j);
-                sp->setOpacity(0);
             }
         }
 
@@ -500,7 +504,7 @@ bool Map_1_01::init()
         auto grid1 = this->getChildByTag<Sprite*>(tag1_1);
         auto grid2 = this->getChildByTag<Sprite*>(tag1_2);
         // 获取当前格的状态
-        int state = occupy_1[cur_line][cur_row];
+        int& state = occupy_1[cur_line][cur_row];
         // 调整按键位置，防止超出地图
         int up_po = cur_line < 4 ? -1 : 1;
         int right = 0;
@@ -648,14 +652,20 @@ bool Map_1_01::init()
 
             }
             else if (state == 2) {//现在点击了一个障碍物
-                for (int i = 1; i <= this->get_n_barrier(); i++) {
+                int i;
+                for (i = 1; i <= this->get_n_barrier(); i++) {
                     auto temp = this->getChildByTag<Target*>(300000 + i);
+                    if (temp == NULL)
+                    {
+                        //state = 0;
+                        continue;
+                    }
                     if (temp->getBoundingBox().containsPoint(pos)) {//寻找点击的障碍物
                         if (target == temp) {//之前选中了此障碍物
                             target = NULL;//取消选中
                             temp->get_selected_sprite()->setZOrder(-10);//把精灵放下去
                         }
-                        else{
+                        else {
                             if (target)//之前选中了其他目标 
                                 target->get_selected_sprite()->setZOrder(-10);//把之前的精灵放下去
                             target = temp; //选中
@@ -664,8 +674,10 @@ bool Map_1_01::init()
                         break;
                     }
                 }
+                if (i == this->get_n_barrier() + 1)
+                    state = 0;
             }
-            else if (state == 0) {//现在点击了一个可以建造炮塔的位置
+            if (state == 0) {//现在点击了一个可以建造炮塔的位置
                 grid1 = this->getChildByTag<Sprite*>(tag1_1);//获取虚线框
                 grid2 = this->getChildByTag<Sprite*>(tag1_2);//获取实线框
                 //更新精灵位置及ZOrder
@@ -827,6 +839,19 @@ bool Popwin::init() {
         case ui::Widget::TouchEventType::BEGAN:
             break;
         case ui::Widget::TouchEventType::ENDED:
+            //查看all_clear情况
+     
+            if (!all_map[LEVEL].all_clear) 
+                for (int i = 0; i < 8; i++) {
+                    if (main_scene->getChildByTag(300000 + i))
+                        break;
+                    else if (!main_scene->getChildByTag(300000 + i) && i == 7)
+                        all_map[LEVEL].all_clear = 1;
+                }
+            //查看星情况+下一张图open
+            
+               
+
             Director::getInstance()->popScene();
             break;
         default:
