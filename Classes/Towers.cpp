@@ -20,6 +20,7 @@ Tower* Tower::create_Tower(int type, int line, int row, Scene* scene)
     Vec2 pos = get_po(line, row);
     auto building = Tower::create();
     building->setType(towers[type]);
+    building->type = type;
     building->base = Sprite::create();
     building->bullet = Sprite::create();
     building->_setScale(1.5, 1.5, 1.5);
@@ -57,6 +58,14 @@ void Tower::_setScale(const float& building_scale, const float& base_scale, cons
 /* 炮塔升级 */
 void Tower::up_level() {
     level++;
+    if (this->type == 2) {
+        this->unschedule(schedule_selector(Tower::shoot_3));
+        this->schedule(schedule_selector(Tower::shoot_3), this->info.speed[level]);
+    }
+    else {
+        this->unschedule(schedule_selector(Tower::shoot_1_2));
+        this->schedule(schedule_selector(Tower::shoot_1_2), this->info.speed[level]);
+    }
     this->setSpriteFrame(this->info.origin_url[level]);
     this->base->setSpriteFrame(this->info.D[level]);
     this->bullet->setSpriteFrame(this->info.bullet_url[level]);
@@ -196,9 +205,9 @@ void Tower::biu_fan(Vec2& start, float x, float y) {
         Vec2 cur_pos = biu->getPosition();
         for (int i = 0; i < lives; i++)
             if (cur_mons[i] && cur_mons[i]->getBoundingBox().containsPoint(cur_pos))
-                cur_mons[i]->get_hurt(this->get_info().attack[this->get_level()]);               
-                if (cur_pos.x >= 1380 || cur_pos.x <= 240 || cur_pos.y >= 860 || cur_pos.y <= 100)
-                    biu->removeFromParentAndCleanup(true);
+                cur_mons[i]->get_hurt(this->get_info().attack[this->get_level()]);
+        if (cur_pos.x >= 1380 || cur_pos.x <= 240 || cur_pos.y >= 860 || cur_pos.y <= 100)
+            biu->removeFromParentAndCleanup(true);
         });
     //auto seq = Sequence::create(delay, call_check, nullptr);
     //auto spawn = Spawn::create(rotate, ahead, seq, nullptr);
@@ -209,7 +218,7 @@ void Tower::biu_fan(Vec2& start, float x, float y) {
 }
 
 // bottle shit子弹发射起始位置(Tower位置) 发射对象
-void Tower::biu_1_2(Vec2 & start, Target * cur_target) {
+void Tower::biu_1_2(Vec2& start, Target* cur_target) {
     /* 实时变换方向的子弹发射 */
     //创建并初始化
     auto biu = Sprite::create();

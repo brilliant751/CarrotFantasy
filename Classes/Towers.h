@@ -25,6 +25,7 @@ public:
 
 	// ÉèÖÃ·ÀÓùËşÀàĞÍ
 	void setType(tower_info type) { info = type; }
+	int get_type() { return type; };
 
 	void up_level();
 
@@ -66,6 +67,7 @@ private:
 	Sprite* bullet;
 	int level = 0;
 	float angle = 0;
+	int type;
 };
 
 

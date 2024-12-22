@@ -596,7 +596,7 @@ bool Map_1_01::init()
             if (create1->getBoundingBox().containsPoint(pos)) {//点击建造bottle
                 if (money >= 100) {
                     auto tower = Tower::create_Tower(0, cur_line, cur_row, this);
-                    tower->schedule(schedule_selector(Tower::shoot_1_2), 1.0f);//发射
+                    tower->schedule(schedule_selector(Tower::shoot_1_2), tower->get_info().speed[tower->get_level()]);//发射
                     /* 2 0x yy */
                     //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
                     tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
@@ -616,7 +616,7 @@ bool Map_1_01::init()
             else if (create2->getBoundingBox().containsPoint(pos)) {//点击建造shit
                 //if (money >= 120) {
                 //    auto tower = Tower::create_Tower(1, cur_line, cur_row, this);
-                //    tower->schedule(schedule_selector(Tower::shoot_1_2), 2.0f);//发射
+                //    tower->schedule(schedule_selector(Tower::shoot_1_2), tower->get_info().speed[tower->get_level()]);
                 //    /* 2 0x yy */
                 //    //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
                 //    tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
@@ -634,7 +634,7 @@ bool Map_1_01::init()
                 //}
                 if (money >= 160) {//试一下电风扇
                     auto tower = Tower::create_Tower(2, cur_line, cur_row, this);
-                    tower->schedule(schedule_selector(Tower::shoot_3), 2.0f);
+                    tower->schedule(schedule_selector(Tower::shoot_3), tower->get_info().speed[tower->get_level()]);
                     /* 2 0x yy */
                     //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
                     tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
