@@ -160,9 +160,14 @@ float cal_relative_angle(const Vec2& po1, const Vec2& po2) {
     float dx = x2 - x1, dy = y2 - y1;
     if (dx == 0)
         return (dy > 0 ? 90.0f : 270.0f);
-    float vec_tan = dy / dx;
+    float vec_tan = fabs(dy / dx);
     float sim_angle = atan(vec_tan) / M_PI * 180;
-    if (sim_angle < 0)
-        sim_angle += 360;
-    return sim_angle;
+    if (dy > 0 && dx > 0)
+        return sim_angle;
+    else if (dy >= 0 && dx < 0)
+        return 180 - sim_angle;
+    else if (dy < 0 && dx < 0)
+        return 180 + sim_angle;
+    else 
+        return 360 - sim_angle;
 }

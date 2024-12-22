@@ -16,10 +16,8 @@ struct each_map {
 	string waves_url;	 //waves在图集中的名字
 	string towers_url;	     //可用防御塔在图集中的名字
 	int stars = 0;		 //通关获得的星数
-	bool all_clear = 0;	 //是否all clear
+	bool all_clear = 0;  //
 };
-
-
 
 class MapChoose : public Scene
 {
@@ -38,15 +36,13 @@ private:
 	Sprite* towers;
 	Sprite* waves;
 	Sprite* map_lock;
+	Sprite* sp_stars;
+	Sprite* sp_all_clear;
 	Button* btn_start;
+
 	int level = 0;
-	each_map all_map[3] = {
-	{"level_1.png","total_15_waves.png","towers_1.png"},
-	{"level_2.png","total_20_waves.png","towers_2.png"},
-	{"level_3.png","total_20_waves.png","towers_3.png"}
-	};
+	
 	string stars_url[3] = { "stars_1.png","stars_2.png" ,"stars_3.png" };//stars对应stars_url[stars-1]
-	bool is_open[3] = { 1,1,0 };
 	string all_clear_url = "all_clear.png";
 };
 

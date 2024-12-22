@@ -163,7 +163,7 @@ void Tower::shoot_1_2(float dt) {
         return;
     /* 有在范围内的怪物 发射子弹 旋转*/
     Vec2 po2 = mon->getPosition();
-    float angle = -cal_relative_angle(po1, po2) + 180;
+    float angle = -cal_relative_angle(po1, po2);
     if (this->get_type() == 0) {
         auto rotate = RotateTo::create(0.0f, angle);
         this->runAction(rotate);//拉倒 
@@ -199,19 +199,30 @@ void Tower::biu_fan(Vec2& start, float x, float y) {
     /* 创建子弹 并初始化 */
     auto biu = Sprite::create();
     biu->setPosition(start);
-    biu->setScale(1.5);
+    biu->setScale(1.5f);
     biu->setSpriteFrame(this->get_bullet_url());
+    biu->setTag(0);
     auto scene = Director::getInstance()->getRunningScene();
     scene->addChild(biu, 4);
     auto rotate = RotateBy::create(1.0f / 60, 30.0f);
     auto ahead = MoveBy::create(1.0f / 60, Vec2(x, y));
     //auto delay = DelayTime::create(0.2f);
-    auto call_check = CallFunc::create([this, biu = biu]() {
+    bool attacked[2][10] = { 0 };
+    auto call_check = CallFunc::create([this,scene=scene, biu = biu, attacked= attacked]() {
 
         Vec2 cur_pos = biu->getPosition();
         for (int i = 0; i < lives; i++)
-            if (cur_mons[i] && cur_mons[i]->getBoundingBox().containsPoint(cur_pos))
+            if (cur_mons[i] && cur_mons[i]->getBoundingBox().containsPoint(cur_pos) && !attacked[0][i]) {
                 cur_mons[i]->get_hurt(this->get_info().attack[this->get_level()]);
+                attacked[0][i] = 1;
+            }
+        for (int i = 0; i < 10; i++) {
+            auto sp = scene->getChildByTag<Target*>(300001 + i);
+            if (sp && sp->getBoundingBox().containsPoint(cur_pos) && !attacked[1][i]) {
+                sp->get_hurt(this->get_info().attack[this->get_level()]);
+                attacked[1][i] = 1;
+            }
+        }
         if (cur_pos.x >= 1380 || cur_pos.x <= 240 || cur_pos.y >= 860 || cur_pos.y <= 100)
             biu->removeFromParentAndCleanup(true);
         });
@@ -260,9 +271,11 @@ void Tower::biu_1_2(Vec2& start, const int tag, float angle) {
         //先不管角度了
         // 子弹还没到达且发射目标存在
         //向量 子弹指向怪物
+        int target_type = p->get_type();//获取目标类型 便于瞄准
+
         Vec2 po2 = p->getPosition();
         float x = po2.x - po1.x;//向量x方向
-        float y = po2.y - po1.y + 40;//向量y方向
+        float y = po2.y - po1.y + 40 * target_type;//向量y方向
 
         float d = cal_distance(po1, po2);//向量长度
 

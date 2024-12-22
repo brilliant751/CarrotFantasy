@@ -9,7 +9,7 @@ using namespace std;
 
 
 struct tower_info {
-	int speed[3];//发出子弹的间隔 
+	float speed[3];//发出子弹的间隔 
 	int attack[3];//攻击伤害
 	float slow_down[3];//减速百分比
 	float duration[3];//减速持续时间
