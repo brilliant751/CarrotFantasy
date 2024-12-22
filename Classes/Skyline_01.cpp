@@ -50,77 +50,6 @@ int occupy_1[8][12] = {
     0,0,0,0,0,0,0,0,0,0,0,0,
     1,1,0,0,0,0,0,0,0,0,1,1
 };
-//创建弹窗层
-Layer* Popwin::create_Layer()
-{
-    return Popwin::create();
-}
-bool Popwin::init() {
-    if (!Layer::init())
-        return false;
-
-    auto visibleSize = Director::getInstance()->getVisibleSize();   //(1620，960)
-
-    /* 参数位置 */
-    /*********************************/
-    const Vec2 Pop(visibleSize / 2);     //失败/成功弹窗位置
-    constexpr float btn_scale = 1.0f;       //按钮放大倍率
-    const Vec2 again_btn(663, 370);          //again按钮
-    const Vec2 chose_btn(903, 370);        //chose按钮
-    /*********************************/
-
-    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/GameMenu/GameMenu.plist");
-    auto main_scene = Director::getInstance()->getRunningScene();
-    auto sp = Director::getInstance()->getRunningScene()->getChildByName<Carrot*>("carrot");
-
-    /*********** 创建按钮 **********/
-      /* 创建 再试一次 按钮 */
-    auto again = btn_create(this,
-        "Levels/GameMenu/again_normal.png",
-        "Levels/GameMenu/again_pressed.png",
-        again_btn, btn_scale, 12);
-    again->addTouchEventListener([this](Ref* sender, Widget::TouchEventType type) {
-        switch (type)
-        {
-        case ui::Widget::TouchEventType::BEGAN:
-            break;
-        case ui::Widget::TouchEventType::ENDED:
-            Director::getInstance()->replaceScene(Map_1_01::create());
-            break;
-        default:
-            break;
-        }
-        });
-
-    /* 创建 选择关卡 按钮 */
-    auto chose = btn_create(this,
-        "Levels/GameMenu/return_normal.png",
-        "Levels/GameMenu/return_pressed.png",
-        chose_btn, btn_scale, 12);
-    chose->addTouchEventListener([this](Ref* sender, Widget::TouchEventType type) {
-        auto main_scene = Director::getInstance()->getRunningScene();
-        switch (type)
-        {
-        case ui::Widget::TouchEventType::BEGAN:
-            break;
-        case ui::Widget::TouchEventType::ENDED:
-            Director::getInstance()->popScene();
-            break;
-        default:
-            break;
-        }
-        });
-
-
-
-    /* 创建 成功弹窗 */
-    auto win = sp_create(main_scene, "win_bg.png", Pop, 2.0f, 11);
-    win->setName("win");
-
-
-    return true;
-
-}
 
 // 怪物行走路线
 const Vec2 path[] = {
@@ -139,6 +68,7 @@ constexpr int top = 8; //栈顶位置
 void Map_1_01::update_waves()
 {
     ++waves;    //进入下一波
+    lives = 0;
     update_tag(mons_tag, waves);    //更新当前怪物标签
     update_tag(least, waves);       //更新起始怪物标签
     auto left = getChildByName<Label*>("wavesleft");
@@ -596,7 +526,7 @@ bool Map_1_01::init()
             if (create1->getBoundingBox().containsPoint(pos)) {//点击建造bottle
                 if (money >= 100) {
                     auto tower = Tower::create_Tower(0, cur_line, cur_row, this);
-                    tower->schedule(schedule_selector(Tower::shoot_1_2), tower->get_info().speed[tower->get_level()]);//发射
+                    tower->schedule(schedule_selector(Tower::shoot_1_2), tower->get_info().speed[tower->get_level()] / speed);//发射
                     /* 2 0x yy */
                     //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
                     tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
@@ -616,7 +546,7 @@ bool Map_1_01::init()
             else if (create2->getBoundingBox().containsPoint(pos)) {//点击建造shit
                 //if (money >= 120) {
                 //    auto tower = Tower::create_Tower(1, cur_line, cur_row, this);
-                //    tower->schedule(schedule_selector(Tower::shoot_1_2), tower->get_info().speed[tower->get_level()]);
+                //    tower->schedule(schedule_selector(Tower::shoot_1_2), tower->get_info().speed[tower->get_level()] / speed);
                 //    /* 2 0x yy */
                 //    //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
                 //    tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
@@ -634,7 +564,7 @@ bool Map_1_01::init()
                 //}
                 if (money >= 160) {//试一下电风扇
                     auto tower = Tower::create_Tower(2, cur_line, cur_row, this);
-                    tower->schedule(schedule_selector(Tower::shoot_3), tower->get_info().speed[tower->get_level()]);
+                    tower->schedule(schedule_selector(Tower::shoot_3), tower->get_info().speed[tower->get_level()] / speed);
                     /* 2 0x yy */
                     //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
                     tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
@@ -835,4 +765,82 @@ bool Map_1_01::init()
 
 
 	return true;
+}
+
+//创建弹窗层
+Layer* Popwin::create_Layer()
+{
+    return Popwin::create();
+}
+bool Popwin::init() {
+    if (!Layer::init())
+        return false;
+
+    auto visibleSize = Director::getInstance()->getVisibleSize();   //(1620，960)
+
+    /* 参数位置 */
+    /*********************************/
+    const Vec2 Pop(visibleSize / 2);     //失败/成功弹窗位置
+    constexpr float btn_scale = 1.0f;       //按钮放大倍率
+    const Vec2 again_btn(663, 370);          //again按钮
+    const Vec2 chose_btn(903, 370);        //chose按钮
+    /*********************************/
+
+    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Levels/GameMenu/GameMenu.plist");
+    auto main_scene = Director::getInstance()->getRunningScene();
+    auto sp = Director::getInstance()->getRunningScene()->getChildByName<Carrot*>("carrot");
+
+    /*********** 创建按钮 **********/
+      /* 创建 再试一次 按钮 */
+    auto again = btn_create(this,
+        "Levels/GameMenu/again_normal.png",
+        "Levels/GameMenu/again_pressed.png",
+        again_btn, btn_scale, 12);
+    again->addTouchEventListener([this](Ref* sender, Widget::TouchEventType type) {
+        auto scene = Director::getInstance()->getRunningScene();
+        switch (type)
+        {
+        case ui::Widget::TouchEventType::BEGAN:
+            break;
+        case ui::Widget::TouchEventType::ENDED:
+            /* 暂停主场景的活动 */
+            // 此处会循环暂停所有child结点的监听事件
+            scene->getEventDispatcher()->resumeEventListenersForTarget(scene, true);
+            // 暂停所有刷新和动作
+            scene->resumeSchedulerAndActions();
+            Director::getInstance()->replaceScene(Map_1_01::create());
+            break;
+        default:
+            break;
+        }
+        });
+
+    /* 创建 选择关卡 按钮 */
+    auto chose = btn_create(this,
+        "Levels/GameMenu/return_normal.png",
+        "Levels/GameMenu/return_pressed.png",
+        chose_btn, btn_scale, 12);
+    chose->addTouchEventListener([this](Ref* sender, Widget::TouchEventType type) {
+        auto main_scene = Director::getInstance()->getRunningScene();
+        switch (type)
+        {
+        case ui::Widget::TouchEventType::BEGAN:
+            break;
+        case ui::Widget::TouchEventType::ENDED:
+            Director::getInstance()->popScene();
+            break;
+        default:
+            break;
+        }
+        });
+
+
+
+    /* 创建 成功弹窗 */
+    auto win = sp_create(main_scene, "win_bg.png", Pop, 2.0f, 11);
+    win->setName("win");
+
+
+    return true;
+
 }

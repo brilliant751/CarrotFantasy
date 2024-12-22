@@ -30,11 +30,15 @@ public:
 	void update(float dt) override;
 	// 设置路线
 	void set_route(const Vec2* path, const int& top) { route = path; this->top = top; }
+	// 设置移动速率
+	void set_sp_percent(float percent, float duration);
 	// 定义create
 	CREATE_FUNC(Monster);
 	
 private:
 	monf info;	//怪物属性
+	float sp_percent = 1.0f;	//移速倍率
+	int slow_tag = 100;
 
 	/* 行走路线参数 */
 	const Vec2* route;	//路线数组指针

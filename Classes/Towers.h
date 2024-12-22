@@ -55,7 +55,7 @@ public:
 	void shoot_1_2(float dt);
 	void shoot_3(float dt);
 	void biu_fan(Vec2& start, float x, float y);
-	void biu_1_2(Vec2& start, Target* cur_target);
+	void biu_1_2(Vec2& start, const int tag);
 	const tower_info get_info() { return info; };
 
 

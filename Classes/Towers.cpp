@@ -60,11 +60,11 @@ void Tower::up_level() {
     level++;
     if (this->type == 2) {
         this->unschedule(schedule_selector(Tower::shoot_3));
-        this->schedule(schedule_selector(Tower::shoot_3), this->info.speed[level]);
+        this->schedule(schedule_selector(Tower::shoot_3), this->info.speed[level] / speed);
     }
     else {
         this->unschedule(schedule_selector(Tower::shoot_1_2));
-        this->schedule(schedule_selector(Tower::shoot_1_2), this->info.speed[level]);
+        this->schedule(schedule_selector(Tower::shoot_1_2), this->info.speed[level] / speed);
     }
     this->setSpriteFrame(this->info.origin_url[level]);
     this->base->setSpriteFrame(this->info.D[level]);
@@ -162,7 +162,7 @@ void Tower::shoot_1_2(float dt) {
     if (!mon)//无怪物就不发射
         return;
     /* 有在范围内的怪物 发射子弹 */
-    this->biu_1_2(po1, mon);
+    this->biu_1_2(po1, mon->getTag());
 }
 
 void Tower::shoot_3(float dt) {//风扇 0.4s 2格     5/60=1/12 格   每1/60s
@@ -218,7 +218,7 @@ void Tower::biu_fan(Vec2& start, float x, float y) {
 }
 
 // bottle shit子弹发射起始位置(Tower位置) 发射对象
-void Tower::biu_1_2(Vec2& start, Target* cur_target) {
+void Tower::biu_1_2(Vec2& start, const int tag) {
     /* 实时变换方向的子弹发射 */
     //创建并初始化
     auto biu = Sprite::create();
@@ -228,15 +228,20 @@ void Tower::biu_1_2(Vec2& start, Target* cur_target) {
     auto scene = Director::getInstance()->getRunningScene();
     scene->addChild(biu, 4);
 
-    auto call_check = CallFunc::create([this, biu = biu, cur_target = cur_target]() {
+    auto call_check = CallFunc::create([this, scene = scene, biu = biu, tag = tag]() {
         Vec2 po1 = biu->getPosition();
-
-        if (!cur_target) {//发射目标在子弹到达前挂掉了or本来就不存在
+        Target* p = scene->getChildByTag<Target*>(tag);
+        if (!p) {//发射目标在子弹到达前挂掉了or本来就不存在
             biu->removeFromParentAndCleanup(true);//子弹原地消失
             return;
         }
-        else if (cur_target->getBoundingBox().containsPoint(po1)) {//子弹到达发射目标
-            cur_target->get_hurt(this->get_info().attack[this->get_level()]);//伤害
+        else if (p->getBoundingBox().containsPoint(po1)) {//子弹到达发射目标
+            p->get_hurt(this->get_info().attack[this->get_level()]);//伤害
+            if (this->get_type() == 1 && p->get_type() == 1) {//shit 减速 怪物
+                float slow = this->get_info().slow_down[this->get_level()];//减速百分比
+                float duration = this->get_info().duration[this->get_level()];//减速持续时间
+                //p->set_sp_percent(slow,duration);
+            }
             //动画效果todo
             biu->removeFromParentAndCleanup(true);//消失
             return;
@@ -244,7 +249,7 @@ void Tower::biu_1_2(Vec2& start, Target* cur_target) {
         //先不管角度了
         // 子弹还没到达且发射目标存在
         //向量 子弹指向怪物
-        Vec2 po2 = cur_target->getPosition();
+        Vec2 po2 = p->getPosition();
         float x = po2.x - po1.x;//向量x方向
         float y = po2.y - po1.y + 40;//向量y方向
 
@@ -268,10 +273,5 @@ bool Tower::init()
 {
     if (!Sprite::init())
         return false;
-
-
-
-
-
     return true;
 }

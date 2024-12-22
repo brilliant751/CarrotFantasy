@@ -38,7 +38,7 @@ void Monster::update(float dt)
     Vec2 ex_pos = cur;
     if (cur.x < route[rt].x)
     {
-        if (cur.x + info.speed * speed > route[rt].x)
+        if (cur.x + info.speed * speed * sp_percent > route[rt].x)
             cur.x = route[rt].x;
         else
             cur.x += info.speed * speed;
@@ -117,4 +117,22 @@ void Monster::create_slider()
     hp_holder->setAnchorPoint(Vec2(0.5f, 1.0f));
     selected = sp_create(scene, "selected.png", pos, 1.5f, -5);
     selected->setAnchorPoint(Vec2(0.5f, 0.0f));
+}
+
+/* 设置移动速率 */
+void Monster::set_sp_percent(float percent, float duration)
+{
+    auto set_func = CallFunc::create([this, percent = percent]() {
+        auto act = this->getActionByTag(this->slow_tag - 1);    //获取上一个动作
+        if (act != nullptr)
+            this->stopAction(act);     //停止之前的减速动作
+        this->sp_percent = 1.0f - percent;      //减速
+        });
+    auto delay = DelayTime::create(duration);
+    auto end_func = CallFunc::create([this]() {
+        this->sp_percent = 1.0f;        //恢复速率
+        });
+    auto seq = Sequence::create(set_func, delay, end_func, nullptr);
+    seq->setTag(++slow_tag);
+    runAction(seq);
 }
