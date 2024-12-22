@@ -61,6 +61,7 @@ public:
 
 	// ∂®“Âcreate
 	CREATE_FUNC(Tower);
+	int attacked[2][10] = { 0 };
 private:
 	tower_info info;
 	Sprite* base;

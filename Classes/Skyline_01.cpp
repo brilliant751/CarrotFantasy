@@ -32,6 +32,7 @@ constexpr int mapY[9] = { 0, 95, 190, 285, 380, 475, 570, 665, 760 };
 extern int LEVEL;
 extern each_map all_map[3];
 extern bool is_open[3];
+extern string stars_url[3];
 
 bool is_stop = false;   //标记游戏是否暂停（菜单用）
 int speed;      //游戏倍速
@@ -840,19 +841,29 @@ bool Popwin::init() {
             break;
         case ui::Widget::TouchEventType::ENDED:
             //查看all_clear情况
-     
-            if (!all_map[LEVEL].all_clear) 
+            if (!all_map[LEVEL-1].all_clear) 
                 for (int i = 0; i < 8; i++) {
-                    if (main_scene->getChildByTag(300000 + i))
+                    if (main_scene->getChildByTag(300000 + i))//存在障碍物则不是all_clear
                         break;
-                    else if (!main_scene->getChildByTag(300000 + i) && i == 7)
-                        all_map[LEVEL].all_clear = 1;
+                    else if (!main_scene->getChildByTag(300000 + i) && i == 7)//没有障碍物
+                        all_map[LEVEL-1].all_clear = 1;
                 }
             //查看星情况+下一张图open
-            
-               
-
+            is_open[LEVEL] = 1;
+            //int stars = main_scene->getChildByName<Carrot*>("carrot")->getStars();
+            //if (stars > all_map[LEVEL - 1].stars) 
+            //    all_map[LEVEL - 1].stars = stars; 
+            //          
             Director::getInstance()->popScene();
+
+            //auto scene = Director::getInstance()->getRunningScene();     //mapchoose
+            //auto sp_stars = scene->getChildByName<Sprite*>("sp_stars");
+            //auto sp_all_clear = scene->getChildByName<Sprite*>("sp_all_clear");
+            //sp_stars->setSpriteFrame(stars_url[stars - 1]);
+            //sp_stars->setZOrder(1);
+            //if(all_map[LEVEL - 1].all_clear)
+            //    sp_all_clear->setZOrder(1);
+
             break;
         default:
             break;

@@ -178,6 +178,8 @@ void Tower::shoot_3(float dt) {//风扇 0.4s 2格     5/60=1/12 格   每1/60s
         float d = cal_distance(po1, target->getPosition());//计算距离
         if (d <= this->info.radius[this->get_level()])//在范围内
             mon = target;
+        else //寻找在范围内的第一个怪物
+            mon = this->get_first_monster();
     }
     else //寻找在范围内的第一个怪物
         mon = this->get_first_monster();
@@ -207,9 +209,10 @@ void Tower::biu_fan(Vec2& start, float x, float y) {
     auto rotate = RotateBy::create(1.0f / 60, 30.0f);
     auto ahead = MoveBy::create(1.0f / 60, Vec2(x, y));
     //auto delay = DelayTime::create(0.2f);
-    bool attacked[2][10] = { 0 };
-    auto call_check = CallFunc::create([this,scene=scene, biu = biu, attacked= attacked]() {
-
+    for (int i = 0; i < 2; i++)
+        for (int j = 0; j < 10; j++)
+            attacked[i][j] = 0; 
+    auto call_check = CallFunc::create([this,scene=scene, biu = biu]() {
         Vec2 cur_pos = biu->getPosition();
         for (int i = 0; i < lives; i++)
             if (cur_mons[i] && cur_mons[i]->getBoundingBox().containsPoint(cur_pos) && !attacked[0][i]) {

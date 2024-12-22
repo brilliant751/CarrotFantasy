@@ -18,6 +18,7 @@ each_map all_map[3] = {
     {"level_3.png","total_20_waves.png","towers_3.png",2,0}
 };
 bool is_open[3] = { 1,1,0 };
+string stars_url[3] = { "stars_1.png","stars_2.png" ,"stars_3.png" };//stars对应stars_url[stars-1]
 
 
 /* 如果文件无法打开，打印报错信息 */

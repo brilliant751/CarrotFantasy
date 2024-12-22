@@ -42,7 +42,6 @@ private:
 
 	int level = 0;
 	
-	string stars_url[3] = { "stars_1.png","stars_2.png" ,"stars_3.png" };//stars¶ÔÓ¦stars_url[stars-1]
 	string all_clear_url = "all_clear.png";
 };
 
