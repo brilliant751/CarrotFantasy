@@ -3,13 +3,16 @@
 #include "EnterScene.h"
 #include "HelpScene_1.h"
 #include "OptionScene_1.h"
-#include "AudioEngine.h"
 #include "ui/CocosGUI.h"
 #include "ui/UIButton.h"
+#include "audio/include/AudioEngine.h"
+using namespace cocos2d::experimental;
+#include <Windows.h>
 
 USING_NS_CC;
 using namespace ui;
 using namespace std;
+//using namespace CocosDenshion;
 
 
 /* 创建场景 */
@@ -55,6 +58,14 @@ bool StartScene::init()
 
     const Vec2 origin = Vec2(305, 120); //地图坐标起点
     auto visibleSize = Director::getInstance()->getVisibleSize();   // (1620,960)
+    //SimpleAudioEngine::getInstance()->preloadBackgroundMusic("Resources/sound/background_music.mp3");
+    //SimpleAudioEngine::getInstance()->playBackgroundMusic("Resources/sound/background_music.mp3", true);
+    auto audio = AudioEngine::play2d("sound/CarrotFantasy.mp3", true);
+    //AudioEngine::stopAll();
+    //AudioEngine::stop(1);
+
+    //audio->playBackgroundMusic("sound/CarrotFantasy.mp3", true);
+    //PlaySound(TEXT("E:/VS/范式/期末/CarrotFantasy/Resources/CarrotFantasy.mp3"), NULL, SND_FILENAME | SND_ASYNC);
 
     // 预加载精灵图集
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("StartScene/StartScene.plist");

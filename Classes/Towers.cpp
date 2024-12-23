@@ -2,7 +2,8 @@
 #include "Towers.h"
 #include "tools.h"
 #include "ui/UIButton.h"
-#include "AudioEngine.h"
+#include "audio/include/AudioEngine.h"
+using namespace cocos2d::experimental;
 #define NULL 0
 USING_NS_CC;
 using namespace ui;
@@ -171,7 +172,10 @@ void Tower::shoot_1_2(float dt) {
     if (this->get_type() == 0) {
         auto rotate = RotateTo::create(0.0f, angle);
         this->runAction(rotate);//拉倒 
+        auto audio = AudioEngine::play2d("sound/bottle_atk.mp3", false);
     }
+    else
+        auto audio = AudioEngine::play2d("sound/shit_atk.mp3", false);
     this->biu_1_2(po1, mon->getTag(),angle);
 }
 
@@ -190,6 +194,7 @@ void Tower::shoot_3(float dt) {//风扇 0.4s 2格     5/60=1/12 格   每1/60s
     if (!mon)//无怪物就不发射
         return;
     /* 有在范围内的怪物 发射子弹 */
+    auto audio = AudioEngine::play2d("sound/fan_atk.mp3", false);
     Vec2 po2 = mon->getPosition();//怪物坐标
     //向量 子弹指向怪物
     float x = po2.x - po1.x;//向量x方向
@@ -213,19 +218,49 @@ void Tower::biu_fan(Vec2& start, float x, float y) {
     auto rotate = RotateBy::create(1.0f / 60, 30.0f);
     auto ahead = MoveBy::create(1.0f / 60, Vec2(x, y));
     //auto delay = DelayTime::create(0.2f);
-    bool attacked[2][10] = { 0 };
-    auto call_check = CallFunc::create([this,scene=scene, biu = biu, attacked= attacked]() {
+    for (int i = 0; i < 2; i++)
+        for (int j = 0; j < 10; j++)
+            attacked[i][j] = 0;
+
+    auto call_check = CallFunc::create([=]() {
         if (is_paused || is_stop)
             return;
         Vec2 cur_pos = biu->getPosition();
         for (int i = 0; i < lives; i++)
             if (cur_mons[i] && cur_mons[i]->getBoundingBox().containsPoint(cur_pos) && !attacked[0][i]) {
+                //动画效果
+                Vec2 po2 = Vec2(cur_mons[i]->getPositionX(), cur_mons[i]->getPositionY() + 40); //monster中心             
+                auto sp = Sprite::create();//特效
+                sp->setPosition(po2);
+                sp->setScale(1.5f);       
+                sp->setSpriteFrame("fan_effect1.png");                              
+                scene->addChild(sp, 5);
+                auto fadeout = FadeOut::create(1.0f);
+                auto call = CallFunc::create([=]() {
+                    sp->removeFromParentAndCleanup(true);
+                    });
+                auto se = Sequence::create(fadeout, call, nullptr);
+                sp->runAction(se);
+
                 cur_mons[i]->get_hurt(this->get_info().attack[this->get_level()]);
                 attacked[0][i] = 1;
             }
         for (int i = 0; i < 10; i++) {
             auto sp = scene->getChildByTag<Target*>(300001 + i);
-            if (sp && sp->getBoundingBox().containsPoint(cur_pos) && !attacked[1][i]) {
+            if (sp && sp->getBoundingBox().containsPoint(cur_pos) && !attacked[1][i]) {            
+                //动画效果
+                Vec2 po2 = sp->getPosition();
+                auto sp1 = Sprite::create();
+                sp1->setPosition(po2);
+                sp1->setScale(1.5f);
+                sp1->setSpriteFrame("fan_effect1.png");                
+                scene->addChild(sp1, 5);
+                auto fadeout = FadeOut::create(0.2f);
+                auto call = CallFunc::create([=]() {
+                    sp1->removeFromParentAndCleanup(true);
+                    });
+                auto se = Sequence::create(fadeout, call, nullptr);
+                sp1->runAction(se);
                 sp->get_hurt(this->get_info().attack[this->get_level()]);
                 attacked[1][i] = 1;
             }
@@ -252,7 +287,7 @@ void Tower::biu_1_2(Vec2& start, const int tag, float angle) {
     biu->setSpriteFrame(this->get_bullet_url());
     auto scene = Director::getInstance()->getRunningScene();
     
-    auto rotate = RotateTo::create(0.0f, this->get_type() == 0 ? angle : angle - 180);
+    auto rotate = RotateTo::create(0.0f, angle);
     biu->runAction(rotate);
     scene->addChild(biu, 2);
 
@@ -266,26 +301,46 @@ void Tower::biu_1_2(Vec2& start, const int tag, float angle) {
             return;
         Vec2 po1 = biu->getPosition();
         auto p = scene->getChildByTag<Monster*>(tag);
+        Vec2 po2;
+        int target_type;
+        if (p) {
+            target_type = p->get_type();//获取目标类型 便于瞄准
+            po2 = Vec2(p->getPositionX(), p->getPositionY() + target_type * 40);
+        }
+
         if (!p) {//发射目标在子弹到达前挂掉了or本来就不存在
             biu->removeFromParentAndCleanup(true);//子弹原地消失
             return;
         }
-        else if (p->getBoundingBox().containsPoint(po1)) {//子弹到达发射目标
-            if (tower_type == 1 && p->get_type() == 1) //shit 减速 怪物
-                p->set_sp_percent(slow,duration);
-            p->get_hurt(attack);//伤害
-            //动画效果todo
+        else if (p->getBoundingBox().containsPoint(po1)) {//子弹到达发射目标         
+            //动画效果
+            auto sp = Sprite::create();
+            sp->setPosition(po2);
+            sp->setScale(1.5f);
+            if (tower_type == 0)
+                sp->setSpriteFrame("bottle_effect.png");
+            else
+                sp->setSpriteFrame("shit_effect2.png");
+            auto scene = Director::getInstance()->getRunningScene();
+            scene->addChild(sp, 5);
+            auto fadeout = FadeOut::create(0.2f);
+            auto call = CallFunc::create([=]() {
+                sp->removeFromParentAndCleanup(true);
+                });
+            auto se = Sequence::create(fadeout, call, nullptr);
+            sp->runAction(se);
             biu->removeFromParentAndCleanup(true);//消失
+            if (tower_type == 1 && p->get_type() == 1) //shit 减速 怪物
+                p->set_sp_percent(slow, duration);
+            p->get_hurt(attack);//伤害
             return;
         }
         //先不管角度了
         // 子弹还没到达且发射目标存在
         //向量 子弹指向怪物
-        int target_type = p->get_type();//获取目标类型 便于瞄准
 
-        Vec2 po2 = p->getPosition();
         float x = po2.x - po1.x;//向量x方向
-        float y = po2.y - po1.y + 40 * target_type;//向量y方向
+        float y = po2.y - po1.y ;//向量y方向
 
         float d = cal_distance(po1, po2);//向量长度
 

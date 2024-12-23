@@ -17,6 +17,8 @@
 #include "tools.h"
 #include "Carrot.h"
 #include "MapChoose.h"
+#include "audio/include/AudioEngine.h"
+using namespace cocos2d::experimental;
 
 USING_NS_CC;
 using namespace ui;
@@ -44,19 +46,6 @@ int money = 5000;		//金钱
 Monster* cur_mons[20] = { NULL };   //当前所有怪物
 int lives;      //栈顶指针，当前场上怪物数量
 Target* target; //锁定对象
-
-// 记录地图位置占用情况
-//-1无响应 0可建造位置 1不可建造位置 2障碍物 3防御塔 
-//int occupy_1[8][12] = {
-//    -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-//    0,0,0,2,2,2,2,2,2,0,0,0,
-//    0,1,0,2,2,2,2,2,2,0,1,1,
-//    0,1,0,0,2,0,0,2,0,0,1,0,
-//    0,1,2,0,1,1,1,1,0,2,1,0,
-//    0,1,1,1,1,2,2,1,1,1,1,0,
-//    0,0,0,0,0,0,0,0,0,0,0,0,
-//    1,1,0,0,0,0,0,0,0,0,1,1
-//};
 
 // 怪物行走路线
 const Vec2 path[] = {
@@ -172,6 +161,8 @@ Scene* Map_1_01::create_Scene()
 /* 初始化场景 */
 bool Map_1_01::init()
 {
+    AudioEngine::stopAll();
+
 	if (!Scene::init())
 		return false;
 
@@ -568,6 +559,8 @@ bool Map_1_01::init()
                     map_clicked_1 = 0;
                     //更新钱
                     money -= 100;
+                    auto audio = AudioEngine::play2d("sound/build_tower.mp3", false);
+
                 }
             }
             else if (create2->getBoundingBox().containsPoint(pos)) {//点击建造shit
@@ -588,6 +581,7 @@ bool Map_1_01::init()
                     map_clicked_1 = 0;
                     //更新钱
                     money -= 120;
+                    auto audio = AudioEngine::play2d("sound/build_tower.mp3", false);
                 }
                 //if (money >= 160) {//试一下电风扇
                 //    auto tower = Tower::create_Tower(2, cur_line, cur_row, this);
@@ -595,15 +589,14 @@ bool Map_1_01::init()
                 //    /* 2 0x yy */
                 //    //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
                 //    tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
-
                 //    occupy_1[cur_line][cur_row] = 3;
                 //    create1->setZOrder(-10);
                 //    create2->setZOrder(-10);
                 //    grid1->setZOrder(-10);
                 //    grid2->setZOrder(-10);
                 //    map_clicked_1 = 0;
-
                 //    money -= 120;
+                //    auto audio = AudioEngine::play2d("sound/build_tower.mp3", false);
                 //}
             }
             else {//点其他任何位置 即取消选中    
@@ -627,12 +620,16 @@ bool Map_1_01::init()
                 if (money >= um && tower_level < 2) {//可以升级
                     tower->up_level();          //升级 todo：可加动画
                     money -= um;                //更新钱
+                    auto audio = AudioEngine::play2d("sound/uplevel_tower.mp3", false);
+
                 }
             }
             else if (_sell->getBoundingBox().containsPoint(pos)) {//按出售精灵
                 tower->remove();    //清除
                 money += sm;        //获得卖出的钱
                 occupy_1[cur_line][cur_row] = 0;    //更新格子状态
+                auto audio = AudioEngine::play2d("sound/sell_tower.mp3", false);
+
             }
             //把不显示的精灵放在下面
             /* ZOrder */

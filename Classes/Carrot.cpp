@@ -5,6 +5,8 @@
 #include "tools.h"
 #include"Skyline_01.h"
 #include"Skyline_02.h"
+#include "audio/include/AudioEngine.h"
+using namespace cocos2d::experimental;
 
 
 USING_NS_CC;
@@ -146,6 +148,7 @@ void Carrot::cut_chp() {
         auto scene = Director::getInstance()->getRunningScene();
         chp_num->setZOrder(-3);
         chp_num = lb_create(scene, c_hp, "fonts/HPSimplified_Bd.ttf", 27, chp_num_pos, 2);
+        AudioEngine::play2d("sound/carrot_eaten.mp3", false);
     }
     else {
         auto lose_layer = PopCarrot::create_Layer();    //´´½¨Ê§°Üµ¯´°

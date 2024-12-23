@@ -3,7 +3,7 @@
 #include "StartScene.h"
 #include "EnterScene.h"
 
-// #define USE_AUDIO_ENGINE 1
+ #define USE_AUDIO_ENGINE 1
 #include "audio/include/AudioEngine.h"
 using namespace cocos2d::experimental;
 
@@ -82,6 +82,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     }
 
     register_all_packages();
+    AudioEngine::lazyInit();
 
     // 创建一个场景
     auto scene = StartScene::create_Scene();

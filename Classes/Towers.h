@@ -61,8 +61,8 @@ public:
 
 	// 定义create
 	CREATE_FUNC(Tower);
-	int attacked[2][10] = { 0 };
 private:
+	bool attacked[2][10] = { 0 };//记录是否已经攻击过
 	tower_info info;
 	Sprite* base;
 	Sprite* bullet;

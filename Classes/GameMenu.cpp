@@ -4,6 +4,8 @@
 #include "Skyline_02.h"
 #include "ui/CocosGUI.h"
 #include "ui/UIButton.h"
+#include "audio/include/AudioEngine.h"
+using namespace cocos2d::experimental;
 
 USING_NS_CC;
 using namespace ui;
@@ -270,8 +272,10 @@ void Target::get_hurt(int damage)
         extern int money;
         extern Monster* cur_mons[20];
         money += reward;;	//½±Àø½ðÇ®
-        if (get_type())
+        if (get_type()) {
             cur_mons[this->getTag() % 100 - 1] = NULL;
+            AudioEngine::play2d("sound/monster0.mp3", false);
+        }
         if (target == this)
             target = NULL;
         this->selected->removeFromParentAndCleanup(true);
