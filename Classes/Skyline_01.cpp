@@ -18,13 +18,15 @@
 #include "Carrot.h"
 #include "MapChoose.h"
 #include "audio/include/AudioEngine.h"
-using namespace cocos2d::experimental;
 
 USING_NS_CC;
 using namespace ui;
 using namespace std;
+using namespace experimental;
 
 #define GR_LEN 95       //方格边长
+#define MAX_WAVE 1
+
 
 /********** 坐标线位置 **********/
 // 地图大小为 12 * 8 个方格
@@ -583,21 +585,6 @@ bool Map_1_01::init()
                     money -= 120;
                     auto audio = AudioEngine::play2d("sound/build_tower.mp3", false);
                 }
-                //if (money >= 160) {//试一下电风扇
-                //    auto tower = Tower::create_Tower(2, cur_line, cur_row, this);
-                //    tower->schedule(schedule_selector(Tower::shoot_3), tower->get_info().speed[tower->get_level()] / speed);
-                //    /* 2 0x yy */
-                //    //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
-                //    tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
-                //    occupy_1[cur_line][cur_row] = 3;
-                //    create1->setZOrder(-10);
-                //    create2->setZOrder(-10);
-                //    grid1->setZOrder(-10);
-                //    grid2->setZOrder(-10);
-                //    map_clicked_1 = 0;
-                //    money -= 120;
-                //    auto audio = AudioEngine::play2d("sound/build_tower.mp3", false);
-                //}
             }
             else {//点其他任何位置 即取消选中    
                 //把不显示的精灵放在下面

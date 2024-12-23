@@ -13,7 +13,6 @@ using namespace std;
 USING_NS_CC;
 
 #define MONS_NUM 10     //¹ÖÎïÊıÁ¿ / ²¨
-#define MAX_WAVE 15
 
 class Monster : public Target
 {
