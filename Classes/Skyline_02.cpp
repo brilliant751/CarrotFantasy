@@ -16,7 +16,7 @@ using namespace ui;
 using namespace std;
 using namespace experimental;
 
-#define MAX_WAVE 15     //最大波次
+#define MAX_WAVE 20     //最大波次
 
 // 地图数据
 extern int LEVEL;
@@ -41,16 +41,14 @@ constexpr int mapY[9] = { 0, 95, 190, 285, 380, 475, 570, 665, 760 };
 
 // 怪物行走路线
 static const Vec2 path[] = {
-        Vec2(origin.x + (mapX[1] + mapX[2]) / 2.0f, origin.y + (mapY[5] + mapY[6]) / 2.0f),
-        Vec2(origin.x + (mapX[1] + mapX[2]) / 2.0f, origin.y + (mapY[2] + mapY[3]) / 2.0f),
-        Vec2(origin.x + (mapX[4] + mapX[5]) / 2.0f, origin.y + (mapY[2] + mapY[3]) / 2.0f),
-        Vec2(origin.x + (mapX[4] + mapX[5]) / 2.0f, origin.y + (mapY[3] + mapY[4]) / 2.0f),
-        Vec2(origin.x + (mapX[7] + mapX[8]) / 2.0f, origin.y + (mapY[3] + mapY[4]) / 2.0f),
-        Vec2(origin.x + (mapX[7] + mapX[8]) / 2.0f, origin.y + (mapY[2] + mapY[3]) / 2.0f),
-        Vec2(origin.x + (mapX[10] + mapX[11]) / 2.0f, origin.y + (mapY[2] + mapY[3]) / 2.0f),
-        Vec2(origin.x + (mapX[10] + mapX[11]) / 2.0f, origin.y + (mapY[5] + mapY[6]) / 2.0f),
+        Vec2(origin.x + (mapX[4] + mapX[5]) / 2.0f, origin.y + (mapY[5] + mapY[6]) / 2.0f),
+        Vec2(origin.x + (mapX[9] + mapX[10]) / 2.0f, origin.y + (mapY[5] + mapY[6]) / 2.0f),
+        Vec2(origin.x + (mapX[9] + mapX[10]) / 2.0f, origin.y + (mapY[3] + mapY[4]) / 2.0f),
+        Vec2(origin.x + (mapX[2] + mapX[3]) / 2.0f, origin.y + (mapY[3] + mapY[4]) / 2.0f),
+        Vec2(origin.x + (mapX[2] + mapX[3]) / 2.0f, origin.y + (mapY[1] + mapY[2]) / 2.0f),
+        Vec2(origin.x + (mapX[7] + mapX[8]) / 2.0f, origin.y + (mapY[1] + mapY[2]) / 2.0f),
 };
-static constexpr int top = 8; //栈顶位置
+static constexpr int top = 6; //栈顶位置
 
 
 /* 更新波次 */
@@ -108,6 +106,7 @@ void Map_1_02::create_monster(float dt)
     auto mon1 = Monster::create_Monster(PUPIL_1, path, top);
     mon1->setSpriteFrame(mons_url[waves]);
     mon1->setTag(mons_tag++);
+    mon1->setAnchorPoint(Vec2(0.5, 0.1));
     addChild(mon1, 2);
     //mons_tag++;
     cur_mons[lives++] = mon1;
@@ -169,22 +168,7 @@ bool Map_1_02::init()
     speed = 1;      //倍速为1
     LEVEL = 1;      //关卡序号1
     lives = 0;      //怪物数量0
-
-
-    /* 创建精灵的闭包函数 */
-    //lambda表达式
-    //pctname：  图集中的名称
-    //pos：      坐标
-    //scale：    放大倍率
-    //layer：    放置层数
-    auto sp_create = [&](const string& pctname, const Vec2& pos, const float& scale = 1.0f, int layer = 0) {
-        Sprite* newsp = Sprite::create();
-        newsp->initWithSpriteFrameName(pctname);
-        newsp->setPosition(pos);
-        newsp->setScale(scale);
-        this->addChild(newsp, layer);
-        return newsp;
-        };
+    money = 5000;   //金钱
 
     /* 创建按钮的闭包函数 */
     //lambda表达式
@@ -272,83 +256,105 @@ bool Map_1_02::init()
 
     /*********** 创建精灵 **********/
     /* 创建背景 */
-    auto map_bg = sp_create("1_02_bg.png", bg, map_scale, -2);
+    auto map_bg = sp_create(this, "1_02_bg.png", bg, map_scale, -2);
 
     /* 创建萝卜 */
-    auto carrot = sp_create("HP_MAX.PNG", crt, map_scale, 0);
+    auto carrot = Carrot::create_Carrot(crt, this);
+    carrot->setName("carrot");
 
     /* 创建萝卜血条底图 */
-    auto chp_bg = sp_create("Hp.png", po_chp_bg, map_scale, 0);
+    auto chp_bg = sp_create(this, "Hp.png", po_chp_bg, map_scale, 0);
 
     /* 创建顶部状态栏 */
-    auto top_bg = sp_create("top_bg.png", topbg, map_scale, -1);
+    auto top_bg = sp_create(this, "top_bg.png", topbg, map_scale, -1);
 
     /* 创建暂停中显示 */
-    auto pausing = sp_create("paused.png", topbg, word_scale, -2);
+    auto pausing = sp_create(this, "paused.png", topbg, word_scale, -2);
     pausing->setName("pausing");
 
     /* 创建怪物出生点 */
-    auto start_point_02 = sp_create("start_point02.png", born, map_scale, 0);
+    auto start_point_02 = sp_create(this, "start_point02.png", born, map_scale, 0);
 
     /* 创建倍速键 */
-    auto spd_shift = sp_create("game_speed_1.png", spd, map_scale, 0);
+    auto spd_shift = sp_create(this, "game_speed_1.png", spd, map_scale, 0);
     spd_shift->setName("spd_shift");
 
     /* waves框 */
-    auto bg_waves = sp_create("game)waves.png", po_bg_waves, map_scale, 0);
+    auto bg_waves = sp_create(this, "game)waves.png", po_bg_waves, map_scale, 0);
     bg_waves->setName("bgwaves");
 
     /* 创建障碍物 */
-    auto planet1 = sp_create("Barrier_One_1.png", planet_1, map_scale, 0);
-    auto planet2 = sp_create("Barrier_One_1.png", planet_2, map_scale, 0);
-    auto planet3 = sp_create("Barrier_One_1.png", planet_3, map_scale, 0);
-    auto planet4 = sp_create("Barrier_One_1.png", planet_4, map_scale, 0);
-    auto _balloon = sp_create("Barrier_Four_1.png", balloon, map_scale, 0);
-    auto _trees = sp_create("Barrier_Four_2.png", trees, map_scale, 0);
-    auto _cloud1 = sp_create("Barrier_One_2.png", cloud_1, map_scale, 0);
-    auto _cloud2 = sp_create("Barrier_One_2.png", cloud_2, map_scale, 0);
-    auto _rainbow1 = sp_create("Barrier_Two_1.png", rainbow_1, map_scale, 0);
-    auto _rainbow2 = sp_create("Barrier_Two_1.png", rainbow_2, map_scale, 0);
+
+    auto _1brr1 = targ_create(this, "Barrier_One_1.png", planet_1, map_scale, 0);
+    _1brr1->setTag(300001);
+    _1brr1->setHP(1000);
+    auto _1brr2 = targ_create(this, "Barrier_One_1.png", planet_2, map_scale, 0);
+    _1brr2->setTag(300002);
+    _1brr2->setHP(1000);
+    auto _1brr3 = targ_create(this, "Barrier_One_1.png", planet_3, map_scale, 0);
+    _1brr3->setTag(300003);
+    _1brr3->setHP(1000);
+    auto _1brr4 = targ_create(this, "Barrier_One_1.png", planet_4, map_scale, 0);
+    _1brr4->setTag(300004);
+    _1brr4->setHP(1000);
+    auto _1brr5 = targ_create(this, "Barrier_One_2.png", cloud_1, map_scale, 0);
+    _1brr5->setTag(300005);
+    _1brr5->setHP(1000);
+    auto _1brr6 = targ_create(this, "Barrier_One_2.png", cloud_2, map_scale, 0);
+    _1brr6->setTag(300006);
+    _1brr6->setHP(1000);
+    auto _2brr1 = targ_create(this, "Barrier_Two_1.png", rainbow_1, map_scale, 0);
+    _2brr1->setTag(300007);
+    _2brr1->setHP(2000);
+    auto _2brr2 = targ_create(this, "Barrier_Two_1.png", rainbow_2, map_scale, 0);
+    _2brr2->setTag(300008);
+    _2brr2->setHP(2000);
+    auto _4brr1 = targ_create(this, "Barrier_Four_1.png", balloon, map_scale, 0);
+    _4brr1->setTag(300009);
+    _4brr1->setHP(4000);
+    auto _4brr2 = targ_create(this, "Barrier_Four_2.png", trees, map_scale, 0);
+    _4brr2->setTag(300010);
+    _4brr2->setHP(4000);
 
 
     /* 创建点击格子 + 不可点击格子 */
     for (int i = 1; i < 8; i++)
         for (int j = 0; j < 12; j++) {
             Vec2 po = get_po(i, j);
-            if (occupy_2[i][j] == 0) {
-                auto sp1 = sp_create("start_sprite02.png", po, map_scale, -10);
-                sp1->setTag(i * 12 + j);
-                auto sp2 = sp_create("grid_02.png", po, map_scale, -10);
-                sp2->setTag(96 + i * 12 + j);
-            }
-            else if (occupy_2[i][j] == 1) {
-                auto sp = sp_create("cant_build02.png", po, map_scale, 2);
+            if (occupy_2[i][j] == 1) {
+                auto sp = sp_create(this, "cant_build.png", po, map_scale, 2);
                 sp->setTag(192 + i * 12 + j);
                 sp->setOpacity(0);
             }
+            else {
+                auto sp1 = sp_create(this, "start_sprite.png", po, map_scale, -10);
+                sp1->setTag(i * 12 + j);
+                auto sp2 = sp_create(this, "grid.png", po, map_scale, -10);
+                sp2->setTag(96 + i * 12 + j);
+            }
         }
     /* 创建建造bottle精灵 */
-    auto create_bottle = sp_create("bottle_no_create.png", bg, map_scale, -10);
+    auto create_bottle = sp_create(this, "bottle_no_create.png", bg, map_scale, -10);
     create_bottle->setName("create_bottle");
 
     /* 创建建造shit精灵 */
-    auto create_shit = sp_create("shit_no_create.png", bg, map_scale, -10);
+    auto create_shit = sp_create(this, "shit_no_create.png", bg, map_scale, -10);
     create_shit->setName("create_shit");
 
     /* 创建建造fan精灵 */
-    auto create_fan = sp_create("fan_no_create.png", bg, map_scale, -10);
+    auto create_fan = sp_create(this, "fan_no_create.png", bg, map_scale, -10);
     create_fan->setName("create_fan");
 
     /* 创建 攻击范围 精灵 */
-    auto atk_range = sp_create("range.png", bg, 2, -10);//自身一倍是1.5个格子
+    auto atk_range = sp_create(this, "range.png", bg, 2, -10);//自身一倍是1.5个格子
     atk_range->setName("atk_range");
 
     /* 创建 升级 精灵 */
-    auto up_level = sp_create("no_up.png", bg, map_scale, -10);
+    auto up_level = sp_create(this, "no_up.png", bg, map_scale, -10);
     up_level->setName("up_level");
 
     /* 创建 出售 精灵 */
-    auto sell = sp_create("sell.png", bg, map_scale, -10);
+    auto sell = sp_create(this, "sell.png", bg, map_scale, -10);
     sell->setName("sell");
 
     // 刷新建造防御塔按钮
@@ -358,13 +364,9 @@ bool Map_1_02::init()
 
 
     /*********** 创建标签 ***********/
-    /* 创建萝卜血条数字 */
-    auto chp_num = lb_create1(c_hp, "fonts/HPSimplified_Bd.ttf", 27, po_chp_num, 1);
-
     /* 创建total_waves */
     auto lb_total_waves = lb_create2("/20波怪物", "fonts/方正粗黑宋简体.ttf", 34, po_lb_total_waves, 2);
     lb_total_waves->setName("totalwaves");
-
 
     /* 创建waves十位 */
     auto waves_left = lb_create1(waves / 10, "fonts/方正粗黑宋简体.ttf", 34, po_waves_left, 2, 1);
@@ -513,108 +515,277 @@ bool Map_1_02::init()
         return true;
         };
     map_click_listener->onTouchMoved = [](Touch* touch, Event* event) {};
+    //map_click_listener->onTouchEnded = [&](Touch* touch, Event* event) {
+    //    auto pos = touch->getLocation();
+    //    // 抓取按键精灵
+    //    auto create1 = this->getChildByName<Sprite*>("create_bottle");
+    //    auto create2 = this->getChildByName<Sprite*>("create_shit");
+    //    auto create3 = this->getChildByName<Sprite*>("create_fan");
+    //    // 抓取格子精灵
+    //    auto grid1 = this->getChildByTag<Sprite*>(tag2_1);
+    //    auto grid2 = this->getChildByTag<Sprite*>(tag2_2);
+    //    // 获取当前格的状态
+    //    int state = occupy_2[cur_line][cur_row];
+    //    // 调整按键位置，防止超出地图
+    //    int up_po = cur_line < 4 ? -1 : 1;
+    //        int right = 0;
+    //        if (cur_row == 0)
+    //            right = 2;
+    //        else if (cur_row == 1)
+    //            right = 1;
+    //        else if (cur_row == 11)
+    //            right = -2;
+    //        else if (cur_row == 10)
+    //            right = -1;
+    //    
+    //    // 设定位置
+    //    Vec2 po = get_po(cur_line, cur_row);
+    //    Vec2 po1(po.x + (right - 2) * 55, po.y + 95 * up_po);
+    //    Vec2 po2(po.x + right * 55, po.y + 95 * up_po);
+    //    Vec2 po3(po.x + (right + 2) * 55, po.y + 95 * up_po);
+    //    // 抓取一些精灵
+    //    auto range = this->getChildByName<Sprite*>("atk_range");          //攻击范围精灵
+    //    auto up = this->getChildByName<Sprite*>("up_level");              //升级精灵
+    //    auto _sell = this->getChildByName<Sprite*>("sell");               //出售精灵
+    //    // 抓取一些标签
+    //    auto up_money = this->getChildByName<Label*>("lb_up_money");      //升级需要的钱
+    //    auto sell_money = this->getChildByName<Label*>("lb_sell_money");  //出售可得的钱
+    //    /* 按格子状态对应不同功能 */
+    //    if (map_clicked_2 == 1) //之前已经点击了一个可建造炮塔的位置
+    //    {
+    //        if (create1->getBoundingBox().containsPoint(pos)) {//点击建造bottle
+    //            if (money >= 100) {
+    //                auto tower = Tower::create_Tower(0, cur_line, cur_row, this);
+    //                /* 2 0x yy */
+    //                //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
+    //                tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
+    //                // 更新格子状态
+    //                occupy_2[cur_line][cur_row] = 3;
+    //                //把不显示的精灵放在下面
+    //                create1->setZOrder(-10);
+    //                create2->setZOrder(-10);
+    //                create3->setZOrder(-10);
+    //                grid1->setZOrder(-10);
+    //                grid2->setZOrder(-10);
+    //                //更新格子状态
+    //                map_clicked_2 = 0;
+    //                //更新钱
+    //                money -= 100;
+    //                auto audio = AudioEngine::play2d("sound/build_tower.mp3", false);
+    //            }
+    //        }
+    //        else if (create2->getBoundingBox().containsPoint(pos)) {//点击建造shit
+    //            if (money >= 120) {
+    //                auto tower = Tower::create_Tower(1, cur_line, cur_row, this);
+    //                /* 2 0x yy */
+    //                //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
+    //                tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
+    //                // 更新格子状态
+    //                occupy_2[cur_line][cur_row] = 3;
+    //                //把不显示的精灵放在下面
+    //                create1->setZOrder(-10);
+    //                create2->setZOrder(-10);
+    //                create3->setZOrder(-10);
+    //                grid1->setZOrder(-10);
+    //                grid2->setZOrder(-10);
+    //                //更新格子状态
+    //                map_clicked_2 = 0;
+    //                //更新钱
+    //                money -= 120;
+    //                auto audio = AudioEngine::play2d("sound/build_tower.mp3", false);
+    //            }
+    //        }
+    //        else if (create3->getBoundingBox().containsPoint(pos)) {//点击建造fan
+    //            if (money >= 160) {//试一下电风扇
+    //                auto tower = Tower::create_Tower(2, cur_line, cur_row, this);
+    //                tower->schedule(schedule_selector(Tower::shoot_3), 2.0f);
+    //                /* 2 0x yy */
+    //                //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
+    //                tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
+    //                occupy_2[cur_line][cur_row] = 3;
+    //                create1->setZOrder(-10);
+    //                create2->setZOrder(-10);
+    //                create3->setZOrder(-10);
+    //                grid1->setZOrder(-10);
+    //                grid2->setZOrder(-10);
+    //                map_clicked_2 = 0;
+    //                money -= 120;
+    //                auto audio = AudioEngine::play2d("sound/build_tower.mp3", false);
+    //        }
+    //        }
+    //        else {//点其他任何位置 即取消选中    
+    //            //把不显示的精灵放在下面
+    //            create1->setZOrder(-10);
+    //            create2->setZOrder(-10);
+    //            create3->setZOrder(-10);
+    //            grid1->setZOrder(-10);
+    //            grid2->setZOrder(-10);
+    //            //更新格子状态
+    //            map_clicked_2 = 0;
+    //        }
+    //    }
+    //    else if (map_clicked_2 == 2)//之前已经点击了一个防御塔
+    //    {   // 有两个按钮可按 升级 or sell
+    //        auto tower = this->getChildByTag<Tower*>(2 * 10000 + cur_line * 100 + cur_row);    //获取防御塔       
+    //        int tower_level = tower->get_level();  //获取防御塔等级
+    //        int um = tower->get_up_money();     //升级所需的钱
+    //        int sm = tower->get_sell_money();   //卖出所给的钱
+    //        if (up->getBoundingBox().containsPoint(pos)) {//按升级精灵
+    //            if (money >= um && tower_level < 2) {//可以升级
+    //                tower->up_level();          //升级 todo：可加动画
+    //                money -= um;                //更新钱
+    //                auto audio = AudioEngine::play2d("sound/uplevel_tower.mp3", false);
+    //            }
+    //        }
+    //        else if (_sell->getBoundingBox().containsPoint(pos)) {//按出售精灵
+    //            tower->remove();    //清除
+    //            money += sm;        //获得卖出的钱
+    //            occupy_2[cur_line][cur_row] = 0;    //更新格子状态
+    //            auto audio = AudioEngine::play2d("sound/sell_tower.mp3", false);
+    //        }
+    //        //把不显示的精灵放在下面
+    //        /* ZOrder */
+    //        range->setZOrder(-10);
+    //        up->setZOrder(-10);
+    //        _sell->setZOrder(-10);
+    //        up_money->setZOrder(-10);
+    //        sell_money->setZOrder(-10);
+    //        //为防止range超出范围 放在靠中间的位置
+    //        range->setPosition(Vec2(500, 500));
+    //        //更新格子状态
+    //        map_clicked_2 = 0;
+    //    }
+    //    else {//之前还未点击一个可以建造炮塔的位置
+    //        if (state == 1) {//现在点击了一个不可点击的位置
+    //            auto ban = this->getChildByTag<Sprite*>(192 + cur_line * 12 + cur_row);//获取ban精灵
+    //            ban->setOpacity(255);                    //恢复透明度为100%
+    //            auto fadeout = FadeOut::create(1.0f);    //逐渐淡去
+    //            ban->runAction(fadeout);                 //执行动作
+    //        }
+    //        else if (state == 0) {//现在点击了一个可以建造炮塔的位置
+    //            grid1 = this->getChildByTag<Sprite*>(tag2_1);//获取虚线框
+    //            grid2 = this->getChildByTag<Sprite*>(tag2_2);//获取实线框
+    //            //更新精灵位置及ZOrder
+    //            create1->setPosition(po1);
+    //            create2->setPosition(po2);
+    //            create3->setPosition(po3);
+    //            create1->setZOrder(4);
+    //            create2->setZOrder(4);
+    //            create3->setZOrder(4);
+    //            grid1->setZOrder(4);
+    //            grid2->setZOrder(4);
+    //            //更新格子状态
+    //            map_clicked_2 = 1;
+    //        }
+    //        else if (state == 3) {//现在点击了一个防御塔
+    //            auto tower = this->getChildByTag<Tower*>(2 * 10000 + cur_line * 100 + cur_row);  //获取防御塔              
+    //            int tower_level = tower->get_level();
+    //            float range_scale = tower->get_scale();
+    //            /* 计算各个精灵 标签位置 */
+    //            Vec2 up_pos;
+    //            Vec2 sell_pos;
+    //            Vec2 up_money_pos;
+    //            Vec2 sell_money_pos;
+    //            if (cur_line > 1 && cur_line < 7) {//防御塔在中间 升级在上 出售在下 
+    //                up_pos = Vec2(cur_pos.x, cur_pos.y + 95);
+    //                sell_pos = Vec2(cur_pos.x, cur_pos.y - 95);
+    //            }
+    //            else {
+    //                if (cur_line == 1) {//防御塔在最上面
+    //                    int right = cur_row == 11 ? -1 : 1;
+    //                    sell_pos = Vec2(cur_pos.x, cur_pos.y - 95);//出售在下
+    //                    up_pos = Vec2(cur_pos.x + 95 * right, cur_pos.y);//升级：第11列在左 其余在右
+    //                }
+    //                else {//cur_line==7 防御塔在最下面
+    //                    int left = cur_row == 0 ? 1 : -1;
+    //                    sell_pos = Vec2(cur_pos.x + 95 * left, cur_pos.y);//出售：第0列在右 其余在左
+    //                    up_pos = Vec2(cur_pos.x, cur_pos.y + 95);//升级在上
+    //                }
+    //            }
+    //            //根据精灵计算标签位置
+    //            up_money_pos = Vec2(up_pos.x + 12, up_pos.y - 30);
+    //            sell_money_pos = Vec2(sell_pos.x + 12, sell_pos.y - 30);
+    //            /* 设置攻击范围大小 */
+    //            range->setScale(range_scale);
+    //            /* 设置位置 */
+    //            range->setPosition(cur_pos);
+    //            up->setPosition(up_pos);
+    //            _sell->setPosition(sell_pos);
+    //            up_money->setPosition(up_money_pos);
+    //            sell_money->setPosition(sell_money_pos);
+    //            /* 渲染 */
+    //            /* up+up_money */
+    //            if (tower_level == 2)
+    //                up->setSpriteFrame("top_level.png");
+    //            else {
+    //                int um = tower->get_up_money();
+    //                string text = to_string(um);
+    //                //根据money和升级money的关系渲染
+    //                if (money >= um)
+    //                    up->setSpriteFrame("yes_up.png");
+    //                else
+    //                    up->setSpriteFrame("no_up.png");
+    //                up_money->setString(text);
+    //            }
+    //            /* sell_money */
+    //            int sm = tower->get_sell_money();
+    //            string text = to_string(sm);
+    //            sell_money->setString(text);
+    //            /* ZOrder */
+    //            range->setZOrder(1);
+    //            up->setZOrder(3);
+    //            _sell->setZOrder(3);
+    //            if (tower_level < 2)
+    //                up_money->setZOrder(4);
+    //            sell_money->setZOrder(4);
+    //            //更新格子状态
+    //            map_clicked_2 = 2;
+    //        }
+    //    }
+    //    };
     map_click_listener->onTouchEnded = [&](Touch* touch, Event* event) {
-        auto pos = touch->getLocation();
-        // 抓取按键精灵
-        auto create1 = this->getChildByName<Sprite*>("create_bottle");
-        auto create2 = this->getChildByName<Sprite*>("create_shit");
-        auto create3 = this->getChildByName<Sprite*>("create_fan");
-        // 抓取格子精灵
-        auto grid1 = this->getChildByTag<Sprite*>(tag2_1);
-        auto grid2 = this->getChildByTag<Sprite*>(tag2_2);
-        // 获取当前格的状态
-        int state = occupy_2[cur_line][cur_row];
-        // 调整按键位置，防止超出地图
-        int up_po = cur_line < 4 ? -1 : 1;
-            int right = 0;
-            if (cur_row == 0)
-                right = 2;
-            else if (cur_row == 1)
-                right = 1;
-            else if (cur_row == 11)
-                right = -2;
-            else if (cur_row == 10)
-                right = -1;
-        
-        // 设定位置
-        Vec2 po = get_po(cur_line, cur_row);
-        Vec2 po1(po.x + (right - 2) * 55, po.y + 95 * up_po);
-        Vec2 po2(po.x + right * 55, po.y + 95 * up_po);
-        Vec2 po3(po.x + (right + 2) * 55, po.y + 95 * up_po);
-        // 抓取一些精灵
-        auto range = this->getChildByName<Sprite*>("atk_range");          //攻击范围精灵
-        auto up = this->getChildByName<Sprite*>("up_level");              //升级精灵
-        auto _sell = this->getChildByName<Sprite*>("sell");               //出售精灵
-        // 抓取一些标签
-        auto up_money = this->getChildByName<Label*>("lb_up_money");      //升级需要的钱
-        auto sell_money = this->getChildByName<Label*>("lb_sell_money");  //出售可得的钱
+    auto pos = touch->getLocation();
+    // 抓取按键精灵
+    auto create1 = this->getChildByName<Sprite*>("create_bottle");
+    auto create2 = this->getChildByName<Sprite*>("create_shit");
+    auto create3 = this->getChildByName<Sprite*>("create_fan");
+    // 抓取格子精灵    
+    auto grid1 = this->getChildByTag<Sprite*>(tag2_1);
+    auto grid2 = this->getChildByTag<Sprite*>(tag2_2);
+    // 获取当前格的状态
+    int& state = occupy_2[cur_line][cur_row];
+    // 调整按键位置，防止超出地图
+    int up_po = cur_line < 4 ? -1 : 1;
+    int right = 0;
+    if (cur_row == 0)
+        right = 1;
+    else if (cur_row == 11)
+        right = -1;
+    // 设定位置
+    Vec2 po = get_po(cur_line, cur_row);
+    Vec2 po1(po.x + (right - 2) * 55, po.y + 95 * up_po);
+    Vec2 po2(po.x + right * 55, po.y + 95 * up_po);
+    Vec2 po3(po.x + (right + 2) * 55, po.y + 95 * up_po);
+    // 抓取一些精灵
+    auto range = this->getChildByName<Sprite*>("atk_range");          //攻击范围精灵
+    auto up = this->getChildByName<Sprite*>("up_level");              //升级精灵
+    auto _sell = this->getChildByName<Sprite*>("sell");               //出售精灵
+    // 抓取一些标签
+    auto up_money = this->getChildByName<Label*>("lb_up_money");      //升级需要的钱
+    auto sell_money = this->getChildByName<Label*>("lb_sell_money");  //出售可得的钱
 
-        /* 按格子状态对应不同功能 */
-        if (map_clicked_2 == 1) //之前已经点击了一个可建造炮塔的位置
-        {
-            if (create1->getBoundingBox().containsPoint(pos)) {//点击建造bottle
-                if (money >= 100) {
-                    auto tower = Tower::create_Tower(0, cur_line, cur_row, this);
-                    /* 2 0x yy */
-                    //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
-                    tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
-                    // 更新格子状态
-                    occupy_2[cur_line][cur_row] = 3;
-                    //把不显示的精灵放在下面
-                    create1->setZOrder(-10);
-                    create2->setZOrder(-10);
-                    create3->setZOrder(-10);
-                    grid1->setZOrder(-10);
-                    grid2->setZOrder(-10);
-                    //更新格子状态
-                    map_clicked_2 = 0;
-                    //更新钱
-                    money -= 100;
-                    auto audio = AudioEngine::play2d("sound/build_tower.mp3", false);
-                }
-            }
-            else if (create2->getBoundingBox().containsPoint(pos)) {//点击建造shit
-                if (money >= 120) {
-                    auto tower = Tower::create_Tower(1, cur_line, cur_row, this);
-                    /* 2 0x yy */
-                    //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
-                    tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
-                    // 更新格子状态
-                    occupy_2[cur_line][cur_row] = 3;
-                    //把不显示的精灵放在下面
-                    create1->setZOrder(-10);
-                    create2->setZOrder(-10);
-                    create3->setZOrder(-10);
-                    grid1->setZOrder(-10);
-                    grid2->setZOrder(-10);
-                    //更新格子状态
-                    map_clicked_2 = 0;
-                    //更新钱
-                    money -= 120;
-                    auto audio = AudioEngine::play2d("sound/build_tower.mp3", false);
-                }
-
-            }
-            else if (create3->getBoundingBox().containsPoint(pos)) {//点击建造fan
-                if (money >= 160) {//试一下电风扇
-                    auto tower = Tower::create_Tower(2, cur_line, cur_row, this);
-                    tower->schedule(schedule_selector(Tower::shoot_3), 2.0f);
-                    /* 2 0x yy */
-                    //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
-                    tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
-                    occupy_2[cur_line][cur_row] = 3;
-                    create1->setZOrder(-10);
-                    create2->setZOrder(-10);
-                    create3->setZOrder(-10);
-                    grid1->setZOrder(-10);
-                    grid2->setZOrder(-10);
-                    map_clicked_2 = 0;
-                    money -= 120;
-                    auto audio = AudioEngine::play2d("sound/build_tower.mp3", false);
-
-            }
-            }
-            else {//点其他任何位置 即取消选中    
+    /* 按格子状态对应不同功能 */
+    if (map_clicked_2 == 1) //之前已经点击了一个可建造炮塔的位置
+    {
+        if (create1->getBoundingBox().containsPoint(pos)) {//点击建造bottle
+            if (money >= 100) {
+                auto tower = Tower::create_Tower(0, cur_line, cur_row, this);
+                tower->schedule(schedule_selector(Tower::shoot_1_2), tower->get_info().speed[tower->get_level()] / speed);//发射
+                /* 2 0x yy */
+                //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
+                tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
+                // 更新格子状态
+                occupy_2[cur_line][cur_row] = 3;
                 //把不显示的精灵放在下面
                 create1->setZOrder(-10);
                 create2->setZOrder(-10);
@@ -623,132 +794,236 @@ bool Map_1_02::init()
                 grid2->setZOrder(-10);
                 //更新格子状态
                 map_clicked_2 = 0;
+                //更新钱
+                money -= 100;
+                auto audio = AudioEngine::play2d("sound/build_tower.mp3", false);
+
             }
         }
-        else if (map_clicked_2 == 2)//之前已经点击了一个防御塔
-        {   // 有两个按钮可按 升级 or sell
-            auto tower = this->getChildByTag<Tower*>(2 * 10000 + cur_line * 100 + cur_row);    //获取防御塔       
-            int tower_level = tower->get_level();  //获取防御塔等级
-            int um = tower->get_up_money();     //升级所需的钱
-            int sm = tower->get_sell_money();   //卖出所给的钱
-
-            if (up->getBoundingBox().containsPoint(pos)) {//按升级精灵
-                if (money >= um && tower_level < 2) {//可以升级
-                    tower->up_level();          //升级 todo：可加动画
-                    money -= um;                //更新钱
-                    auto audio = AudioEngine::play2d("sound/uplevel_tower.mp3", false);
-                }
+        else if (create2->getBoundingBox().containsPoint(pos)) {//点击建造shit
+            if (money >= 120) {
+                auto tower = Tower::create_Tower(1, cur_line, cur_row, this);
+                tower->schedule(schedule_selector(Tower::shoot_1_2), tower->get_info().speed[tower->get_level()] / speed);
+                /* 2 0x yy */
+                //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
+                tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
+                // 更新格子状态
+                occupy_2[cur_line][cur_row] = 3;
+                //把不显示的精灵放在下面
+                create1->setZOrder(-10);
+                create2->setZOrder(-10);
+                create3->setZOrder(-10);
+                grid1->setZOrder(-10);
+                grid2->setZOrder(-10);
+                //更新格子状态
+                map_clicked_2 = 0;
+                //更新钱
+                money -= 120;
+                auto audio = AudioEngine::play2d("sound/build_tower.mp3", false);
             }
-            else if (_sell->getBoundingBox().containsPoint(pos)) {//按出售精灵
-                tower->remove();    //清除
-                money += sm;        //获得卖出的钱
-                occupy_2[cur_line][cur_row] = 0;    //更新格子状态
-                auto audio = AudioEngine::play2d("sound/sell_tower.mp3", false);
+        }
+        else if (create3->getBoundingBox().containsPoint(pos)) {//点击建造fan
+            if (money >= 160) {//试一下电风扇
+                auto tower = Tower::create_Tower(2, cur_line, cur_row, this);
+                tower->schedule(schedule_selector(Tower::shoot_3), 2.0f);
+                /* 2 0x yy */
+                //2开头表示防御塔 0无意义 x为cur_line yy为cur_row
+                tower->setTag(2 * 10000 + cur_line * 100 + cur_row);
+                occupy_2[cur_line][cur_row] = 3;
+                create1->setZOrder(-10);
+                create2->setZOrder(-10);
+                create3->setZOrder(-10);
+                grid1->setZOrder(-10);
+                grid2->setZOrder(-10);
+                map_clicked_2 = 0;
+                money -= 120;
+                auto audio = AudioEngine::play2d("sound/build_tower.mp3", false);
             }
+        }
+        else {//点其他任何位置 即取消选中    
             //把不显示的精灵放在下面
-            /* ZOrder */
-            range->setZOrder(-10);
-            up->setZOrder(-10);
-            _sell->setZOrder(-10);
-            up_money->setZOrder(-10);
-            sell_money->setZOrder(-10);
-            //为防止range超出范围 放在靠中间的位置
-            range->setPosition(Vec2(500, 500));
+            create1->setZOrder(-10);
+            create2->setZOrder(-10);
+            create3->setZOrder(-10);
+            grid1->setZOrder(-10);
+            grid2->setZOrder(-10);
             //更新格子状态
             map_clicked_2 = 0;
         }
-        else {//之前还未点击一个可以建造炮塔的位置
-            if (state == 1) {//现在点击了一个不可点击的位置
+    }
+    else if (map_clicked_2 == 2)//之前已经点击了一个防御塔
+    {   // 有两个按钮可按 升级 or sell
+        auto tower = this->getChildByTag<Tower*>(2 * 10000 + cur_line * 100 + cur_row);    //获取防御塔       
+        int tower_level = tower->get_level();  //获取防御塔等级
+        int um = tower->get_up_money();     //升级所需的钱
+        int sm = tower->get_sell_money();   //卖出所给的钱
+
+        if (up->getBoundingBox().containsPoint(pos)) {//按升级精灵
+            if (money >= um && tower_level < 2) {//可以升级
+                tower->up_level();          //升级 todo：可加动画
+                money -= um;                //更新钱
+                auto audio = AudioEngine::play2d("sound/uplevel_tower.mp3", false);
+
+            }
+        }
+        else if (_sell->getBoundingBox().containsPoint(pos)) {//按出售精灵
+            tower->remove();    //清除
+            money += sm;        //获得卖出的钱
+            occupy_2[cur_line][cur_row] = 0;    //更新格子状态
+            auto audio = AudioEngine::play2d("sound/sell_tower.mp3", false);
+
+        }
+        //把不显示的精灵放在下面
+        /* ZOrder */
+        range->setZOrder(-10);
+        up->setZOrder(-10);
+        _sell->setZOrder(-10);
+        up_money->setZOrder(-10);
+        sell_money->setZOrder(-10);
+        //为防止range超出范围 放在靠中间的位置
+        range->setPosition(Vec2(500, 500));
+        //更新格子状态
+        map_clicked_2 = 0;
+    }
+    else {//之前还未点击一个可以建造炮塔的位置
+        if (state == 1) {//现在点击了一个不可点击的位置 or monster
+            bool show_ban = 1;
+            for (int i = 0; i < lives; i++) {
+                if (cur_mons[i] && cur_mons[i]->getBoundingBox().containsPoint(pos)) {
+                    if (target == cur_mons[i]) {
+                        target = NULL;//取消选中
+                        cur_mons[i]->get_selected_sprite()->setZOrder(-10);//把精灵放下去
+                        show_ban = 0;
+                    }
+                    else {
+                        if (target)//之前选中了其他目标 
+                            target->get_selected_sprite()->setZOrder(-10);//把之前的精灵放下去
+                        target = cur_mons[i];//选中
+                        cur_mons[i]->get_selected_sprite()->setZOrder(5);//把精灵放上来
+                        show_ban = 0;
+                    }
+                    break;
+                }
+            }
+            if (show_ban) {
                 auto ban = this->getChildByTag<Sprite*>(192 + cur_line * 12 + cur_row);//获取ban精灵
                 ban->setOpacity(255);                    //恢复透明度为100%
                 auto fadeout = FadeOut::create(1.0f);    //逐渐淡去
                 ban->runAction(fadeout);                 //执行动作
             }
-            else if (state == 0) {//现在点击了一个可以建造炮塔的位置
-                grid1 = this->getChildByTag<Sprite*>(tag2_1);//获取虚线框
-                grid2 = this->getChildByTag<Sprite*>(tag2_2);//获取实线框
-                //更新精灵位置及ZOrder
-                create1->setPosition(po1);
-                create2->setPosition(po2);
-                create3->setPosition(po3);
-                create1->setZOrder(4);
-                create2->setZOrder(4);
-                create3->setZOrder(4);
-                grid1->setZOrder(4);
-                grid2->setZOrder(4);
-                //更新格子状态
-                map_clicked_2 = 1;
-            }
-            else if (state == 3) {//现在点击了一个防御塔
-                auto tower = this->getChildByTag<Tower*>(2 * 10000 + cur_line * 100 + cur_row);  //获取防御塔              
-                int tower_level = tower->get_level();
-                float range_scale = tower->get_scale();
-                /* 计算各个精灵 标签位置 */
-                Vec2 up_pos;
-                Vec2 sell_pos;
-                Vec2 up_money_pos;
-                Vec2 sell_money_pos;
-                if (cur_line > 1 && cur_line < 7) {//防御塔在中间 升级在上 出售在下 
-                    up_pos = Vec2(cur_pos.x, cur_pos.y + 95);
-                    sell_pos = Vec2(cur_pos.x, cur_pos.y - 95);
-                }
-                else {
-                    if (cur_line == 1) {//防御塔在最上面
-                        int right = cur_row == 11 ? -1 : 1;
-                        sell_pos = Vec2(cur_pos.x, cur_pos.y - 95);//出售在下
-                        up_pos = Vec2(cur_pos.x + 95 * right, cur_pos.y);//升级：第11列在左 其余在右
-                    }
-                    else {//cur_line==7 防御塔在最下面
-                        int left = cur_row == 0 ? 1 : -1;
-                        sell_pos = Vec2(cur_pos.x + 95 * left, cur_pos.y);//出售：第0列在右 其余在左
-                        up_pos = Vec2(cur_pos.x, cur_pos.y + 95);//升级在上
-                    }
-                }
-                //根据精灵计算标签位置
-                up_money_pos = Vec2(up_pos.x + 12, up_pos.y - 30);
-                sell_money_pos = Vec2(sell_pos.x + 12, sell_pos.y - 30);
 
-                /* 设置攻击范围大小 */
-                range->setScale(range_scale);
-
-                /* 设置位置 */
-                range->setPosition(cur_pos);
-                up->setPosition(up_pos);
-                _sell->setPosition(sell_pos);
-                up_money->setPosition(up_money_pos);
-                sell_money->setPosition(sell_money_pos);
-
-                /* 渲染 */
-                /* up+up_money */
-                if (tower_level == 2)
-                    up->setSpriteFrame("top_level.png");
-                else {
-                    int um = tower->get_up_money();
-                    string text = to_string(um);
-                    //根据money和升级money的关系渲染
-                    if (money >= um)
-                        up->setSpriteFrame("yes_up.png");
-                    else
-                        up->setSpriteFrame("no_up.png");
-                    up_money->setString(text);
-                }
-                /* sell_money */
-                int sm = tower->get_sell_money();
-                string text = to_string(sm);
-                sell_money->setString(text);
-
-                /* ZOrder */
-                range->setZOrder(1);
-                up->setZOrder(3);
-                _sell->setZOrder(3);
-                if (tower_level < 2)
-                    up_money->setZOrder(4);
-                sell_money->setZOrder(4);
-                //更新格子状态
-                map_clicked_2 = 2;
-            }
         }
-        };
+        else if (state == 2) {//现在点击了一个障碍物
+            int i;
+            for (i = 1; i <= this->get_n_barrier(); i++) {
+                auto temp = this->getChildByTag<Target*>(300000 + i);
+                if (temp == NULL)
+                {
+                    //state = 0;
+                    continue;
+                }
+                if (temp->getBoundingBox().containsPoint(pos)) {//寻找点击的障碍物
+                    if (target == temp) {//之前选中了此障碍物
+                        target = NULL;//取消选中
+                        temp->get_selected_sprite()->setZOrder(-10);//把精灵放下去
+                    }
+                    else {
+                        if (target)//之前选中了其他目标 
+                            target->get_selected_sprite()->setZOrder(-10);//把之前的精灵放下去
+                        target = temp; //选中
+                        temp->get_selected_sprite()->setZOrder(5);//把现在的精灵放上来
+                    }
+                    break;
+                }
+            }
+            if (i == this->get_n_barrier() + 1)
+                state = 0;
+        }
+        if (state == 0) {//现在点击了一个可以建造炮塔的位置
+            grid1 = this->getChildByTag<Sprite*>(tag2_1);//获取虚线框
+            grid2 = this->getChildByTag<Sprite*>(tag2_2);//获取实线框
+            //更新精灵位置及ZOrder
+            create1->setPosition(po1);
+            create2->setPosition(po2);
+            create3->setPosition(po3);
+            create1->setZOrder(4);
+            create2->setZOrder(4);
+            create3->setZOrder(4);
+            grid1->setZOrder(4);
+            grid2->setZOrder(4);
+            //更新格子状态
+            map_clicked_2 = 1;
+        }
+        else if (state == 3) {//现在点击了一个防御塔
+            auto tower = this->getChildByTag<Tower*>(2 * 10000 + cur_line * 100 + cur_row);  //获取防御塔              
+            int tower_level = tower->get_level();
+            float range_scale = tower->get_scale();
+            /* 计算各个精灵 标签位置 */
+            Vec2 up_pos;
+            Vec2 sell_pos;
+            Vec2 up_money_pos;
+            Vec2 sell_money_pos;
+            if (cur_line > 1 && cur_line < 7) {//防御塔在中间 升级在上 出售在下 
+                up_pos = Vec2(cur_pos.x, cur_pos.y + 95);
+                sell_pos = Vec2(cur_pos.x, cur_pos.y - 95);
+            }
+            else {
+                if (cur_line == 1) {//防御塔在最上面
+                    int right = cur_row == 11 ? -1 : 1;
+                    sell_pos = Vec2(cur_pos.x, cur_pos.y - 95);//出售在下
+                    up_pos = Vec2(cur_pos.x + 95 * right, cur_pos.y);//升级：第11列在左 其余在右
+                }
+                else {//cur_line==7 防御塔在最下面
+                    int left = cur_row == 0 ? 1 : -1;
+                    sell_pos = Vec2(cur_pos.x + 95 * left, cur_pos.y);//出售：第0列在右 其余在左
+                    up_pos = Vec2(cur_pos.x, cur_pos.y + 95);//升级在上
+                }
+            }
+            //根据精灵计算标签位置
+            up_money_pos = Vec2(up_pos.x + 12, up_pos.y - 30);
+            sell_money_pos = Vec2(sell_pos.x + 12, sell_pos.y - 30);
+
+            /* 设置攻击范围大小 */
+            range->setScale(range_scale);
+
+            /* 设置位置 */
+            range->setPosition(cur_pos);
+            up->setPosition(up_pos);
+            _sell->setPosition(sell_pos);
+            up_money->setPosition(up_money_pos);
+            sell_money->setPosition(sell_money_pos);
+
+            /* 渲染 */
+            /* up+up_money */
+            if (tower_level == 2)
+                up->setSpriteFrame("top_level.png");
+            else {
+                int um = tower->get_up_money();
+                string text = to_string(um);
+                //根据money和升级money的关系渲染
+                if (money >= um)
+                    up->setSpriteFrame("yes_up.png");
+                else
+                    up->setSpriteFrame("no_up.png");
+                up_money->setString(text);
+            }
+            /* sell_money */
+            int sm = tower->get_sell_money();
+            string text = to_string(sm);
+            sell_money->setString(text);
+
+            /* ZOrder */
+            range->setZOrder(1);
+            up->setZOrder(3);
+            _sell->setZOrder(3);
+            if (tower_level < 2)
+                up_money->setZOrder(4);
+            sell_money->setZOrder(4);
+            //更新格子状态
+            map_clicked_2 = 2;
+        }
+    }
+    };
     _eventDispatcher->addEventListenerWithSceneGraphPriority(map_click_listener, this);
 
 

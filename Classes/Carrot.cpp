@@ -111,19 +111,17 @@ bool PopCarrot::init() {
 Carrot* Carrot::create_Carrot(const Vec2& carrot_pos, Scene* scene) {
     auto carrot = Carrot::create();
     carrot->chp_bg = Sprite::create();
-    carrot->c_pos.x = carrot_pos.x;
-    carrot->c_pos.y = carrot_pos.y;
+    carrot->c_pos = carrot_pos;
     const Vec2 chp_pos(carrot_pos.x + 80, carrot_pos.y - 10);
     const Vec2 chp_num_pos(carrot->c_pos.x + 93, carrot->c_pos.y - 10);
     carrot->chp_num = lb_create(scene, carrot->c_hp, "fonts/HPSimplified_Bd.ttf", 27, chp_num_pos, 2);
     carrot->chp_num->setName("chp_num");
     carrot->_setPosition(carrot_pos, chp_pos);
-    carrot->_setScale(1.5, 1.5);
+    carrot->_setScale(1.5f, 1.5f);
     carrot->_setSpriteFrame(carrot->chp_url[9]);
     carrot->chp_bg->setSpriteFrame("Hp.png");
     scene->addChild(carrot, 3);
     scene->addChild(carrot->chp_bg, 1);
-
     return carrot;
 }
 void Carrot::_setPosition(const Vec2& carrot_pos, const Vec2& chp_pos)
@@ -146,8 +144,7 @@ void Carrot::cut_chp() {
         const Vec2 chp_num_pos(c_pos.x + 93, c_pos.y - 10);//ÂÜ²·ÑªÌõÊý×ÖÎ»ÖÃ
         this->_setSpriteFrame(chp_url[c_hp - 1]);
         auto scene = Director::getInstance()->getRunningScene();
-        chp_num->setZOrder(-3);
-        chp_num = lb_create(scene, c_hp, "fonts/HPSimplified_Bd.ttf", 27, chp_num_pos, 2);
+        chp_num->setString(to_string(c_hp));
         AudioEngine::play2d("sound/carrot_eaten.mp3", false);
     }
     else {

@@ -209,15 +209,8 @@ bool Map_1_01::init()
     const Vec2 brr4_1(origin.x + mapX[6], origin.y + mapY[6]);
     const Vec2 brr4_2(origin.x + mapX[4], origin.y + mapY[6]);
     const Vec2 brr4_3(origin.x + mapX[8], origin.y + mapY[6]);
-    /* 怪物位置 */
-    
-   
 
     /**************************************/
-
-    
-    
-    
 
     /*********** 创建精灵 **********/
     /* 创建背景 */
