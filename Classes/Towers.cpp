@@ -4,7 +4,11 @@
 #include "ui/UIButton.h"
 #include "audio/include/AudioEngine.h"
 using namespace cocos2d::experimental;
+
 #define NULL 0
+#define SHIT 0
+#define BOTTLE 1
+#define FAN 2
 USING_NS_CC;
 using namespace ui;
 using namespace std;
@@ -74,40 +78,6 @@ void Tower::up_level() {
     this->bullet->setSpriteFrame(this->info.bullet_url[level]);
 }
 
-int Tower::tower_rotate_direction() {
-    Monster* mon = this->get_first_monster();
-    if (mon == nullptr)
-        return 0;//不旋转
-
-    Vec2 po1 = this->getPosition();
-    Vec2 po2 = mon->getPosition();
-
-    float mon_angle = cal_relative_angle(po1, po2);
-    float tower_angle = this->get_angle();
-
-    //return mon_angle;
-    /* 判断旋转方向 */
-    if (fabs(mon_angle - tower_angle) <= 3)
-        return 0;//不旋转
-
-    int clock_wise = 0;//顺时针为1 逆时针为-1
-
-    if (mon_angle >= 0 && mon_angle <= 180) {
-        if (tower_angle >= mon_angle && tower_angle <= mon_angle + 180)
-            clock_wise = 3;
-        else
-            clock_wise = -3;
-    }
-    else {
-        if (tower_angle >= mon_angle - 180 && tower_angle <= mon_angle)
-            clock_wise = -3;
-        else
-            clock_wise = 3;
-    }
-
-    return -clock_wise;//逆时针为正方向
-}
-
 Monster* Tower::get_first_monster() {//获取范围内第一个Montser
     for (int i = 0; i < lives; ++i)
         if (cur_mons[i]) {
@@ -118,44 +88,15 @@ Monster* Tower::get_first_monster() {//获取范围内第一个Montser
     return NULL;
 }
 
-void Tower::tower_rotate_1(float dt) {
-    //int direc = tower_rotate_direction();//逆时针为正方向
-    //if (direc == 0)
-    //    return;
-    //float de = direc - angle;
-    //float change = 0;
-    //if (de > 180)
-    //    change = 3;
-    //else if (de <= 180 && de > 3)
-    //    change = -3;
-    //else if (de <= 3 && de >= -3)
-    //    change = -de;
-    //else if (de < -3 && de >= -180)
-    //    change = 3;
-    //else if (de < -180)
-    //    change = -3;
-    //float change_angle = 2.0f * direc;
-    //float next_ag = angle + change_angle;
-    ////float next_ag = angle + change;
 
-    //if (next_ag >= 360)
-    //    next_ag -= 360;
-    //else if (next_ag < 0)
-    //    next_ag += 360;
-    //angle = next_ag;
-
-    //this->setRotation(next_ag);
-    //this->bullet->setRotation(next_ag);
-    //this->setRotation(change_angle);
-    //this->bullet->setRotation(change_angle);
-}
 
 void Tower::shoot_1_2(float dt) {
     if (is_paused || is_stop)
         return;
     Vec2 po1 = this->getPosition();//子弹起始坐标
-    Target* mon = NULL;//Tower此时攻击对象
-    if (target) {//先判断有没有选中对象以及是否在范围内
+    Target* mon = NULL; //Tower此时攻击对象
+    // 先判断有没有选中对象以及是否在范围内
+    if (target) {
         float d = cal_distance(po1, target->getPosition());//计算距离
         if (d <= this->info.radius[this->get_level()])//在范围内
             mon = target;
@@ -168,10 +109,11 @@ void Tower::shoot_1_2(float dt) {
         return;
     /* 有在范围内的怪物 发射子弹 旋转*/
     Vec2 po2 = mon->getPosition();
+    // 计算转角
     float angle = -cal_relative_angle(po1, po2);
-    if (this->get_type() == 0) {
+    if (get_type() == SHIT || get_type() == BOTTLE) {
         auto rotate = RotateTo::create(0.0f, angle);
-        this->runAction(rotate);//拉倒 
+        this->runAction(rotate);    //瞄准怪物
         auto audio = AudioEngine::play2d("sound/bottle_atk.mp3", false);
     }
     else
@@ -217,11 +159,10 @@ void Tower::biu_fan(Vec2& start, float x, float y) {
     scene->addChild(biu, 4);
     auto rotate = RotateBy::create(1.0f / 60, 30.0f);
     auto ahead = MoveBy::create(1.0f / 60, Vec2(x, y));
-    //auto delay = DelayTime::create(0.2f);
+
     for (int i = 0; i < 2; i++)
         for (int j = 0; j < 10; j++)
             attacked[i][j] = 0;
-
     auto call_check = CallFunc::create([=]() {
         if (is_paused || is_stop)
             return;
@@ -335,10 +276,8 @@ void Tower::biu_1_2(Vec2& start, const int tag, float angle) {
             p->get_hurt(attack);//伤害
             return;
         }
-        //先不管角度了
         // 子弹还没到达且发射目标存在
-        //向量 子弹指向怪物
-
+        // 子弹指向怪物
         float x = po2.x - po1.x;//向量x方向
         float y = po2.y - po1.y ;//向量y方向
 
@@ -363,4 +302,70 @@ bool Tower::init()
     if (!Sprite::init())
         return false;
     return true;
+}
+
+int Tower::tower_rotate_direction() {
+    Monster* mon = this->get_first_monster();
+    if (mon == nullptr)
+        return 0;//不旋转
+
+    Vec2 po1 = this->getPosition();
+    Vec2 po2 = mon->getPosition();
+
+    float mon_angle = cal_relative_angle(po1, po2);
+    float tower_angle = this->get_angle();
+
+    //return mon_angle;
+    /* 判断旋转方向 */
+    if (fabs(mon_angle - tower_angle) <= 3)
+        return 0;//不旋转
+
+    int clock_wise = 0;//顺时针为1 逆时针为-1
+
+    if (mon_angle >= 0 && mon_angle <= 180) {
+        if (tower_angle >= mon_angle && tower_angle <= mon_angle + 180)
+            clock_wise = 3;
+        else
+            clock_wise = -3;
+    }
+    else {
+        if (tower_angle >= mon_angle - 180 && tower_angle <= mon_angle)
+            clock_wise = -3;
+        else
+            clock_wise = 3;
+    }
+
+    return -clock_wise;//逆时针为正方向
+}
+
+void Tower::tower_rotate_1(float dt) {
+    //int direc = tower_rotate_direction();//逆时针为正方向
+    //if (direc == 0)
+    //    return;
+    //float de = direc - angle;
+    //float change = 0;
+    //if (de > 180)
+    //    change = 3;
+    //else if (de <= 180 && de > 3)
+    //    change = -3;
+    //else if (de <= 3 && de >= -3)
+    //    change = -de;
+    //else if (de < -3 && de >= -180)
+    //    change = 3;
+    //else if (de < -180)
+    //    change = -3;
+    //float change_angle = 2.0f * direc;
+    //float next_ag = angle + change_angle;
+    ////float next_ag = angle + change;
+
+    //if (next_ag >= 360)
+    //    next_ag -= 360;
+    //else if (next_ag < 0)
+    //    next_ag += 360;
+    //angle = next_ag;
+
+    //this->setRotation(next_ag);
+    //this->bullet->setRotation(next_ag);
+    //this->setRotation(change_angle);
+    //this->bullet->setRotation(change_angle);
 }

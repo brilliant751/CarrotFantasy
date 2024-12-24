@@ -80,11 +80,8 @@ void Map_1_01::update_waves()
 /* 生成怪物 */
 void Map_1_01::create_monster(float dt)
 {
-    if (get_tag_waves(mons_tag) != waves)
-    {
-        update_tag(mons_tag, waves);
-    }
-    if (mons_tag % 100 > MONS_NUM)  //怪物已全部刷新
+    // 怪物已全部刷新
+    if (mons_tag % 100 > MONS_NUM)
     {
         int temp = least;
         for (int i = 0; i < MONS_NUM; ++i)
@@ -114,11 +111,12 @@ void Map_1_01::create_monster(float dt)
         update_waves();
         return;
     }
+    // 生成怪物
     auto mon1 = Monster::create_Monster(PUPIL_1, path, top);
-    mon1->setSpriteFrame(mons_url[waves]);
-    mon1->setTag(mons_tag++);
+    mon1->setSpriteFrame(mons_url[waves]);  //设置怪物图片
+    mon1->setTag(mons_tag++);   //设置怪物编号
     addChild(mon1, 2);
-    //mons_tag++;
+    // 在数组中存放怪物指针
     cur_mons[lives++] = mon1;
     timer = clock();    //记录最后一次刷怪时间
 }

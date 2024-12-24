@@ -56,23 +56,26 @@ private:
 class Target : public Sprite
 {
 public:
-	double hp;	//血量
-	double max_hp;	//血量
-	int reward = 200;
-	Sprite* selected;	//锁定标识
-	Sprite* hp_holder;	//血条槽
+	double hp;		//血量
+	double max_hp;	//最大血量
+	int reward = 200;		//掉落金币
+	Sprite* selected;		//锁定标识
+	Sprite* hp_holder;		//血条槽
 	LoadingBar* hp_slider;	//血条
 
-	CREATE_FUNC(Target);
+	// 设置血量
 	void setHP(int max_hp) { this->max_hp = hp = max_hp; }
-
+	// 获取类型
 	virtual int get_type()const { return BARRIER_TARGET; }
+	// 创建血条
 	virtual void create_slider();
+	// 受到伤害
 	virtual void get_hurt(int damage);
-
 
 	// 获取锁定标识
 	Sprite* get_selected_sprite()const { return selected; }
+	// 定义create
+	CREATE_FUNC(Target);
 };
 
 

@@ -19,10 +19,12 @@ extern Target* target;
 extern Monster* cur_mons[20];   //当前所有怪物
 extern int lives;      //栈顶指针，当前场上怪物数量
 
+/* 更新怪物坐标 */
 void Monster::update(float dt)
 {
     if (is_stop)
-        return;
+        return; //暂停时不移动
+    /* 到达萝卜 */
     if (rt == top)
     {
         auto sp = Director::getInstance()->getRunningScene()->getChildByName<Carrot*>("carrot");
@@ -38,9 +40,10 @@ void Monster::update(float dt)
         cur_mons[tag % 100 - 1] = NULL;
         return;
     }
-    Vec2 cur = getPosition();
-    Vec2 hp_pos = hp_slider->getPosition();
-    Vec2 ex_pos = cur;
+    Vec2 cur = getPosition();   //获取当前位置
+    Vec2 hp_pos = hp_slider->getPosition(); //获取血条位置
+    Vec2 ex_pos = cur;      //记录当前位置
+    /* 计算坐标变化 */
     if (cur.x < route[rt].x)
     {
         if (cur.x + info.speed * speed * sp_percent > route[rt].x)
@@ -70,12 +73,14 @@ void Monster::update(float dt)
             cur.y -= info.speed * speed * sp_percent;
     }
     else
-        ++rt;
-    // todo：更新血条位置
+        ++rt;   //靠近下一个拐点
+    /* 更新血条位置 */
     update_pos(hp_pos, ex_pos, cur);
     hp_slider->setPosition(hp_pos);
     hp_holder->setPosition(hp_pos);
+    // 更新锁定标记位置
     selected->setPosition(hp_pos);
+    // 更新怪物位置
     setPosition(cur);
 }
 
@@ -85,7 +90,6 @@ bool Monster::init()
 	if (!Sprite::init())
 		return false;
     reward = 20;
-    hp = info.hp * waves;
 	return true;
 }
 
@@ -94,16 +98,14 @@ Monster* Monster::create_Monster(monf type, const Vec2* path, const int& top)
 {
     auto scene = Director::getInstance()->getRunningScene();
     auto mt = Monster::create();
-    mt->setType(type);
-    mt->setHP(mt->info.hp);
-    mt->set_route(path, top);     //设置路线
-    //mt->setSpriteFrame(mons_url[waves]);
-    mt->setPosition(mt->route[0]);
-    mt->setScale(1.5f);
-    mt->setAnchorPoint(Vec2(0.5, 0)); //锚点为脚部
-    //mt->setTag(mons_tag++);
-    mt->scheduleUpdate(); //实现按路径移动
-    mt->create_slider();
+    mt->setType(type);      //设置怪物类型
+    mt->setHP(mt->info.hp * waves);     //设置血量（随波次变化）
+    mt->set_route(path, top);           //设置路线
+    mt->setPosition(mt->route[0]);      //设置位置（路线起始点）
+    mt->setScale(1.5f);     //设置放大倍率
+    mt->setAnchorPoint(Vec2(0.5, 0));   //设置锚点为脚部
+    mt->scheduleUpdate();               //实现按路径移动
+    mt->create_slider();                //创建血条
     return mt;
 }
 
